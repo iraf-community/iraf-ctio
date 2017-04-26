@@ -1,0 +1,53 @@
+.help console Mar88 manuals
+.ls USING WINDOWS ON THE SUN CONSOLE: HELPFUL HINTS
+
+To use the suntools windows, you must be logged in at a console. The windows
+are activated by a call of the suntools, ie:
+
+.nf
+      mach% suntools
+.fi
+
+This will usually be done automatically when you log in to the console to use
+iraf. The screen will change to a grey background with windows. If the windows
+are not created properly, it means that there is not enough block memory for the
+window to use. This will result in an error message appearing somewhere on the
+console. This means that there are too many people using the computer, so try
+again later, or see Mario Hamuy, or Lisa Wells.
+
+Now that the windows are up, the mouse can be used to manipulate the windows.
+If you are using one of the windows, you must move the mouse cursor into that
+window. If the window you wish to use is covered by another window then move
+the cursor to the border of the window you want, and press the left button on
+the mouse. Your window will come to the front. If you wish to move the windows,
+move the cursor to the border of the window you wish to move. Now hold the     
+middle button and move the window. A frame will appear showing the outline of
+the window. Releasing the button will set the position and will move the window
+to its new place.
+
+If the console gets too cluttered and you wish to get rid of a few windows there
+are two ways of doing it. For windows you plan to use again it is easiest to
+just close the window. Take the cursor to the border and hold the right button.
+Move the cursor to 'frame' and follow the arrow off the edge. A new menu will
+appear so move to 'close' and release the button. The window will change to a
+small rectangle. To bring back the window just move the cursor into the
+rectangle and press the right button. If you no longer need the window you can
+just quit out of it by moving the cursor to 'quit' and releasing. Do not kill
+the console window which appears in the upper left-hand corner. This window is
+used by the system to print out error messages and without it the windows are
+messed up each time the system detects an error.
+
+If you get error messages and the window borders are messed up, move the cursor
+to the grey region behind the windows and hold the right button. Move the cursor
+to 'redisplay all' and release. To bring up more windows, again move to the grey
+background and hold the right button. Move the cursor to 'imtool' or 'gterm' for
+the type of window you wish and release.
+
+When you are done for the day and wish to log out, move the cursor to the grey
+background area anywhere and hold the right button. \fBDO NOT TRY TO LOGOUT FROM
+THE CONSOLE WINDOW OR ANY OF THE WINDOWS\fR. Move the cursor to 'exit suntools'
+and release. You will return to the blank screen and be logged off the
+computer. If you are not logged out immediately then type logout. This will
+log you off the computer.
+.le
+.endhelp

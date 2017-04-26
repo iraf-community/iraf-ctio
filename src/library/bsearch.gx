@@ -1,0 +1,66 @@
+include	<mach.h>
+
+$for (csilrd)
+
+# BSEARCH -- Binary search over an increasing ordered array. If the key is
+# found the procedure returns OK, and the upper and lower limits have the
+# same value. Otherwise it returns ERR, and the lower and upper limits
+# delimit the range where the key would be located. When the key is less
+# than the first element in the array the lower limit is zero, and when is
+# greater than the last element the upper limit is the number of points in
+# the array plus one.
+
+int procedure bsearch$t (a, npts, key, lower, upper)
+
+PIXEL	a[ARB]			# input array
+int	npts			# number of points in array
+PIXEL	key			# quantity to search for
+int	lower, upper		# lower and upper indices (output)
+
+int	k
+
+begin	       
+	# Return inmediately if the key is out of bounds.
+	# Otherwise set up limits to start the iteration.
+	if (key < a[1]) {
+	    lower = 0
+	    upper = 1
+	    return (ERR);
+	} else if (key > a[npts]) {
+	    lower = npts
+	    upper = npts + 1
+	    return (ERR);
+	} else {
+	    lower = 1
+	    upper = npts
+	}
+
+	# Look for the upper and lower limits
+	while (upper - lower > 1) {
+	    k = int ((lower + upper) / 2)
+	    if (key > a[k])
+	        lower = k
+	    else
+	        upper = k
+	}
+
+	# Check for equality
+	$if (datatype == r || datatype == d)
+	if (abs (key - a[lower]) < EPSILON$T) {
+	$else
+	if (key == a[lower]) {
+	$endif
+	    upper = lower
+	    return (OK);
+	$if (datatype == r || datatype == d)
+	} else if (abs (key - a[upper]) < EPSILON$T) {
+	$else
+	} else if (key == a[upper]) {
+	$endif
+	    lower = upper
+	    return (OK);
+	} else
+	    return (ERR);
+end
+
+$endfor

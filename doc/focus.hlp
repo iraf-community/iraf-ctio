@@ -1,0 +1,125 @@
+.help focus Dec89 ctio
+.ih
+NAME
+focus -- Compute telescope focus
+.ih
+USAGE
+focus images
+.ih
+PARAMETERS
+.ls images = ""
+List of input images to process. Any file template can be used.
+.le
+.ls display = yes
+Display the image at the beginning of the interactive loop ?. The
+user will be prompted for this parameter for each image in the
+list.
+.le
+.ls cursor = "imcur"
+Cursor input file. If the value "imcur" is specified the standard image
+cursor is used, otherwise image cursor positions will be read from the
+specified file. This file can be created with \fBrimcursor\fR, for
+example.
+.le
+.ls start = INDEF, step = INDEF
+Starting focus position, and step between two adyacent positions,
+in "real" units. These values are used to print the optimum focus in
+meaninfull units. If undefined both defauult to one.
+.le
+.ls 1 x
+Used internally by the task.
+.le
+.ls 1 y
+Used internally by the task.
+.le
+.ls 3 wcs
+Used internally by the task.
+.le
+.ls 3 key
+Used internally by the task.
+.le
+.ls flist1
+Used internally by the task.
+.le
+.ls flist2
+Used internally by the task.
+.le
+.ih
+DESCRIPTION
+This task determines the telescope focus either interactively or
+non-interactively, athough is intented to be used in the former way,
+interacting with the user via single keystrokes commands while in image
+cursor readback mode.
+.br
+For each image in the input list, the task prompts the user to display the
+image on the image display, and then enters a loop waiting for user commands.
+In this loop the user will be able to acumulate stars for focus computation,
+determine the optimum focus, skip to the next image in the list, etc.
+.br
+The focus is computed by determining the FWHM for each acumulated star,
+and then computing a parabola containing three points around the minimum
+FWHM. The minimum of the parabolla is the optimum focus.
+.br
+The output of the program will be the optimum focus value, the minimum FWHM,
+and the FWHM at the optimum focus, along with a plot of all the data points
+and the determined parabolla.
+.ih
+CURSOR COMMANDS
+.ls "a"
+Acumulate star position: The image cursor coordinate is accumulated to
+be used later in the focus determination.
+.le
+.ls "f"
+Determine focus: The optimum focus for all the acumulated star coordinates
+is computed and printed.
+.le
+.ls "n"
+Continue with next image: The task will continue processing the next image
+in the input list. If no next image exists the task quits.
+.le
+.ls "r"
+Reset acumulation: All the acumulated star coordinates are discarded to start
+over again, but using the same image.
+.le
+.ls "q"
+Quit: The task will quit, and delete all temporary files.
+.le
+.ls "?"
+Help: Get list of all possible cursor commands.
+.le
+.ih
+EXAMPLES
+1.- Determine the focus for a list of three images, interactively:
+.nf
+
+lo> focus image1,image2,image3 cursor="imcur"
+... interactive loop
+.fi
+.sp
+2.- Do the same, but generate the file using \fBrimcursor\fR, and feed the
+task with it:
+.nf
+
+cl> lists
+li> rimcursor > curfile
+...interactive loop
+li> ctio
+ct> focus image1,image2,image3 cursor=curfile
+.fi
+.ih
+TIME REQUIREMENTS
+The focus computation takes a while.
+.ih
+BUGS
+If the task aborts abnormally it may letf temporary file of the form
+"tmp*" floating around.
+.sp
+The task needs the \fBdisplay\fR, \fBfields\fR, \fBgraph\fR, \fBimexam\fR,
+\fBsections\fR and \fBimgets\fR tasks defined, but it does not load the
+packages that contain them automatically.
+.br
+.ih
+SEE ALSO
+tv.display, proto.fields, plot.graph, proto.imexam, images.sections, 
+images.imgets
+.endhelp

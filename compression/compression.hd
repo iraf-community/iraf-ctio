@@ -1,0 +1,9 @@
+# Help directory for the COMPRESSION package.
+
+$defdir		= "ctio$compression/"
+$doc		= "ctio$compression/doc/"
+
+fitswrite	hlp = doc$fitswrite.hlp, 	src = fitswrite.cl
+fitsread	hlp = doc$fitsread.hlp, 	src = fitsread.cl
+imcompress	hlp = doc$imcompress.hlp,	src = imcompress.cl
+imuncompress	hlp = doc$imuncompress.hlp,	src = imuncompress.cl

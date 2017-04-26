@@ -1,0 +1,18 @@
+# Help directory for the FABRY package.
+
+$defdir		= "ctio$fabry/"
+$doc		= "ctio$fabry/doc/"
+
+avgvel		hlp = doc$avgvel.hlp,	 src = t_avgvel.x
+fabry		hlp = doc$fabry.hlp
+findsky		hlp = doc$findsky.hlp,	 src = t_findsky.x
+fitring		hlp = doc$fitring.hlp,	 src = t_fitring.x
+fpspec		hlp = doc$fpspec.hlp,	 src = fpspec.cl
+icntr		hlp = doc$icntr.hlp,	 src = t_icntr.x
+intvel		hlp = doc$intvel.hlp,	 src = intvel.cl
+ringpars	hlp = doc$ringpars.hlp,	 src = t_ringpars.x
+mkcube		hlp = doc$mkcube.hlp,	 src = t_mkcube.x
+mkshift		hlp = doc$mkshift.hlp,	 src = t_mkshift.x
+normalize	hlp = doc$normalize.hlp, src = t_normalize.x
+velocity	hlp = doc$velocity.hlp,	 src = t_velocity.x
+zeropt		hlp = doc$zeropt.hlp,	 src = t_zeropt.x

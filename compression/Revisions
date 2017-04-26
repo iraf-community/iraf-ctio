@@ -1,0 +1,3 @@
+compression.hd
+	Modified to allow HELP find the help pages of the package even 
+	when the CTIO package is not loaded (PG 17/Aug/93).

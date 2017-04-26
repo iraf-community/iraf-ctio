@@ -1,0 +1,4 @@
+# Parameter for MKSHIFT
+
+coord_file,s,a,,,,File containing coordinate data
+script_file,s,a,,,,File to contain IMSHIFT commands

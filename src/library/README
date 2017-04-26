@@ -1,0 +1,32 @@
+LIB			09-Apr-90		(Pedro Gigoux)
+
+This directory contains some usefull routines, written in SPP, installed
+here either because they are shared by one than more task of the CTIO
+package, or because they are general procedures not found in the standard
+IRAF libraries. The files contained here are:
+
+addflux.x		add flux on a given fractional pixel range
+
+bsearch.gx		binary search routine (generic)
+bsearch.x
+
+confnu.x		convert a spectrum from F-lambda to F-nu
+
+directory.x		recursive directory traversal
+
+dtgastr.x		get array string (DTTEXT)
+
+julian.x		julian date
+
+puttime.x		put a time stamp in a text file (log file)
+
+sort.x			general sorting procedures
+
+strext.x		extract dictionary delimited substring
+strins.x		insert substring after reference string
+strrep.x		replace all occurences of a string by another
+strsubs.x		extract index delimited substring
+strwht.x		determine if a string contains only whitespaces
+strwrd.x		extract one word from a string (opposite of strdic)
+
+wairmass.x		weighted airmass determination procedures

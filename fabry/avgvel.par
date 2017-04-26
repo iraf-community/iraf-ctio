@@ -1,0 +1,13 @@
+# AVGVEL parameter file
+
+cube_image,s,a,,,,Input name for image cube
+output,s,a,,,,Output file name
+lambda_rest,r,a,,,,Rest wavelength of observed line
+x,i,h,1,1,,X coordinate
+y,i,h,1,1,,Y coordinate
+nrings,i,h,0,0,,Number of square rings to average
+x_offset,i,h,1,1,,Offset in x due to subraster extraction
+y_offset,i,h,1,1,,Offset in y due to subraster extraction
+verbose,b,h,yes,,,Output results to standard output
+plot,b,h,yes,,,Create plots at each fitting point
+device,s,h,"stdgraph",,,Output device for plots

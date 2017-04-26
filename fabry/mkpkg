@@ -1,0 +1,41 @@
+# fabry mkpkg file (Mon Jun  6 14:46:25 AST 1988)
+
+$call	relink
+$exit
+
+update:
+	$call	relink
+	$call	install
+	;
+
+relink:
+	$update	libpkg.a
+	$omake	x_fabry.x
+	$link	x_fabry.o libpkg.a -lxtools -o xx_fabry.e
+	;
+
+install:
+	$move	xx_fabry.e pkgbin$x_fabry.e
+	$purge	pkgbin$
+	;
+
+libpkg.a:
+	getentry.x	<mach.h>
+	getradii.x
+	hdr.x	<imhdr.h>
+	icntr.x	
+	lfit.f	
+	peaks.x	
+	rngfit.f	
+	simul.f	
+	t_avgvel.x	<gset.h> <imhdr.h> <imio.h> <imset.h>
+	t_findsky.x	<fset.h> <imhdr.h> <imio.h>
+	t_fitring.x	
+	t_icntr.x	<error.h> <imhdr.h>
+	t_mkcube.x	<imhdr.h> <imio.h>
+	t_mkshift.x	<ctype.h> <fset.h>
+	t_normalize.x	<fset.h> <imhdr.h> <imio.h>
+	t_ringpars.x	<error.h> <fset.h> <gset.h> <imhdr.h> <mach.h>
+	t_velocity.x	<fset.h> <gset.h> <imhdr.h> <imio.h> <imset.h> <mach.h>
+	t_zeropt.x	<fset.h> <imhdr.h> <imio.h>
+	;

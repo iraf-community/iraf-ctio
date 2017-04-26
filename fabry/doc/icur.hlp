@@ -1,0 +1,48 @@
+.help icur July87 fabry
+.ih
+NAME
+icur -- get image cursor coordinates
+.ih
+USAGE
+icur
+.ih
+PARAMETERS
+.ls image
+the name of the image currently displayed on the monitor
+.le
+.ls coord_file
+the name of a file to receive a list of cursor coordinates.
+If NULL, (no name entered), the coordinates still appear
+on the terminal. If the coordinate file already exists,
+additional positions are appended.
+.le
+.ih
+DESCRIPTION
+This is a device dependent program to obtain cursor positions
+from the image display. Since the hardware cursor position
+is related to, but not equal to, the pixel location, the
+image size must be derived. This is performed using the IMFORT
+routines  to obtain the image dimensions.
+
+The cursor position in the image and the image name are stored
+in the output text file as  (x y image) elements each time
+the RETURN key is pressed. CTRL Z is used to exit from the
+cursor read loop.
+.ih
+EXAMPLES
+Initiate the image cursor and write a series of cursor positions
+to file "coords".
+
+	cl> icur ngc7027 coords
+
+To suppress writing to the file, returning the positons solely
+on the terminal:
+
+	cl> icur ngc7027 ""
+
+.ih
+BUGS
+This code works only for images having dimensions up to 512x512
+and when the image display is not zoomed, and the image is loaded
+in the screen center.
+.endhelp

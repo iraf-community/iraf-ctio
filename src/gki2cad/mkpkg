@@ -1,0 +1,11 @@
+# gki2cad mkpkg file (Thu May 24 14:50:10 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	cad.x		"cad.h" "dxf.h"
+	t_gki2cad.x	"cad.h" <error.h> <gki.h>
+	;

@@ -1,0 +1,10 @@
+# irlincor mkpkg file (Wed Jun  8 11:33:30 AST 1988)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_irlincor.x	<error.h> <imhdr.h>
+	;

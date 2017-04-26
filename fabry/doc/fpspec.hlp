@@ -1,0 +1,77 @@
+.help fpspec Mar89 fabry
+.ih
+NAME
+fpspec -- Plot pixel value for a set of images
+.ih
+USAGE
+fspec images
+.ih
+PARAMETERS
+.ls images
+Input image list. It can be any image template including @ lists. Images
+will be processed in the order specified in the list, i.e. no sorting
+is performed.
+.le
+.ls display_imag = ""
+Image to display. The image specified will be displayed at the beginning
+of execution. If the null string is specified the middle image on the
+input list will be used.
+.le
+.ls cursor = ""
+Image cursor file. 
+If the null string is specified input is taken interactively from the
+standard image cursor. Otherwise cursor coordinates are read from the
+file.
+.le
+.ls x = INDEF               
+Used internally by the task.
+.le
+.ls y = INDEF
+Used internally by the task.
+.le
+.ls wcs = INDEF
+Used internally by the task.
+.le
+.ls key = ""               
+Used internally by the task.
+.le
+.ls flist = ""
+Used internally by the task.
+.le
+.ls fname = ""
+Used internally by the task.
+.le
+.ih
+DESCRIPTION
+This is a script task that displays an image on the image display, reads
+pixel coordinates from the image cursor, and plots the specified pixel
+value for each image in the input list as a function of the image position
+in the list. 
+Pixel coordinates can be specified with the image cursor, either 
+interactively or non-interactively. When used interactively, cursor reads
+are performed by pressing any key. A \fBq\fR will terminate the task.
+If used non-interactively, pixel positions are read from a file until the
+end of file is reached.
+.ih
+EXAMPLES
+1.- Plot pixels for a list of images, displaying the middle image, and
+reading pixel coordinates interactively:
+.nf
+
+fa> fpspec @list display="" cursor=""
+
+.fi
+2.- Plot pixels for three images, displaying the first one, and reading
+pixel coordinates from a file:
+.nf
+
+fa> fpspec image1,image2,image3 display=image1 cursor=file
+.fi
+.ih
+BUGS
+If the task aborts abnormally some temporary files of the form "tmp*" may
+be left in the current directory.
+.ih
+SEE ALSO
+cursors
+.endhelp

@@ -1,0 +1,213 @@
+.help satlink Nov91 manuals
+.ls \fIUsing the Satellite Link to the US\fR
+
+CTIO in conjunction with NASA, now has a satellite link to the US which is
+open to all users, for remote logins, copying files to or from home, and
+real time communications with collaborators in the US. In 3-5 years, remote
+observing may be possible. We encourage you to use the link and if you do,
+please report it in your visitor suggestions form before you leave CTIO.
+The equipment has been affected by the harsh 91' winter, and therefore the
+link has been unstable. This document explains how to log onto your computer
+at home, how to copy files in either direction, and instructions for copying
+images to your home institution. It is also possible to have collaborators
+in the US checking images as they are taken.
+
+.ce
+\fI1. Remote Login\fR
+
+You may log onto machines at your home institution using the machine name or
+the internet number assigned to the machine. If you first try the name and
+cannot connect, use "nslookup machinename.path", to get the internet number
+for your machine. The UNIX command to remotely log onto other machines is
+"telnet". The following example shows the possible forms:
+
+.nf
+     cl> !nslookup bootes.unm.edu
+     Server:  ctio.edu
+     Address:  139.229.1.2
+
+     Non-authoritative answer:
+     Name:    bootes.unm.edu
+     Address:  129.24.8.2
+
+     cl> telnet bootes.unm.edu
+     Trying 129.24.8.2 ...
+     Connected to bootes.unm.edu.
+     Escape character is '^]'.
+
+                  +---------------------------------------------------+
+                  |              University of New Mexico             |
+                  | Computer and Information Resources and Technology |
+                  +---------------------------------------------------+
+
+	     The BOOTES Local Area Vax Cluster
+             Local Node UNMB -- VAX 6000-320 Running VAX/VMS V5.4-2  
+
+     Username:
+.fi
+
+You may now log onto your home machine, provided you have an account. Using
+the address instead of the name, "telnet 129.24.8.2", would give the same
+result. Typing in your username will result in a prompt for the password.
+You may now read mail, run programs, and edit files on your home machine.
+Logging off your home machine will kill the connection.
+
+.ce
+\fI2. Copying Files\fR
+
+The UNIX command "ftp" is used to copy files between machines. If you have
+a file on your home computer that you wish to copy down to your visitor
+account, for example, your loginuser.cl file, do the following:
+
+.nf
+     cl> !ftp 129.24.8.2
+     Connected to 129.24.8.2.
+     220 BOOTES.UNM.EDU MultiNet FTP Server Process 3.0(12) at Thu
+     10-Oct-91 3:01PM-MDT
+     Name (129.24.8.2:username): iraf
+     331 User name (iraf) ok. Password, please.
+     Password:
+     230 User IRAF logged into CPD:[USER.IRAF] at Thu 10-Oct-91 17:02, job
+     5c6b.
+     ftp> 
+.fi
+
+Since "ftp" is not normally defined as a foreign task in IRAF, you must preceed
+the command with a exclamation sign. Now you must go the the directory where
+your file resides and use "get" to pull it from your home directory to the CTIO
+computer. At the same time we will send a file home called 'backup'.
+
+.nf
+     ftp> cd cpd:[user.iraf.workspace]
+     250 Connected to CDP:[USER.IRAF.WORKSPACE].
+     ftp> dir
+     200 Port 6.65 at Host 129.24.8.2 accepted.
+     150 List started.
+
+     CDP:[USER.IRAF.WORKSPACE]
+       
+      LOGINUSER.CL;1      2034   2-AUG-1991 08:07 [AP$,IRAF] (RWED,RWED,RE,)
+      FIRST_TRY.FITS;1    2020   2-AUG-1991 08:08 [AP$,IRAF] (RWED,RWED,RE,)
+      VARS.DST;1          33   2-AUG-1991 08:06 [AP$,IRAF] (RWED,RWED,RE,)
+
+
+     Total of 4087 blocks in 3 files.
+     226 Transfer completed.
+     295 bytes received in 0.86 seconds (0.34 Kbytes/s)
+     ftp> get loginuser.cl
+     200 Port 6.67 at Host 139.229.2.60 accepted.
+     150 ASCII retrieve of CDP:[USER.IRAF.WORKSPACE]LOGINUSER.CL;$ started.
+     226 Transfer completed.  16896 (8) bytes transferred.
+     local: LOGINUSER.CL remote: LOGINUSER.CL
+     16896 bytes received in 6.6 seconds (2.5 Kbytes/s)
+     ftp> send backup
+     200 Port 6.76 at Host 139.229.2.60 accepted.
+     150 ASCII Store of CPD:[USER.IRAF.WORKSPACE]BACKUP.;1 started.
+     226 Transfer completed.  620 (8) bytes transferred.
+     local: backup remote: backup
+     620 bytes sent in 0.0057 seconds (1.1e+02 Kbytes/s)
+     ftp> quit
+     221 QUIT command received. Goodbye.
+     cl>
+.fi
+
+The file will be copied to the directory from which you ran "ftp". There is
+a help page available in UNIX by typing "man ftp" within or outside of IRAF.
+
+.ce
+\fI3. Sending Images Home\fR
+
+If you have an image that you would like to get to a collaborator quickly,
+then you must first write the image onto disk using wfits. You should use
+the proper format. For a fits format disk image you must first type "binary".
+This will set the mode for transfer, so then type the "send" command. This
+works that same for getting an image from home to compare with one you have
+just taken, use "get imagename".
+
+.nf
+     cl> !ftp 129.24.8.2
+     Connected to 129.24.8.2.
+     220 BOOTES.UNM.EDU MultiNet FTP Server Process 3.0(12) at Thu
+     10-Oct-91 3:01PM-MDT
+     Name (129.24.8.2:username): iraf
+     331 User name (iraf) ok. Password, please.
+     Password:
+     230 User IRAF logged into CPD:[USER.IRAF] at Thu 10-Oct-91 17:02, job
+     5c6b.
+     ftp> binary
+     200 Type I ok.
+     ftp> send image.fits
+     200 Port 6.76 at Host 139.229.2.60 accepted.
+     150 BINARY Store of CPD:[USER.IRAF.WORKSPACE]IMAGE.FITS;1 started.
+     226 Transfer completed.  620 (8) bytes transferred.
+     local: image.fits remote: image.fits
+     620 bytes sent in 0.0057 seconds (1.1e+02 Kbytes/s)
+.fi
+
+If you wish to copy all of your images at the end of the night to your home
+computer, there are several more steps required. You should find some space
+on a disk to write all your nights images to fits format. Use the UNIX "tar"
+utility to write them all to one tar file, and use "compress" on this file.
+The following example shows the steps to first get the images copied to the
+home machine and then, what to do when you get home to retrieve the images.
+
+.nf
+     cl> cd home$tardir
+     cl> wfits *.imh image
+     File 1: may12.08.imh -> image001 sn1991t  B            Size = 509 x 506
+     2 Header  358  Data logical (2880 byte) records written
+     File 2: may12.09.imh -> image002 sn1991t  V            Size = 509 x 506
+     2 Header  358  Data logical (2880 byte) records written
+     File 3: may12.10.imh -> image003 sn1991t  R            Size = 509 x 506
+     2 Header  358  Data logical (2880 byte) records written
+     File 4: may12.11.imh -> image004 sn1991t  I            Size = 509 x 506
+     2 Header  358  Data logical (2880 byte) records written
+     File 5: may12.07.imh -> image005 sn1991t  U            Size = 509 x 506
+     2 Header  358  Data logical (2880 byte) records written
+     cl> !tar -cvf image* > images.tar
+     cl> !compress images.tar
+     cl> !ftp 129.24.8.2
+     Connected to 129.24.8.2.
+     220 BOOTES.UNM.EDU MultiNet FTP Server Process 3.0(12) at Thu
+     10-Oct-91 3:01PM-MDT
+     Name (129.24.8.2:username): iraf
+     331 User name (iraf) ok. Password, please.
+     Password:
+     230 User IRAF logged into CPD:[USER.IRAF] at Thu 10-Oct-91 17:02, job
+     5c6b.
+     ftp> binary
+     200 Type I ok.
+     ftp> send image.tar.Z
+     200 Port 6.76 at Host 139.229.2.60 accepted.
+     150 BINARY Store of CPD:[USER.IRAF.WORKSPACE]IMAGE.TAR.Z;1 started.
+     226 Transfer completed.  14432(8) bytes transferred.
+     local: image.tar.Z remote: image.tar.Z
+     620 bytes sent in 0.0057 seconds (1.1e+02 Kbytes/s)
+     ftp> quit
+     221 QUIT command received. Goodbye.
+     cl>
+.fi
+
+The file is in the same form as the file on the machine here. When you return
+home, first you must use the UNIX "uncompress image.tar.Z". This assumes that
+your home machine runs UNIX. Then use "tar xvf - < image.tar". And finally
+you must get the images out of fits storage format by using "rfits image* raw
+raw oldiraf+".
+
+.ce
+\fI4. Collaborations\fR
+
+We have had astronomers log in remotely from the states to look over the
+shoulder of their collaborator at the telescope and do data reduction while
+the other observed. This requires that IRAF host files be set to the proper
+path, especially for displaying images remotely at the US terminal. If you
+would like to have your collaborator looking over your shoulder while
+observing, you must talk with Steve Heathcote, sheathcote@noao.edu, so that
+the link may be set up \fIBEFORE\fR your observing run. There is a UNIX
+command "talk" which enables two people to talk to one another in one of
+the windows while reductions are being done in another. To use "talk" you
+must specify the username of the person being contacted, if you are on the
+same machine, or specify the username@machinename for other machines. The
+online help for "talk" is available by typing "man talk".
+.le
+.endhelp

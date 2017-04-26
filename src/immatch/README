@@ -1,0 +1,12 @@
+IMMATCH			27-Nov-89	(Pedro Gigoux)
+
+This directory contains the code for the image matching program. The files
+contained here are:
+
+immatch.key		Interactive key menu
+
+immcosbell.x		Cosine bell filter procedures
+
+immgraph.x		Interactive procedures
+
+t_immatch.x		Task procedures

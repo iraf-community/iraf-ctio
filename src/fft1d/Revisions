@@ -1,0 +1,78 @@
+fft1d.par
+t_fft1d.x
+	Added "interval" and "angular" parameters. The first one is used
+	to the sampling interval, and the second one is used to specify
+	whether to use angular frecuencies in the output. With these
+	parameters it is now possible to get the frecuency scale along
+	with the transformation, in a two column output (PG 15/Nov/90).
+
+t_fft1d.x
+	Modified in order to be consistent with the changes in fft1d.x,
+	specially with fft1_size() and fft1_get() (PG 16/Nov/90).
+
+t_fft1d.x
+	Increased the initial size of the FFT buffer from 128 to 512
+	points (PG 16/Nov/90).
+
+fft1d.par
+t_fft1d.x
+	Added "flip" parameter, and modified calls to fft1_init() in order
+	to be consistent with changes on it. Also the code was modified so
+	"flip" is turned on every time the sampling interval is defined.
+	This is to prevent wrong scaling (PG 16/Nov/90).
+
+t_fft1d.x
+	Changed the image reading section so now the task process images
+	that are not one dimensional (naxis > 1), but that have a only
+	one line (PG 06/Jun/91).
+
+fft1d.hlp
+fft1d.par
+t_fft1d.x
+	Modified the behavior of the task with images. Now the task will
+	get the sampling interval from the input image header by reading
+	WPC and CDELT1 (in that order). The output image header will contain
+	three new keywords: CRVAL1 with the starting frequency (always zero),
+	CDELT1 with the frequency increment, and NYQUIST with the Nyquist
+	frequency. The task will now output the square of the transformation
+	instead of the modulus, so the "modulus" parameter was renamed as
+	"power" to be consistent with this change. The help page was updated
+	as well (PG 06/Aug/91).
+
+fft11d.hlp
+fft11d.par
+t_fft1d.x
+	Renamed the "power" parameter to "format", and changed it to a string
+	parameter with three possible values: "plain" for the untouched output,
+	"modulus" for the modulus of the transformation, and "power" for the
+	square of the transformation (PG 07/Aug/91).
+
+t_fft1d.x
+	Changed the output image length to be the actual size of the FFT
+	buffer, instead of the input image length (PG 03/Sep/91).
+
+fft1d.par
+t_fft1d.x
+	Added two new parameters to specify the name of the image header
+	keywords instead of using the fixed values "WPC", "CRDELT1", and
+	"CRVAL1". Also, the "NYQUIST" keyword is no longer written in the
+	output image header. The new keyword "FFT1DVAL" is now written when
+	taking the direct transformation, in order to save the physical
+	coordinate of the first pixel (old CRVAL1), and restore it when
+	taking the inverse transformation (PG 03/Sep/91).
+	
+t_fft1d.x
+	Modified the behavior of the "flip" parameter in such a way that
+	now is not set automaticaly when the sampling interval is specified,
+	either by using the "interval" parameter or the input image header
+	keywords (PG 03/Sep/91).
+
+t_fft1d.x
+	Fixed two problems in fft1_image(). The first one was a bug related
+	with the fact that fft1_init() was being called before the line
+	length of the input image was retrived, thus initializing with the
+	wrong buffer size. The second was a problem with always reading the
+	image as complex. For some reason the data buffer returned by IMIO
+	had garbage in at least one pixel value. The fix was to read as
+	complex only complex images, and use a real read for all the others.
+	The reason for this behavior is still unknown (PG 02/Dec/92).

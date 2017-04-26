@@ -1,0 +1,77 @@
+.help iraf2bin Jul93 ctio
+.ih
+NAME
+iraf2bin -- Convert IRAF images into binary files
+.ih
+USAGE
+iraf2bin images files
+.ih
+PARAMETERS
+.ls images
+Input image list. Image sections are allowed.
+.le
+.ls files
+Output file list. This list should be equal in length to the
+list of input images.
+.le
+.ls data_type = "ubyte"
+File data type. It can take the following values: \fBubyte\fR for unsigned
+bytes, \fBushort\fR for unsigned short integers, \fBshort\fR for short
+integers, \fBint\fR for integers, \fBlong\fR for long integers,
+\fBreal\fR for reals, and \fBdouble\fR for double precission reals.
+The actual number of bits used to represent of these numbers is machine
+dependent, although normally a byte is eight bits long, a short is
+sixteen bits long, an int and a long are thirty two bits long, 
+a real is also thirty two bits long, and a double is sixty four bits long.
+.le
+.ls swap = "none"
+Byte swap mode. It can take the following values: \fBnone\fR to leave data
+untouched, \fBswap2\fR to swap every two bytes, and \fBswap4\fR to swap
+every four bytes.
+A byte in this case is always eight bits long.
+With \fBswap2\fR the hexadecimal input sequence "0123456789ABCDEF" is
+converted into "23016745AB89EFCD", and with \fBswap4\fR the same sequence
+is converted into "67452301EFCDAB89"
+The line length should be a multiple of two when swapping every two bytes,
+and a multiple of four when swapping every four bytes.
+.le
+.ls header = no
+Write Roddier header to the output file? This is a header of a length
+(in bytes) is equal to four time the number of image columns. The number
+of columns and the number of lines in the image are written as two integer
+numbers in the first two locations of the header.
+.le
+.ih
+DESCRIPTION
+This task takes a list of IRAF images and converts them into binary files.
+An image section can be specified in the image names.
+The output file data type is specified with the \fBdata_type\fR parameter,
+regardless of the input image type. Truncation, loss of precission, or
+integer overflow might occur if the output data type is not consistent
+with the image data type.
+The task can optionally swap bytes, every two or four bytes, before writing
+out each image line to the file.
+.sp
+An optional header may be written to the output file. This header is
+provided to generate files compatible with some programs written by
+Claude Roddier, which are used at CTIO for optics analysis. The default
+is not to write this header.
+.ih
+EXAMPLES
+1.- Convert an image of any type into a short integer binary file,
+with no byte swapping:
+.nf
+
+ct> iraf2bin image.imh file.bin data_type=short swap=none
+
+.fi
+2.- Convert two images containing short integer pixels, into two binary
+files containing integers, swapping every two bytes:
+.nf
+
+ct> iraf2bin image1,image2 file1.bin,file2.bin data_type=int swap=swap2
+.fi
+.ih
+SEE ALSO
+bin2iraf
+.endhelp

@@ -1,0 +1,19 @@
+growthcurve.cl
+	Fixed a problem with the fit file. The task was not checking
+	for the file existence before renaming the temporary file,
+	thus crashing the task (PG 04/Dic/90).
+
+growthcurve.cl
+	Fixed a problem with the magnitude correction. The task was
+	adding one more difference than needed at the upper limit. This
+	was giving greater magnitudes than expected (PG 04/Dic/90).
+
+growthcurve.cl
+	Added calls to take the integral part of aperture numbers when
+	they are read from the output of CURFIT as real numbers. This
+	prevents an error in the comparison against aperture numbers
+	entered as integer numbers (PG 04/Dic/90).
+
+growthcurve.cl
+	Changed calls to APSELECT to TXDUMP, in order to reflect the
+	new names used in IRAF 2.10 (PG 08/Sep/92).

@@ -1,0 +1,9 @@
+# findfile parameter file
+rootdir,s,a,".",,,Root directory name
+name,s,a,"",,,Name to match
+type,s,h,"plain","|none|plain|directory|",,File type to match
+print,b,h,yes,,,Print file names ?
+nflush,i,h,10,1,,Number of files to accumulate before printing ?
+execute,s,h,"",,,Command to execute on every file
+wait,b,h,yes,,,Wait for command completion ?
+skip,b,h,yes,,,Skip hidden files ?

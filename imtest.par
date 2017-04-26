@@ -1,0 +1,6 @@
+# imtest parameter file
+imhdir,s,a,"home$",,,Header directories list
+pixdir,s,a,"imdir$",,,Pixel directories list
+verbose,b,h,no,,,Verbose output ?
+verify,b,h,yes,,,Verify before deleting files ?
+ignore,b,h,yes,,,Ignore node name when comparing pixel file names ?

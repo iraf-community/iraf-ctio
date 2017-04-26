@@ -1,0 +1,15 @@
+# dfits mkpkg file (Fri Mar 30 12:02:45 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	fits_dheader.x	"dfits.com" "dfits.h" <pattern.h>
+	fits_disp.x	"dfits.com" "dfits.h" <error.h>
+	fits_rpixels.x	<fset.h> <mach.h> <mii.h>
+	print.x	"dfits.com" "dfits.h"
+	read_formats.x	"dfits.com" "dfits.h" <ctype.h>
+	t_dfits.x	"dfits.com" "dfits.h" <error.h> <fset.h>
+	;

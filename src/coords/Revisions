@@ -1,0 +1,5 @@
+t_corrds.x
+	Fixed a problem detected by Skip Shaller with the Data General
+	compiler. It turned out that one expression had a division by
+	a variable with a unary minus in front, without being enclosed
+	in parenthesis. The parenthesis were added (PG, SS 07/Mar/91).

@@ -1,0 +1,96 @@
+.help imsort Aug89 ctio
+.ih
+NAME
+imsort -- Sort images by header parameter values
+.ih
+USAGE
+imsort images parameter
+.ih
+PARAMETERS
+.ls images
+Images to sort.
+.le
+.ls parameter
+Header parameter name used to sort the images. It can be any numeric or
+string valued parameter.
+.le
+.ls numeric = yes
+Sort numerically instead of alphabetically ?. If one tries to sort strings
+numerically, the task assumes that they have an INDEF value.
+.le
+.ls invert = no
+Invert the sense of the sort ?. Normally the task sorts numbers
+from small to big values, and strings lexicographically from
+A to Z.
+.le
+.ls verbose = no
+Print the header parameter value along with the image name ?.
+.le
+.ih
+DESCRIPTION
+The task will read the value for the specified header parameter for all
+the images specified, and then sort the image names based on these values.
+Images without the specified parameter in their headers are skipped with
+a warning message.
+.br
+It it possible to sort either numerically or alphabetically. If numeric
+sorting is specified, then string valued header parameters are associated
+with an INDEF value. This guarantess that it will be possible to perform
+the sort, since INDEF is a numeric value (actually a big value).
+It is also possible to reverse the sense of the sort.
+.br
+The output of the task is printed to the standard output. It consists
+of the list of all the sorted image names.
+If verbose output is selected, the header parameter values are printed
+along with the image names.
+.ih
+EXAMPLES
+Take the following example with four images:
+.nf
+
+lo> hselect images* $I,otime yes
+image1.imh	1000
+image2.imh	40
+image3.imh	2
+image4.imh	125
+
+.fi
+Now perform several different sorts. Remember that the default is to sort
+numerically, not to invert the sort, and non-verbose output:
+.nf
+
+lo> unlearn imsort		<-- to get defaults
+lo> imsort images* otime
+image3.imh
+image2.imh
+image4.imh
+image1.imh
+
+lo> imsort images* otime verbose+
+image3.imh 2
+image2.imh 40
+image4.imh 125
+image1.imh 1000
+
+lo> imsort images* otime invert+ verbose+
+image1.imh 1000
+image4.imh 125
+image2.imh 40
+image3.imh 2
+
+lo> imsort images* otime numeric- verbose+
+image1.imh 1000
+image4.imh 125
+image3.imh 2
+image2.imh 40
+
+lo> imsort images* otime numeric- invert+ verbose+
+image2.imh 40
+image3.imh 2
+image4.imh 125
+image1.imh 1000
+.fi
+.ih
+SEE ALSO
+files, sort, hselect
+.endhelp

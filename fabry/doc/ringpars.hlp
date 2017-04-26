@@ -1,0 +1,173 @@
+.help ringpars July87 fabry
+.ih
+NAME
+ringpars -- determine the parameters of the calibration rings
+.ih
+USAGE
+ringpars input output
+.ih
+PARAMETERS
+.ls input
+the list of image names for the ring calibrations
+.le
+.ls output
+the name of the text file to hold the ring parameters
+.le
+.ls lambda = 0
+the wavelength of the standard illuminating the instrument for
+this ring. This parameter can only be used when a single input
+image is input, and must be used in conjuntion with the parameter
+"z". When several input images are given, the "lzfile" parameter should
+be used.
+.le
+.ls z = 0
+the etalon gap parameter, for the instrument when obtaining the single
+input image. See also "lambda". The value for "z" may be in either
+imstrument units (near 0.5) or user units (near 500), and will be
+converted to instrument units on output.
+.le
+.ls lzfile = ""
+A text file containing pairs of (lambda z) combinations, 1 pair
+per line, separated by a space or tab, and in linear
+association with the input image file list. This parameter is
+required if multiple input images are given.
+.le
+.ls average = 7
+the number of image rows and columns to average while performing
+the analysis. For noisy data, this may need to be increased.
+.le
+.ls xstart = 0
+the initial guess for the central column of the ring. If zero,
+the central column of the image is used.
+.le
+.ls ystart = 0
+the initial guess for the central row of the ring. If zero,
+the central row of the image is used.
+.le
+.ls cwidth = 31
+the width of the centroided region in pixels. After the peaks
+in the ring are located, a centroided center is found extending
+over this width in total.
+.le
+.ls contrast = 0.1
+the minimum ratio between the strongest and weakest peaks allowable,
+when searching for the 2 highest peaks in a row or column cut for
+the ring centers.
+.le
+.ls separation = 40
+the minimum number of pixels between the two highest peaks. If the
+rings have very small radii this may be too large a number.
+.le
+.ls threshold = 0.0
+the minimum pixel value to be considered a valid peak.
+.le
+.ls verbose = no
+if set to yes, the ring parameters will be printed on the terminal.
+.le
+.ls interactive = yes
+if set to yes, the user may graphically view the results of the
+ring parameter search, and override if desired.
+.le
+.ls cursor = ""
+the graphics cursor.
+.le
+.ih
+DESCRIPTION
+The Fabry-Perot passes a single wavelength of light for a given etalon
+setting when used in parallel light, but due to the angles of rays
+coming from off-axis locations in the telescope field, the wavelength
+passed is a function of distance from the optical axis, as well
+as the etalon gap. This relationship is calibrated by illuminating the
+instrument with light from a standard lamp having a known wavelength.
+The light will fall on the detector only in a ring about the optical
+axis, having a radius determined by the gap setting and the wavelength
+of the light.
+
+By varying the etalon setting, and illuminating with light from
+a lamp producing several wavelengths of light, the dispersion relations
+can be well determined, and are of the form:
+
+	lambda = (A + B*z) * (Cos (Atan (R/C)))
+
+where the constants A, B, and C are to be determined, and R is the
+radius of the ring, and z is the etalon setting.
+
+RINGPARS determines the ring radii by identifying the peaks
+in row and column cuts. The peak finder from the IDENTIFY package is
+used, followed by a centroiding centering algorithm. 
+The center  of the ring is deduced to be the midway point between
+the centers of the two peaks. A second iteration is performed at these revised
+row and column cuts. Two iterations appears to be adequate, even
+when the initial starting guesses are far from correct.
+The final radius is coputed by averaging the row and column diameters.
+It is assumed that the rings are circularly symmetric.
+
+Upon exit, the parameters wavelength, etalon gap, radius, x-center, 
+and y-center are written to a text file for later use by FITRINGS, and 
+ZEROPT. The wavelength and gap are taken from the file indicated
+by the parameter "lzfile" and may look like:
+
+	6598.953  574
+.br
+	6598.953  582
+.br
+	6606.123  557
+.br
+	6606.123  592
+
+where the first column indicates the wavelength of the lamp
+iillumination, and the second is the etalon gap setting, in this
+case, in user units (the 574 value, for example, could also
+be given as 0.574). One line of "lz" values is needed for each
+input calibration image.
+
+When the parameter "interactive" is selected, a plot of the rows and
+columns are displayed and the user may override the marked centers.
+This is frequently necessary for noisy data, or rings having
+small diameters. The following keystrokes are in effect when the
+cursor is presented (in addition to the usual system wide capital
+keystrokes):
+
+.ls c
+print cursor position
+.le
+.ls h
+set the high (rightmost) peak to the current cursor position
+.le
+.ls l
+set the low  (leftmost) peak to the current cursor position
+.le
+.ls i
+reset interactive mode to no. To be used when you have many
+images, and you've gotten tired of looking at good automatic results.
+.le
+.ls v
+print current values for the low and high peaks
+.le
+.ls ?
+prints minimal help
+.le
+.ls q
+quit and accept the current low and high peak values for the current
+image.
+.le
+.ih
+EXAMPLES
+To find the ring parameters for the neon images, prepare a
+file containing the lambda,z pairs called neonlz. Then run:
+
+	cl> ringpars neon*.imh neonout lzfile=neonlz
+
+.ih
+TIME REQUIREMENTS
+For a 512x512 image, the time is governed by the column
+extraction time, which is about 3 seconds.
+.ih
+BUGS
+The peaks are occasionally found incorrectly, especially when
+the peak is asymmetric. Varying the "cwidth" parameter can improve
+the results.
+.ih
+SEE ALSO
+FITRING, IDENTIFY
+.endhelp

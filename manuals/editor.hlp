@@ -1,0 +1,81 @@
+.help editor Jan89 Version-1.0
+.ls \fIEditing with VI\fR
+
+The main UNIX editor is VI, visual editor. If you are more familiar with
+another editor, then use the one you know. To edit a file using vi type:
+
+.nf
+      cl> edit [filename]    or      cl> vi [filename]
+.fi
+
+If you are forced to use vi without knowing anything about it, here are
+a few basic commands which should allow you to do most things. The commands
+will not be echoed, and in any of the insert modes (where an <ESC> is used
+to terminate it), a "delete" will backspace but will not erase even though
+it has deleted the letters. Remember also that vi is very case sensitive.
+
+.nf
+      j     - cursor down
+      k     - cursor up
+      h     - cursor left
+      l     - cursor right
+      #G    - move cursor to line #
+      G     - move cursor to last line
+      0     - move cursors to beginning of current line
+      $     - move cursor to end of current line
+      dd    - delete current line
+      dw    - delete from cursor to next word
+      d)    - delete to the end of the sentence
+      d}    - delete to the end of the paragraph
+      #dd   - delete # of lines starting at current line
+      u     - undelete last command
+      U     - undelete all changes to current line
+      x     - delete character under the cursor
+      r     - replace character under the cursor with the next
+              letter typed
+      /word - search forward for the first occurance of the word
+      ?word - search backwards from cursor for word
+      n     - next occurance of word searched for using / or ?
+      ^L    - rewrite the screen
+.fi
+
+The following commands are terminated by <ESC>:
+
+.nf
+      i     - insert before the cursor
+      a     - insert after the cursor
+      R     - write over text beginning at the cursor
+      o     - open a line following the current line
+      O     - open a line before the current line
+.fi
+
+The following commands are viewed at the bottom of the screen after a ':'
+
+.nf
+      :w    - write the text to the file
+      :q    - quit the editor, without saving changes
+      :q!   - emphatic quit, use when :q fails
+      :wq   - write the text to the file and quit
+      :1,$s/old/new    - substitute new for first occurance of old
+              in lines 1-$, where 1,$ is all lines
+      :1,10s/old/new/g - globally substitute new for old in lines
+              1-10
+      :10,20w file2    - write lines 10-20 to filename file2
+      :1,5w >> file2   - append lines 1-5 to file2
+.fi
+
+To do more substantial cut and paste work, use the following commands:
+
+.nf
+      yy    - yank a copy of the current line (coppied into buffer)
+      #yy   - yank a copy of the next # lines from cursor position
+      p     - put the last item yanked or deleted after the cursor
+      P     - put the last item yanked or deleted before the cursor
+.fi
+
+If you get lost using this editor, just type <esc> several times to get out
+of insert modes you might be in and type ':q!'. This will get you out of
+the editor and will not save the file you are working on. If you need help,
+just ask someone on the staff.
+.le
+.endhelp

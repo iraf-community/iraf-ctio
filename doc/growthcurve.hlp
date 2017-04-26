@@ -1,0 +1,90 @@
+.help growthcurve Nov90 ctio
+.ih
+NAME
+growthcurve -- Correct magnitudes using the growth curve for them
+.ih
+USAGE
+growthcurve files naps small large
+.ih
+PARAMETERS
+.ls files
+Input files. These files are the output from APPHOT.
+.le
+.ls naps
+Number of apertures, from the APPHOT output, to use in the growth curve.
+This number does not have to be the same as the total number of apertures
+used by APPHOT. The actual number of apertures used will be the minimum
+between the value specified by \fBnaps\fR and the number of apertures
+used by APPHOT.
+.le
+.ls small
+Small aperture number. This is the number of the aperture having a small
+diameter. The magnitudes for this aperture will be corrected using the
+growth curve information.
+.le
+.ls large
+Large aperture number. This is the number of the aperture having a large
+(or the largest) diameter. The correction to the magnitudes in the
+\fBsmall\fR aperture will be such that the average of the latter will
+match the average of the magnitudes in the \fBlarge\fR aperture.
+.le
+.ls function = "legendre"
+The type of function with which to fit the data. Choices are \fBlegendre\fR,
+\fBchebyshev\fR, \fBspline1\fR (linear spline) or \fBspline3\fR (cubic
+spline).
+.le
+.ls order = 8
+The order of the fit or number of spline pieces.
+.le
+.ls interactive = yes
+If \fBinteractive\fR is set to \fByes\fR, a plot of the growth curve fit
+is drawn, the cursor will be available for interactively examining or
+adjusting the fit, and the user will be prompted for the small and large
+aperture numbers for each file in the input list.
+.le
+.ls flist = ""
+Used internally by the task.
+.le
+.ih
+DESCRIPTION
+This is a CL script task that takes output files coming from the APPHOT
+package, computes a growth curve for the magnitudes determined by APPHOT,
+and finally corrects the magnitudes for a given aperture using the growth
+curve information.
+.sp
+The first step done by the script is to extract the magnitudes, for all
+the objects, from the first aperture to the last aperture specified
+by \fBnaps\fR.
+Then, for each object, the task computes the difference in magnitude
+between one aperture and the next one. The differences are then piped
+to \fBcurfit\fR in order to fit a curve to the data (growth curve).
+Once the fit is finished, the task takes the output from \fBcurfit\fR,
+and sums all the differences, from the aperture specified by \fBsmall\fR
+to the aperture specified by \fBlarge\fR parameter.
+This sum is used to correct the magnitudes of all objects for the aperture
+specified by \fBsmall\fR.
+.sp
+There is one output file for each file in the input list. The output
+file name will be generated automatically from the input file name. If the
+input file name contains a ".mag." in its name, then the output file name
+will be the same as the input file name, but with the ".mag." replaced by
+a ".grw.". Otherwise the output file name will be the input file name with
+a".grw" suffix.
+.sp
+Each output file will contain the object id, the magnitude without
+correction (from APPHOT), the corrected magnitude value, and the
+magnitude error (from APPHOT).
+.ih
+EXAMPLES
+.ih
+BUGS
+The task expects the apertures to be sorted, with the one having the 
+smallest diameter first and the largest diameter at the end.
+.sp
+It is not possible to use any commands that generate output to the
+standard output when fitting interactively with CURFIT, since the
+output of CURFIT is internally redirected to a file.
+.ih
+SEE ALSO
+apphot.apselect, utilities.curfit
+.endhelp

@@ -1,0 +1,19 @@
+# VELOCITY parameter file
+
+cube_image,s,a,,,,Input name for image cube
+root,s,a,,,,Output root name for answer pictures
+lambda_rest,r,a,,,,Rest wavelength of observed line
+x1,i,h,0,,,Starting column for analysis
+x2,i,h,0,,,Ending column
+y1,i,h,0,,,Starting column for analysis
+y2,i,h,0,,,Ending column
+navgx,i,h,3,1,,Number of columns to average during analysis
+navgy,i,h,3,1,,Number of rows to average during analysis
+x_offset,i,h,1,,,Offset in x due to subraster extraction
+y_offset,i,h,1,,,Offset in y due to subraster extraction
+v_limit,r,h,1000.,,,Maximum velocity error before block averaging
+block,b,h,no,,,Block average and re-fit unfittable pixels
+plot,b,h,no,,,Create plots at each fitting point
+dir_plot,s,a,,,,File name for plot directory
+metacode,s,a,,,,File name for plot metacode
+verbose,b,h,yes,,,Print something

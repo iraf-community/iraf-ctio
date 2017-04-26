@@ -1,0 +1,7 @@
+# filecalc parameter file
+files,s,a,"",,,Input file list
+expressions,s,a,"",,,Expression list
+lines,s,h,"",,,Lines from which to extract columns
+format,s,h,"",,,Format string
+calctype,s,h,"real","|real|double|",,Calculation type
+warnings,b,h,no,,,Output warnings ?

@@ -1,0 +1,20 @@
+# iraf2bin mkpkg file (Tue Jul  6 13:26:14 CST 1993)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+
+generic:
+	$ifolder (iraf2bin.x,  iraf2bin.gx)
+	    $generic -k -o iraf2bin.x iraf2bin.gx
+	$endif
+	;
+
+libpkg.a:
+	$ifeq (USE_GENERIC, yes) $call generic $endif
+
+	iraf2bin.x	<mach.h> <iraf2bin.h>
+	t_iraf2bin.x	<error.h> <mach.h> <iraf2bin.h>
+	;

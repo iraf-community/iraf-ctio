@@ -1,0 +1,737 @@
+.help rvxcor Aug88 ctio
+.ih
+NAME
+\fIrvxcor\fR -- Compute radial velocities via cross correlation.
+.ih
+USAGE
+\fIrvxcor\fR objects refspec
+.ih
+PARAMETERS
+.ls objects
+The list of image names for the input object spectra.
+.le
+.ls refspec
+The image name of a spectrum that will be used as a template for the cross
+correlation.
+.le
+.ls apnum = 1
+Aperture number of image to be used.  This number is used for \fIboth\fR the
+object and reference spectra.
+.le
+.ls interactive = "yes"
+Process spectra interactively?  If "no", then the spectra are processed
+with a fixed set of parameters.  If "yes", select parameters may be changed
+with colon commands allowing control over individual reductions.
+.le
+.ls corrfunc = "fourier"
+Correlation method used.  Possible abbreviated choices are "difference"
+or "fourier". "Difference" uses a linear correlation and the
+pixel shift is computed from a "squared difference" between 
+the two spectra.
+"Fourier" will use a FFT correlation method in which the data are 
+processed through a FFT and reverse transformed after multiplication of
+one by the complex conjugate of the other.
+.le
+.ls fitfunc = "gaussian"
+Function used to fit the correlation plot. Possible choices
+are "gaussian" or "parabola".
+.le
+.ls maxshift = 20
+Maximum pixel shift in either direction for correlation.  Used only in the
+difference method.
+.le
+.ls initshift = 0
+Initial pixel shift of object spectrum relative to the reference spectrum.  
+Used if approximate shift is known. Overlapping end regions will not be used 
+in the correlation.
+.le
+.ls apodize = 0.1
+Percentage of endpoints to apodize with a cosine bell when using the Fourier
+correlation method.
+.le
+.ls regions = "*"
+Regions of the spectrum to be used in the correlation specified in pixels if
+the first character is a 'p' or anstroms if the first character is an 'a'.
+The default (i.e. no 'a' or 'p' as the first character), if a range is provided,
+is a range specified in angstroms.  This string value will be updated in an 
+interactive session as regions are being selected. The default, '*', is the 
+entire spectrum.  The list is specified either as a singel character '*' to
+denote the entire spectrum or as a starting wavelength/pixel, a '-', 
+ending wavelength/pixel and an optional comma to delimit ranges.
+entire spectrum.  The list is specified as a starting wavelength/pixel, a '-', 
+.le
+.ls max_peak = 20
+Maximum expected pixel shift.  A warning will be issued if the shift value is
+outside this range.   The correlation plot for an FFT correlation is expanded
+to lags of plus or minus twice this value to aide in fitting the peak.
+Also useful for flagging possible bad correlations in batch mode.
+.le
+.ls pix_drift = "yes"
+Use the difference in starting wavelengths between the object and reference
+spectra as a correction for pixel drift between observations.   If the data
+have all been binned on the same scale, or if the difference was removed with 
+the \fIdispcor\fR or \fIrebin\fR tasks, this parameter should be 'no'.
+.le 
+.ls filter = "no"
+If set then the data will be processed with a bandpass filter if using
+the Fourier method.  The filter type is determined by the \fIfilt_type\fR 
+parameter and will operate on the Fourier components defined by the \fIcuton\fR,
+\fIcutoff\fR, \fIfullon\fR, and \fIfulloff\fR parameters.
+.le
+.ls filt_type = "ramp"
+The type of filter to be used on the data.  Possible choices are 'ramp',
+'welch', 'hanning', or 'square'.  See the section on filtering for an 
+explanation of these filter types and their use.
+.le
+.ls cuton = 0
+The Fourier component at which the filter begins to operate.  Components lower 
+than the cuton component are ignored while components up to the cutoff component
+are passed through the filter. See the section on filtering.
+.le
+.ls cutoff = 0
+The component at which the filter ceases to operate.  Components higher than
+the cutoff component are ignored.  If using a 'ramp' filter then this is the
+component at which the filter begins to decrease.  In all other filter types
+this is the component at which the filter ends. See the section on filtering.
+.le
+.ls fullon = 0
+Used only for the 'ramp' filter type.  This is the component at which the 
+ramp filter reaches it's maximum value (i.e. the full value of the data are
+passed through).  See the section on filtering.
+.le
+.ls fulloff = 0
+Used only for the 'ramp' filter type.  This is the component at which the 
+ramp filter reaches it's zero value (i.e. the true cutoff component for the
+filter).  See the section on filtering.
+.le
+.ls output = ""
+File name of file to which output will be written.  If no file name is given
+then no log files will be kept. Text output will have a 
+".txt" sufix appended and the graphics metacode file will be appended with
+a ".vdm" suffix.
+.le
+.ls spec_plot = "yes"
+Replot the spectra after operations such as selecting a new object spectrum
+or initial shift value.  May be disabled to speed up interactive operation.
+.le
+.ls header = "yes"
+Print an explanatory header on the output table? If set then information
+such as correlation method, fitting function, and reference spectrum will
+also be printed to the header.
+.le
+.ls imupdate = "no"
+Update the image header with the computed velocities?
+.le
+.ls rvobs = "rvobs"
+Header keyword to contain the observed radial velocity if \fIimupdate\fR = yes.
+.le
+.ls rvcor = "rvcor"
+Header keyword to contain the corrected heliocentric radial velocity if 
+\fIimupdate\fR = yes. This keyword should be present in the reference star's 
+header and must contain the known or corrected velocity of the reference
+star.  An assumed velocity of zero km/sec will be used if this keyword is
+not present or contains and INDEF value.
+.le
+.ls latitude = ")observatory.latitude"
+Latitude of observation in degrees.
+The default is taken from the parameter \fInoao.imred.observatory.latitude\fR.
+.le
+.ls longitude = ")observatory.longitude"
+Longitude of observation in degrees.  
+The default is taken from the parameter \fInoao.imred.observatory.longitude\fR.
+.le
+.ls altitude = ")observatory.altitude"
+Altitude of observation in meters.  
+The default is taken from the parameter \fInoao.imred.observatory.altitude\fR.
+.le
+.ls graphics = "stdgraph"
+Graphics output device.
+.le
+.ls cursor = "stdgcur"
+Graphics input cursor.
+.ih
+DESCRIPTION
+\fIRvxcor\fR is designed to run in two modes: a "batch" mode
+in which the input list is processed with the fixed parameter set
+given in the parameter file or an "interactive" mode in which the user
+may change parameters relating to the correlation.  Batch  mode is used
+to process a list of spectra in which the parameters are not expected to 
+change.  Correlation results are printed to the screen and to the log
+file if one is being kept.  Graphics in batch mode will be spooled to
+the output metacode file if a logfile is named and will consist of the
+correlation plot and the fitted function.  Batch mode is activated by
+setting the \fIinteractive\fR parameter to "no" in the CL or issuing 
+the \fI:batch\fR command from interactive mode.
+ 
+The purpose of interactive mode is twofold: first, to allow the user to
+examine each star as it is being processed, thereby controlling  the reduction,
+and second, to edit the parameters of the reduction by allowing the user
+to change things such as the spectral regions being used
+and shift values so that these new parameters may later be used in
+a batch mode process.  Interactive mode should be used if the user wishes to 
+correlate each star individually or when the parameters for a batch reduction
+are not known and need to be determined.
+It is possible to update the parameter file once the parameters 
+are determined.  Graphics is output to
+the screen in the form of plots of the spectra and the correlation plot and
+it's fitted function.  The cursor is used to input keystroke and
+colon commands.  Text output to the screen aside from prompts consists of 
+the computed velocities and the parameters of the fit.
+Interactive mode is activated by setting the \fIinteractive\fR parameter 
+to "yes".
+ 
+The graphics cursor is used to select regions of the spectrum to be used 
+in the correlation and to perform various functions.  A menu of the keystroke
+options is printed when the '?' is typed.  The standard cursor mode keys
+are still available for windowing, regraphing, and making hardcopy output.
+ 
+Colon commands are used to reset and show current task parameters as well
+as read in new data.  A task parameter is shown simply by typing it's name 
+after a ':'.  A parameter is reset by typing it's name followed by the new 
+value (e.g. ':maxshift 10' resets the maximum pixel shift to 10 pixels).  
+To display the current values for all of the parameters, type ":show".
+ 
+The data must be binned logarithmically with wavelength and the \fIDC-FLAG\fR
+keyword must be set in the image header.  The dispersion information is
+obtained from either the \fIW0\fR/\fIWPC\fR or \fICRVAL1\fR/\fICRDELT1\fR 
+image header keywords.  Dispersion information must be present in both the 
+object and reference image header.  Information about the observation used 
+in the heliocentric correction is obtained from the \fIRA\fR, \fIDEC\fR, 
+\fIUT\fR, \fIDATE-OBS\fR, \fIEPOCH\fR, and \fIOTIME\fR or \fIEXPTIME\fR 
+image header keywords.
+ 
+.ih 
+INTERACTIVE OPERATION
+A typical session in interactive mode would go as follows:
+The object and reference spectra are read and then plotted to the 
+standard graphics device.  For 
+plotting purposes the spectra are normalized so that the mean of
+each spectrum is scaled to 1.  
+This is to allow for the overplotting of two spectra whose
+maximum intensity may not be on the same scale. If an initial shift was 
+given in the parameter file the object spectrum will be plotted with the 
+shift indicated by the \fIinishift\fR parameter.
+ 
+The object spectrum may be shifted by a certain 
+amount by positioning the cursor at a desired point and typing 's'.
+Move the cursor to the endpoint of the shift at the "again:" prompt 
+and hit any key.  The object spectrum will be replotted
+with the shift indicated.  To print the pixel shift without actually
+shifting the spectrum, use the above procedure with the 'd' key. This may
+be used to find the approximate pixel difference between lines in the object
+and reference spectra.
+ 
+Typing the 'c' key will mark the beginning of a region to be used in the 
+correlation if the entire spectrum is not to be used.  Move to the region's
+endpoint at the "again:" prompt and strike any key.  This may be done 
+repeatedly until all regions desired are selected.  The user should note,
+however, that when using the Fourier correlation method the endpoints of the
+regions are linearly interpolated before the correlation is begun.  Therefore
+it is suggested that regions not begin or end in the middle of a 
+spectral feature since the interpolation may adversely affect the correlation
+function.
+Each time a region is selected interactively, the \fIregions\fR list is updated,
+allowing the user to specify regions to be used for a batch process.   
+The selected region will be identified graphically with a cross bar at 
+the bottom of the screen.  The ":update" colon command may be used to
+update the parameter file with the new list of regions. 
+ 
+Once satisfied that all regions are selected, the cross correlation is begun
+by typing the 'x' key.  The correlation will be done with the method chosen
+in the \fIcorrfunc\fR parameter.  The screen will be cleared and the 
+correlation function plotted.  Position the cursor at the beginning of
+a region to be fit and type 'g'.  Move the cursor to the endpoint at 
+the "again:" prompt and hit any key.  The region selected will be fit with 
+the function chosen by the \fIfitfunc\fR parameter by an iterative
+least squares method and the fitted function plotted to the screen along with 
+the computed velocities and parameters of the fit. The points in the 
+correlation function used in the fit will be plotted with a marker.  Dots
+will also be plotted to indicate the first iteration of the fitting function.
+Instead of using the 'g' keys, the user 
+may position the Y cursor and hit the 'y' key.  The data points closest to the
+Y value of the cursor are selected as the new endpoints of the region to be
+fit.  To see where all the correlation points are, hit the 'p' key to plot
+markers at the correlation points.
+ 
+If satisfied with the fit, hitting the ':write' command will write the
+computed radial velocity to the logfile if activated and the header
+keywords if the \fIimupdate\fR parameter is set.  Hitting the 'g' or 'y' key,
+instead, at this point will fit a new function to the data using two new
+endpoints.  Alternatively, the correlation method may
+be changed using the ":corrfunc [fourier|difference]" command
+and a new correlation done by again hitting the 'x' key or a new spectrum
+may even be read in.
+ 
+Another star may be reduced by simply reading in a new object or reference
+spectrum.  If a root image name was given initially, the ':next' will 
+automatically read in the next image in the list.  
+Similarly the ':previous' command
+will read in the previous image name in the list.  
+If the results were not saved to the log file or the image header, 
+the user will be asked if he wishes to save the results.  
+Using the ':next!' or ':previous!' commands will force
+the new image to be read without saving results or querying the user.
+ 
+Once satisfied with the current parameter settings, the parameter file may 
+be updated with the ":update" command.  It is also possible at this point
+to process the remainder of the list in batch mode by 
+typing ":batch" to turn off the \fIinteractive\fR parameter.
+The user will be asked if the input list should be rewound 
+to the start so that all data may be processed with a consistant parameter 
+set.  Otherwise, processing will continue on the input list from the current 
+image.  Using the command ":batch rewind" will bypass
+the query and start processing after rewinding the input list and
+spool files.  Graphics output to the
+screen will be turned off however the text output (i.e. results)
+will continue to be written to the screen.  
+The log file and metacode file will be overwritten if the input list was
+rewound otherwise they will continue to be appended.  
+When processing is complete, the user will
+be put back in cursor mode so that he may  proceed with another input list, 
+reference spectrum, or perhaps set new parameters.
+ 
+At any time, the user may page the logfile of results (if one is being kept)
+by typing 'l'.
+ 
+To exit the program simply type 'q'.
+ 
+.ih
+BATCH OPERATION
+When running in batch mode, the regions of the spectrum used in 
+the correlation are set by the range given in the \fIregions\fR 
+parameter.  The default for this is the entire spectrum.  
+The data are automatically correlated using the specified method.
+The area used for the fit to the correlation function is determined 
+by offsetting to either side
+of the peak of the function until a local minimum (or maximum for difference
+curves) is found.  The function is fit using the function set by the
+\fIfitfunc\fR parameter. Results are written to the logfile and metacode
+for the correlation plot and fitted function is written to the graphics
+spool file. Processing then continues on the list of input images.  
+As each star is processed, the results as they would appear
+in the logfile are printed to the screen.  If the user wishes to save only the
+text output, he may disable the logfiles and simply redirect the text into
+another file.  Unless batch operation was started from within an interactive
+session, the task will exit when processing is finished.
+ 
+The text output may later be processed with the list tools for further
+analysis. The graphics metacode may be plotted individually or viewed through 
+(e.g.) \fIgkimosaic\fR.
+ 
+.ih 
+CURSOR KEYS
+.ls c
+Select (cut) a region to be used in the correlation.  
+Move to the endpoint of the region at the "again: " prompt and strike any key.
+.le
+.ls d
+Print the difference in angstoms (and approximate pixels) between two 
+points on a spectrum.
+.le
+.ls g 
+Select the region of the correlation plot to be fit. 
+Move to the endpoint of the region at the "again: " prompt and strike any key.
+The region will be fit with the  function chosen in the \fIfitfunc\fR 
+parameter.
+.le
+.ls l
+Page the current logfile of results if a logfile is being kept.
+.le
+.ls p
+Plot the data points on a correlation plot.
+.le
+.ls q
+Quit the task.
+.le
+.ls r
+Replot the data.
+.le
+.ls s
+Shift the object spectrum.  Position the cursor at a desired start point
+and type 's'.  Move the cursor to the desired shift point and hit any key.
+The shifted object spectrum be will replotted with the pixel shift closest 
+to the desired shift.
+.le
+.ls x
+Do the cross correlation using the method chosen with the \fIcorrfunc\fR 
+parameter.
+.le
+.ls y
+Same as the 'g' key except that the data points closest to the y value of
+the cursor are used as the endpoints.
+.le
+.ls z
+Zoom in on the plot.  The plot is expanded by a factor of four about the
+x value of the cursor.  This command may be called repeatedly.  To redraw
+the original plot use the 'r' key.
+.le
+.ls ?
+Print a help summary of keystrokes and commands.
+.le
+ 
+The following colon commands may be used to set or show a named task parameter.
+To show the current value of the parameter, just type it's name following a ':'.
+ 
+.ls :apodize [real_value]
+Set or show the value of the fraction of the data to be apodized with a cosine
+bell if using the Fourier correlation method.
+.le
+.ls :batch [rewind]
+Disable the interactive flag and process the remainder of the list using the
+current parameter settings.  Graphics will be disabled to the screen but 
+metacode for the correlation plot and fit will continue to be written to the 
+metacode file.  Text output will be saved to the log file and appear on the
+screen as each star is processed.  If the \fIrewind\fR keyword is used the
+input list and output files will be rewound before processing begins, otherwise
+the user will be queried whether to rewind the list.  The user is returned 
+to cursor mode when finished.  
+.le
+.ls :corrfunc  [difference|fourier]
+Set or show current correlation method used.
+.le
+.ls :cutoff [int_value] 	:cuton [int_value]
+Set or show the current values of the cutoff and cuton wavenumbers for the
+filter.
+.le
+.ls :filter [yes|no]
+Set or show the current value of the filter flag.
+.le
+.ls :filttype  [square|ramp|welch|hanning]
+Set or show the current type of filter used.  See the section on filtering for
+and explanation of each.
+.le
+.ls :fitfunc   [gaussian|parabola]
+Set or show the function used to fit the correlation plot.
+.le
+.ls :fulloff [int_value] 	:fullon [int_value]
+Set or show the current values of the fulloff and fullon wavenumbers for the
+filter if the filter chosen is a 'ramp' filter.  See the section on filtering
+for more details on how this is used.
+.le
+.ls :initshift  [int_value]
+Set or show current initial shift value.
+.le
+.ls :maxpeak  [int_value]
+Set or show current maximum shift value in which a peak is expected. A warning
+will be issued if the peak is found outside this shift.
+.le
+.ls :maxshift  [int_value]
+Set or show current maximum shift value.
+.le
+.ls :next[!] 
+Read in the next object spectrum in the input list.
+.le
+.ls :objects [file]
+Set or show current object image name. If passed a image name list then the
+current list will be closed and the new list opened for processing.
+.le
+.ls :previous[!]
+Read in the previous object spectrum in the input list.
+.le
+.ls :refspec [file]
+Set or show current reference image name.
+.le
+.ls :regions  [range string]
+Set or show current regions used in the correlation.
+.le
+.ls :show [file]
+List the current values of all the parameters. If passed a file name then the
+output is written to the file.
+.le
+.ls :specplot [yes|no]
+Set or show the flag that determines if the spectra will be replotted after
+the following operations: setting shift value (\fI:initshift\fR), reading 
+in a new object or reference spectrum (\fI:next\fR, \fI:previous\fR, 
+\fI:object\fR, \fI:refspec\fR), resetting the parameters to the defaults
+(\fI:unlearn\fR).
+.le
+.ls :unlearn
+Reset the values of all the parameters to their defaults.  This is the same
+as the '\fIunlearn rvxcor\fR' command from the CL.
+.le
+.ls :update
+Update the parameter file with the current parameter values.  
+.le
+.ls :write [n|p|q]
+Write the results of the correlation to the logfile and the header
+keywords. The commands "\fI:write n\fR" and "\fI:write p\fR" will 
+write the results and then read in the next or previous image in the 
+input list respectively. The command "\fI:write q\fR" will write the
+results and then quit the task.
+.le
+ 
+.ih
+DISCUSSION OF CORRELLATION METHODS
+The fourier method is nothing more than the standard FFT correlation
+technique.  The data are centered in the array and apodized with a
+cosine bell to reduce leakage prior to the FFT. 
+If regions of the spectra have been selected then the spectra are masked 
+prior to the FFT. The mask interpolates between the endpoints of selected
+regions and is applied to each spectrum.  If the starting wavelength for
+the two spectra are different, then this difference is added to the
+region's endpoints for the reference spectrum so that the same wavelengths
+are masked in both spectra prior to correlation.
+ 
+Both the  object and reference spectra are then processed
+through a FFT simultaneously to take advantage of the symmetry of 
+transforming two real arrays.  Once in fourier space, the data may be 
+filtered if the \fIfilter\fR parameter is set.  The filter type used
+is set by the \fIfilt_type\fR parameter.
+Below is a discussion of the filtering method. 
+The result of one transform is then mutiplied
+by the complex conjugate of the other and the product then inverse
+transformed.  The result is then a complex vector whose real components
+are the values of the correlations at different lags and whose imaginary
+components are zero.  The peak of this function is then fit and the resulting 
+pixel shift converted to a velocity shift.  The error quoted is computed
+from the antisymmetric noise component of the correlation function as 
+described in the Tonry & Davis paper.  (References: Tonry, J. and Davis, M. 
+1979 \fIAstron. J.\fR \fB84,\fR 1511, and Wyatt, W.F. 1985 in \fIIAU Coll. 
+No 88, Stellar Radial Velocities\fR, p 123).
+ 
+ 
+ 
+The difference method involves simply measuring the "squared difference"
+of the intensities according to
+.nf
+		p2                  2
+	d(j) = SUM [ x(i) - y(i+j) ]
+	       i=p1
+.fi
+where x(i) denotes the intensity of the reference spectrum and y(i+j)
+the intensity of the unknown spectrum at a trial shift j.  The shift will
+run from -\fImaxshift\fR to +\fImaxshift\fR.  That is to say that the
+difference function will be evaluated in a range from \fImaxshift\fR
+pixels to the left of the present position to \fImaxshift\fR pixels to
+the right of the present position.  The resulting curve will have a minimum 
+at the pixel shift where the velocities of the two spectra are the same.  
+A function is fit and again the pixel shift converted to a velocity.  When 
+operating on only specific regions of the spectrum, pixels that are not in
+the selected region are ignored.  Endpoint pixels which are shifted passed 
+either the first or last pixel are not used in the correlation.  The error
+in the velocity that is quoted is the error of the fit expressed in velocity.
+(References: Weiss, W.W. et al 1978 \fIAstron. Astrophys.\fR \fB63\fR, 247. 
+and Willmarth, D.W and Abt, H.A. in \fIIAU Coll. No. 88, Stellar Radial 
+Velocities\fR, p 99).
+ 
+ 
+.ih 
+FILTERING OF DATA IN FOURIER SPACE
+Filtering of the data may be necessary to remove high frequency noise.  
+If the \fIfilter\fR parameter is set then once the data have been transformed,
+a bandpass filter of the type cosen by the \fIfilt_type\fR parameter is 
+applied to the Fourier components of both spectra.  Components at numbers
+lower than that specified by the \fIcuton\fR parameter are ignored and 
+components up to that specified by the \fIcutoff\fR parameter (or the 
+\fIfulloff\fR parameter in the case of a 'ramp' filter) are attenuated or
+passed according to the filter chosen.   Since the data are assumed to be
+linearized in log-wavelength space, applying a filter to the data in Fourier
+space introduces no phase shift and has the same effect as smoothing the
+data in real space.
+ 
+The filter choices behave as follows:
+ 
+.ls Square Filter
+The fourier components at wavenumbers between the \fIcuton\fR and \fIcutoff\fR
+wavenumbers are passed without change.  Those wavenumbers outside this region
+are set to zero.
+.le
+.ls Ramp Filter
+Fourier components below the \fIcuton\fR and above the \fIfulloff\fR 
+wavenumbers are set to zero. 
+At the \fIcuton\fR wavenumber the filter function
+begins to rise until the \fIfullon\fR wavenumber is reached.  Data in this 
+region is weighted by the slope of the filter until at the \fIfullon\fR
+wavenumber data are passed through without change.  Similarly, the filter
+begins to fall at the \fIcutoff\fR wavenumber until it completely blocks
+(i.e. zeros) the fourier components at the \fIfulloff\fR wavenumber.
+begins to weight the data
+.le
+.ls Welch Filter
+Fourier components below the \fIcuton\fR and above the \fIcutoff\fR 
+wavenumbers are set to zero.  Components between these regions are weighted
+according to the equation for a Welch window.  Namely,
+.nf
+		     | j  - 1/2(N-1) | 2
+	w(j)  = 1. - | ------------- |
+		     |   1/2(N+1)    | 
+ 
+		where j =  (wavenumber - cuton_wavenumber) 
+	      	      N =  (cutoff - cuton) + 1
+.fi
+.le
+.ls Hanning Filter
+Fourier components below the \fIcuton\fR and above the \fIcutoff\fR 
+wavenumbers are set to zero. Components between these regions are weighted
+according to the equation for a Hanning window.  Namely,
+.nf
+ 
+	w(j)  =  1/2 [ 1. - cos( (TWOPI*j) / (N-1) ) ]
+ 
+		where j =  (wavenumber - cuton_wavenumber) 
+	              N =  (cutoff - cuton) + 1
+.fi
+.le
+ 
+.ih
+RADIAL VELOCITY COMPUTATION
+The header keywords specified by the \fIrvobskwd\fR and \fIrvcorkwd\fR 
+parameters should be present in the reference spectrum header,
+otherwise a warning will be printed and the processing 
+will continue at an assumed corrected velocity of zero km/sec 
+for the reference star. 
+ 
+The object spectrum must have the same dispersion as the reference
+spectrum.  The starting wavelengths (i.e. keywords \fIW0\fR or 
+\fICRVAL1\fR) may be different and if the \fIpix_drift\fR parameter is
+set, this difference will be applied to the computation as a pixel
+drift caused by, for example, telescope flexture.  It is assumed that
+all the data have been linearized using a Thorium arc spectrum taken
+regularly throughout the night.  The task \fIdispcor\fR may be used to
+remove this difference and thus put all of the data on the same scale.
+In this case the \fIpix_drift\fR parameter should be turned off.
+ 
+The computed radial velocity is measured with respect to the reference
+star, which is assumed to be at a known velocity and corrected 
+to a heliocentric frame.  
+The center of the function fitted to the correlation peak is converted to a 
+wavelength shift which is easily converted to a velocity. The heliocentric
+correction at time of observation for the reference star is then subtracted 
+from the corrected velocity of the reference star to obtain the observed
+radial velocity.  The velocity shift of the object star is then
+added to the observed velocity of the reference star to obtain the observed
+velocity of the object star.  The heliocentric correction is then added 
+ to obtain the heliocentric velocity of the object star.
+ 
+For the purposes of the heliocentric correction computation,
+the solar motion is assumed to be relative to the Local Standard 
+of Rest (LSR).
+Right Ascension, Declination and time of observation are obtained from the
+header keywords DATE-OBS, UT, RA, DEC, and EPOCH.  The integration time
+is obtained from the OTIME or EXPTIME keyword. If these keywords are 
+not present 
+or contain INDEF values, the correction will be aborted with a warning.
+ 
+The wavelength used for the observed velocity computation is the central 
+wavelength of the spectrum and the time of observation used is the midpoint
+of the exposure (i.e. ut_start + exposure_time/2). 
+The components of the observer's motion are corrected for those due to the
+Earth's rotation (diurnal velocity), the motion of the Earth's center about 
+the Earth-Moon barycenter (lunar velocity), and the motion of the Earth-Moon 
+barycenter about the center of the Sun (annual velocity).  See the help page
+for the \fIastutil.rvcorrect\fR task for a detailed explanation of the 
+algorithms used.
+ 
+.ih
+EXAMPLES
+.nf
+ 1. The following example  processes a set of images with an initial shift
+    of 10 pixels interactively:
+ 
+    cl> rvxcor obj* reference initshift=10
+ 
+ 
+ 2. To process a list of spectra as a background process and save results 
+    in a logfile:
+ 
+    cl> rvxcor obj* reference interactive- output="cc" &
+ 
+ 
+ 3. To run in batch mode with an output header and fitting a parabola to the 
+    correlation plot:
+ 
+    cl> rvxcor obj* ref interactive- fitfunc="parabola" \
+    >>> header+ output="rv"
+    cl> type rv.txt
+    ## Tue 12:31:13 16-Aug-88
+    ##
+    ## IMAGE		= Image name of object spectrum
+    ## OBJECT		= Name of the object star
+    ## TEMPLATE		= Image name of template spectrum
+    ## HJD		= Heliocentric Julian date (HJD-2440000)
+    ## CORM		= Correlation Method
+    ## FITF		= Fitting function
+    ## SHIFT		= Pixel shift
+    ## SFIT		= Sigma of fit to CCF (pix)
+    ## WIDTH		= Width of fit to CCF (pix)
+    ## VOBS		= Computed observed radial velocity
+    ## VHEL		= Corrected heliocentric velocity
+    ## VERR		= Error of fit in km/sec
+    ## COMMENTS	= Task execution comments
+    ##
+    ##   HJD      SHIFT  SFIT  WIDTH  HGHT  VOBS    VHEL    VERR   COMMENTS
+    ##-------------------------------------------------------------------------
+    ## Tue 12:31:13 16-Aug-88
+    ##
+    #K CORM		= "fourier"	
+    #K FITF		= "parabola"
+    #K TEMPLATE   	= "ref"
+    #K IMAGE    	= "obj012.imh"
+    #K OBJECT   	= "HR 1101"
+       7191.6532    0.00  0.12  2.87  0.87 56.059  27.865   0.868   No error.
+ 
+    #K IMAGE    	= "obj013.imh"
+    #K OBJECT   	= "HR 17"
+       7191.6559   -6.56  0.08  2.88  0.78  8.048 -49.611   0.569   No error.
+ 
+ 
+ 4. The same example without a header would produce the following:
+ 
+    cl> rvxcor obj* ref interactive- fitfunc="parabola" \
+    >>> header- output="rv2"
+    cl> type rv2.txt
+    ## Tue 12:31:13 16-Aug-88
+    ##
+    #K CORM		= "fourier"	
+    #K FITF		= "gaussian"
+    #K TEMPLATE   	= "ref"
+    #K IMAGE    	= "obj012.imh"
+    #K OBJECT   	= "HR 1101"
+       7191.6532    0.00  0.12  2.87  0.87 56.059  27.865   0.868   No error.
+ 
+    #K IMAGE    	= "obj013.imh"
+    #K OBJECT   	= "HR 17"
+       7191.6559   -6.56  0.08  2.88  0.78  8.048 -49.611   0.569   No error.
+ 
+ 
+ 5. To capture the text output from a batch process without keeping a
+    logfile:  (Note that this may also be used to keep a logfile without
+    keeping a metacode file if run as a batch process)
+ 
+    cl> rvxcor obj* ref interactive- header- > rv3.txt &
+    cl> type rv3.txt
+    ## Tue 12:31:13 16-Aug-88
+    ##
+    #K CORM		= "fourier"	
+    #K FITF		= "gaussian"
+    #K TEMPLATE   	= "ref"
+    #K IMAGE    	= "obj012.imh"
+    #K OBJECT   	= "HR 1101"
+       7191.6532    0.00  0.12  2.87  0.87 56.059  27.865   0.868   No error.
+ 
+    #K IMAGE    	= "obj013.imh"
+    #K OBJECT   	= "HR 17"
+       7191.6559   -6.56  0.08  2.88  0.78  8.048 -49.611   0.569   No error.
+ 
+.fi
+ 
+.ih
+TIME REQUIREMENTS
+Requires approximately 6 seconds per star running in batch mode using the 
+Fourier correlation method.  Times vary for the difference method depending on 
+the number of points to search.
+.ih
+SEE ALSO
+rvcorrect, ranges, imred.observatory
+.endhelp
+ 
+ 
+#K TEMPLATE   	= "dw069"
+   7191.6654   -6.12  0.06  3.18  0.70 11.240 -18.962   0.412   No error.
+ 
+#K TEMPLATE   	= "dw070"
+   7191.6654   -6.12  0.06  3.18  0.70 11.240 -18.962   0.412   No error.
+ 
+#K TEMPLATE   	= "dw071"
+   7191.6654   -6.12  0.06  3.18  0.70 11.240 -18.962   0.412   No error.
+ 

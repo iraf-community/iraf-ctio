@@ -1,0 +1,6 @@
+# magavg parameter file
+input,s,a,"",,,Input file list [from MAGBAND]
+output,s,a,"",,,Output file name
+low,r,h,3.0,0.0,,Low rejection limit
+high,r,h,3.0,0.0,,High rejection limit
+niter,i,h,0,0,,Number of rejection iterations

@@ -1,0 +1,22 @@
+comrebin.x
+	Deleted extra arg from imgl1r() call  (9/29/03  MJF)
+
+edit.x
+spcombine.key
+	The key help file was moved to the lib$scr/ directory, and the
+	pathaname definition was changed acordingly (PG 09/apr/90).
+
+edit.x
+spcombine.h
+	The key help file declaration was moved from the SPP file
+	to the include file (PG 08/may/90).
+
+setdef.x
+	Added check against negative values for WPC in set_defaults() in
+	order to deal with IR images (PG 25/Mar/92).
+	
+edit.x
+	Increased the number of decimal places in the graph title from
+	one to two in order to able to discriminate the wavelength when
+	it is expressed in microns. This is not a good fix, but it will
+	work for most cases (PG 25/Mar/92).

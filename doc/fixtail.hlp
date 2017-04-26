@@ -1,0 +1,60 @@
+.help fixtail Oct90 ctio
+.ih
+NAME
+fixtail -- Fix last image lines or columns.
+.ih
+USAGE
+fixtail inlist outlist
+.ih
+PARAMETERS
+.ls inlist
+List of images to fix.
+.ls outlist
+List of fixed output images.
+.le
+.ls offset = 15
+The number of lines or columns, starting from the first line or column,
+to copy or append to the last lines or columns of the image.
+It must be an integer number.
+.le
+.ls axis = "lines"
+Line or column offset ?. If this parameter is set to \fBlines\fR then
+lines will be copied, and if it's set to \fBcolumns\fR then columns
+will be copied.
+.le
+.ls append = no
+Append offset ?. If this parameter is set to \fByes\fR then the first
+lines or columns will be appended to last lines or columns, instead of
+overwriting them.
+.le
+.ls fdin, fdout
+Used internally by the task.
+.le
+.ih
+DESCRIPTION
+For each image in the input and output lists, this task first copies
+the input image into the output image. Then it takes the contents of 
+the first lines or columns of the input image, and either copies them
+to the last lines or columns of the output image, or appends them to
+the last lines or columns of the output image.
+In the latter case the size of the output images is increased.
+.ih
+EXAMPLES
+1.- Copy the contents of the first ten lines into the last ten lines
+of an image:
+.nf
+
+ct> fixtail input.imh output.imh offset=10 axis=lines append=no
+
+.fi
+2.- Append the contents the the first eleven lines to the last columns
+of an image:
+.nf
+
+ct> fixtail input.imh output.imh offset=11 axis=columns append=yes
+
+.fi
+.ih
+SEE ALSO
+images.imcopy, ctio.imcreate
+.endhelp

@@ -1,0 +1,202 @@
+.help spcombine Jun88 ctio
+.ih
+NAME
+spcombine -- Combine spectra interactively
+.ih
+USAGE
+spcombine input output
+.ih
+PARAMETERS
+.ls input
+The list of input spectra to combine.
+.le
+.ls output
+The name of the spectrum wich will be created. This spectrum will contain
+the combined spectrum.
+.le
+.ls interp_mode = "poly5"
+This parameter specifies the method of interpolation during the rebinning
+phase of the operation. The interpolation may be performed as a \fBlinear\fR,
+\fBspline3\fR (cubic spline), \fBpoly3\fR (third order polynomial), or
+\fBpoly5\fR (fifth order polynomial). Additionally, the count preserving
+interpolator option \fBsums\fR may be specified.
+.le
+.ls w0 = INDEF
+Starting wavelength for output spectrum.
+.le 
+.ls w1 = INDEF
+Ending wavelength for output spectrum.
+.le
+.ls wpc = INDEF
+Wavelength increment for output spectrum.
+.le
+.ls npix = INDEF
+Length of output spectrum.
+.le
+.ls sort = inc
+This parameter specifies how to sort the list of input spectra, according
+to their starting wavelength. If \fBsort=inc\fR they are sorted in
+increassing wavelength. If \fBsort=dec\fR, they are sorted in decreasing
+wavelength. If \fBsort=none\fR they are not sorted.
+.le
+.ls logarithm = no
+Rebin output spectrum to linear in log wavelength ?.
+If this switch is set, the output spectra are rebinned to linear
+in log wavelength.
+.le
+.ls exposure = no
+If this switch is set, all the input spectra are scaled by the
+exposure time before combining.
+.le
+.ls fluxcons = yes
+If this switch is set, all the input spectra are rebinned conserving
+the flux.
+.le
+.ls wt_type = none
+The output spectrum is a weighted average of the input spectra. This parameter
+determines the weigths to be used. If \fBwt_type=none\fR, all the weights
+are set to 1.0. If \fBwt_type=expo\fR, the weights for each spectrum are
+assigned the exposure time. If \fBwt_type=user\fR, the user may assign
+weights for each spectrum.
+.le
+.ls weight
+If wt_type = user, the user is asked for this parameter for each input
+spectrum.
+.le
+.ls wt_image = ""
+A spectrum containing the net weights is generated and may be saved by
+giving this parameter a non-null file name.
+.le
+.ls interactive = yes
+If this switch is set, the spectra are combined interactively.
+.le
+.ls cursor = ""
+Cursor input file. If the null string is specified, then the standard
+graphics cursor is used.
+.le
+.ih
+DESCRIPTION
+The task takes as input a list of one dimensional spectra and combines
+them to produce a single spectrum. Optionally, The user is able to
+interactively adjust the data to give the best possible match in the
+overlap regions. When not used interactively, the program behaves in
+the same way as \fBonedutil.combine\fR.
+.br
+The input spectra may be sorted by starting wavelength, in increasing
+or decrasing order.
+The input spectra are then reviewed to determine the minimum starting
+wavelength and maximum ending wavelength to determine the output range,
+if the user has not totally specified one.
+All input spectra are rebinned at the smallest wavelength per pixel ratio
+and then combined together. In regions where there is no overlap, the combined 
+spectrum is filled with zeroes.
+Because IRAF does not yet support blank pixels, a pixel value of zero is
+temporarily adopted to indicate a blank. Any pixel containing a true zero
+value will be ignored during the combining process.
+The rebinned input spectra may be scaled by the exposure if desired.
+.br
+The output of the task are the combined output spectrum and optionally
+a spectrum of weigths, containing the sum of weigths for each pixel used
+during the combining process.
+Except for the wavelength parameters, the header from the first spectrum
+is assigned to the combined spectrum.
+.ih
+INTERACTIVE COMMANDS
+The following keystrokes are active when the program is used in the
+interactive mode, in addition to the standard IRAF facilities:
+.ls a
+Used to mark ranges in the region where the current and accumulated spectra
+overlap. This region is used to calculate the average for the \fBv\fR
+keystroke. The default is the entire overlap region and cannot exceed the
+range defined with the \fBs\fR keystroke.
+.le
+.ls b
+Forget region set with the \fBa\fR keystroke.
+.le
+.ls c
+Print current cursor position.
+.le
+.ls e
+Replace range of pixels by a straigh line segment. The cursor defines
+the two (x,y) position of the current spectrum to join.
+.le
+.ls e
+Replace range of pixels by a straight line segment. The cursor defines
+the two x coordinates of the current spectrum to join.
+.le
+.ls f
+Go back to the beginning and start over from the rebinned spectra.
+.le
+.ls j
+Replace pixel closest to horizontal cursor position by vertical cursor
+value. The remainder of the current spectrum is left unchanged.
+.le
+.ls n
+Goto the next image in the input list.
+It prompts the user for confirmation.
+.le
+.ls o
+Reset current spectrum to initial values, forgeting all vertical and horizontal
+shifts, shift scaling, and range setings.
+.le
+.ls p
+Skip next spectrum and do not combine it.
+.le
+.ls q
+Carry on blindly all the remaining spectra without further interaction.
+It prompts the user for confirmation.
+.le
+.ls s
+Used to mark ranges in the current spectrum to be included in the
+accumulation. The range defaults to the entire length of the spectrum.
+This optiom may modify the ranges set with the \fBa\fR keystroke.
+.le
+.ls t
+Forget region set with the \fBs\fR keystroke.
+.le
+.ls v
+Shift current spectrum vertically so that the average value in the range
+specified with the \fBa\fR keystroke matches that of the accumulated
+spectrum.
+.le
+.ls w
+Window the graph using the standard gtools features.
+.le
+.ls x
+Shift current spectrum horizontally so that the pixel at the first
+horizontal cursor position moves to the second cursor position.
+The current spectrum is NOT reinterpolated.
+.le
+.ls y
+Shift the current spectrum vertically so that the pixel closest to the
+horizontal cursor position lies at the vertical cursor position.
+.le
+.ls z
+Shift the current spectrum vertically so that the pixel closest to the
+horizontal cursor position has the same value as the corresponding pixel
+in the accumulated spectrum. This works in the overlap region.
+.le
+.ls +
+Set to perform vertical shifts of the data by additive scaling.
+.le
+.ls *
+Set to perform vertical shifts of the data by multiplicative scaling.
+This is the default.
+.le
+.ih
+BUGS
+The \fBfluxcons\fR parameter does not work.
+.sp
+The horizontal shift moves the spectrum to the closest pixel position
+instead of reinterpolating the spectrum.
+.sp
+Altough it is possible to shift the current spectrum beyond the boundaries
+of the accumulated spectrum, the part out of range is trucated when combining
+both spectra. The only way to do it is by specifying and output spectrum
+larger than the default, before running the task.
+.sp
+There is always one more bug.
+.ih
+SEE ALSO
+onedspec.combine
+.endhelp

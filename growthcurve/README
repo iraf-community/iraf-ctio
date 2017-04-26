@@ -1,0 +1,7 @@
+FIXTAIL			09-Nov-90		(Pedro Gigoux)
+
+This directory contains the code for the CL script that computes the
+growth curve for star magnitudes, coming from APPHOT, and then corrects
+the magintudes using the curve. The files contained here are:
+
+growthcurve.cl		CL script task

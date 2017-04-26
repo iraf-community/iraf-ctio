@@ -1,0 +1,1771 @@
+.DA \s12February, 15 1991\s0
+.TL
+Using the Computers at CTIO
+.AU
+Lisa Wells
+Cerro Tololo Inter-American Observatory
+(Adapted from a paper written by Bret D. Goodrich for KPNO)
+.K2 "" "" "*"
+.AB
+This manual describes the operation of IRAF on Cerro Tololo Inter-American
+Observatory SUN workstations. The user should be familiar with IRAF and IRAF
+documentation. The intent of this document is to present those aspects of IRAF
+which are influenced by the SUN workstations and SUN windows. Additional
+information is provided on IRAF topics and UNIX commands commonly used at
+Cerro Tololo.
+.AE
+.PP
+.bp
+.NH
+Introduction
+.PP
+This manual describes the operation of SUN/IRAF on the Cerro Tololo
+Inter-American Observatory workstations.  It is intended to be used by the
+experienced IRAF user who is not familiar with the \fISunView\fR windows
+operating environment.  This manual also describes those modifications made
+to the default UNIX and \fISunView\fR environments on the CTIO workstations.
+.PP
+References for UNIX and IRAF commands can be found in the UNIX and IRAF
+manuals placed near each computer.  In addition, on-line help packages
+are available from both UNIX and IRAF with the \fBman\fR and \fBhelp\fR
+commands, respectively.  This document does not pretend to keep up with the
+many changes occurring in IRAF programs, but does give the user a basic
+introduction to SUN/IRAF.  Some IRAF packages or commands are influenced by
+the SUN windows environment; these are illustrated in the following sections.
+Some portions of this document which describe the
+\fIimtool\fR and \fIgterm\fR windows are excerpts from the on-line
+help text.
+.NH 2
+Notation
+.PP
+Throughout this manual the following notation will always be followed:
+.IP \fBboldface\fR 14
+indicates computer input, output or important notes.
+.IP \fIitalics\fR
+indicates names of SUN or IRAF packages or UNIX filenames.
+.IP \fI<argument>\fP
+shows mandatory arguments to be replaced by the user.
+.IP \fI[argument]\fP
+shows optional arguments to be replaced by the user.
+.IP \fB^\fP
+indicates a control character, such as \fB^c\fR or \fB^x\fR.  The character
+key should be pressed while holding down the control key.
+.NH
+The Workstations
+.PP
+CTIO has installed SUN Microsystems workstations at four telescopes on the
+mountain and several downtown with a few SUN SPARC stations also.  These
+workstations are used primarily to run IRAF to reduce CTIO data, for
+use of electronic mail, and other UNIX features. More information about
+the computers is available in appendix I.
+.NH 2
+Resources
+.PP
+All the workstations are connected together by TCP/IP on two EtherNets, one
+in La Serena and one on Cerro Tololo.  The two EtherNets are linked by a
+T1 serial link backed up by an 9600 baud SL/IP link.  Each machine can share
+some of the resources of the others.  This allows users to utilize tape
+and disk drives located at the other sites.  There is little impact on a
+user when his computer is being used across the network.  Printers are also
+shared across the network (see appendix I).  Many PCs are connected by micom
+lines to the SUNs.  Two VAXs are used in La Serena with VMS operating
+systems and these may be used by visitors.
+.NH
+How To...
+.PP
+This is a basic "how to..." section.  Here you can discover the
+methods for logging in, logging out, transferring data between mediums,
+displaying images, plotting, printing, and managing files.  Most of
+these methods apply only to the CTIO SUN workstations.
+.PP
+Each mountain user account has been tailored to do a specific job:
+simplify the task of reducing mountain data.  There are some
+implied features of the mountain systems; for instance, most accounts
+automatically start up IRAF on entry, and several UNIX commands are
+available from IRAF (\fBgetpix\fR is one).  If you look at the \fIlogin.cl\fR
+and \fIloginuser.cl\fR files in the account's home IRAF directory (appendix II)
+you will find a list of UNIX words executable from within IRAF (foreign tasks)
+and a list of packages defined at log-in time.
+.NH 2
+Logging In
+.PP
+There are two ways of logging into the SUN computers: through the console
+display and through a terminal. 
+Both methods allow the user to run an IRAF account; however, the console
+runs a windows-oriented environment called \fISunView\fR.
+We are interested mostly in this environment so this manual will go to
+great lengths to explain the features and procedures of \fISunView\fR.
+.PP
+To log into the console press the carriage return key on the console
+keyboard.  The display screen should output
+.DS
+\fBlogin:\fR
+.DE
+Your response should be a valid account name.  For a list of appropriate
+accounts see appendix I.  Accounts are assigned by Mario Hamuy, Lisa Wells
+or someone at observer support on the mountain.
+.PP
+Once you have logged in, a login message will appear followed by the
+"\fIStarting IRAF\fR" message.  After a few seconds several windows will
+appear (see figure 1).
+One window will be named \fIgterm\fR and will start-up IRAF.  Another will
+be named \fIimtool\fR.  A window can be used by moving the the cursor in
+that window via the mouse.  You can find a further description of each of
+these windows in a later section of this manual.  If you are at a pc, it
+will be necessary to run an emulator to connect to the SUN. For more
+information see the help page "\fBpcomputer\fR" in the \fIctio\fR package.
+.KF
+.sp 6i
+.IP
+\s-2\fIFigure 1. The SunView windows which appear after logging into a
+CTIO SUN/IRAF account.\fR\s+2
+.sp .3i
+.KE
+.NH 2
+Logging Out
+.PP
+Logging out of IRAF and the \fISunView\fR windows is a several step procedure.
+First, log out of IRAF by typing in the \fIgterm\fR window the command
+\fBlogout\fR.  If you have devices allocated you will be notified to
+deallocate them before logging out.  Once you have exited IRAF you
+need to leave \fISunView\fR.  Place the mouse cursor outside the
+existing windows and hold down the right mouse button.  A pop-up
+menu will appear next to the cursor with a list of choices.  Select
+the "\fIExit Suntools\fR" line by placing the cursor on that line and releasing
+the right mouse button.  You will be prompted to confirm this choice, move
+to the \fBconfirm\fR box and press the left mouse button.  After a few seconds
+the windows will disappear and the \fBlogin\fR: message will appear.  You
+have now logged out.
+.PP
+.B1
+\fIA word on courtesy: Please log out before leaving the telescope.  If you wish
+for processing to continue after you have left, execute the job as a background
+task.  Logging out will not affect the processing and will allow other users
+to use the console during the day.  If you wish to log in and the console is
+being used, simply open another window and do an rlogin or telnet to the 
+computer you want to use, see section 5.3.  Simply log off the machine in your
+window and kill the window when you are finished.\fR
+.sp .5
+.B2
+.NH 2
+Transferring Pictures from the CCD Computer
+.PP
+The link between the CCD Computer and the SUN is a high speed, parallel
+data link.  It reads pictures from the CCD computer and writes them as
+IRAF-type images on the SUN.  The link software should only be used
+by the CCD observer.
+Images are transferred individually across the link with the \fBgetpix\fR 
+command and transferred automatically with the \fBstartlink\fR command.
+The \fBstoplink\fR command stops the automatic transfer mode.  There is
+a caveat to image transferral: pictures cannot be transferred from
+the SUN back to the CCD computer.
+.PP
+Transferred pictures are named by \fBgetpix\fR according to type and number.
+An object picture numbered \fI110\fR on the CCD computer would be named
+\fIobj110.imh\fR on the SUN.  Likewise, a bias numbered \fI203\fR would be
+\fIbias203.imh\fR.  This convention will then write all your bias frames
+first to tape followed by the comparison arcs, flat frames, objects and 
+sky frames regardless of the "numbered order" of the pictures.  If you
+would like a different naming convention, there
+is a "-p <root filename>" option to specify a prefix name for your images.
+This may facilitate writing your images sequentially on a tape.  The
+\fBgetpix\fR syntax looks like
+.DS
+\fBgetpix [-v] [-r] <pic#1>...<pic#n>\fR
+.DE
+The optional flags "-v" and "-r" turn on verbose output and set the
+pixel datatype to real (default is short integer).  Be warned that the
+"-r" option takes more space initially on the SUN disk, so we suggest
+using the "short integer" default.  A single picture
+can be read by typing its number at the end of the command.  A
+sequence of pictures can be read by typing the starting number, a dash,
+and the ending number.  To begin getting CCD pictures, move the mouse cursor
+into the "\fIgterm\fR" window (since the three link commands are defined
+in IRAF as foreign commands) and type something like
+.DS
+\fBgetpix -v 110-114\fR
+        or
+\fBgetpix -v -p ima 110-114\fR
+.DE
+which would transfer pictures 110 through 114 as short integers and
+print a verbose output of the transaction.  The second command would prefix
+the numbered frames by "ima", ie ima110, ima111,...
+.PP
+Pictures can be transferred automatically using the command syntax
+.DS
+\fBstartlink [-v]\fR
+.DE
+Any time a CCD picture is readout by the CCD computer \fBstartlink\fR
+will automatically transfer the picture to the SUN.  \fBstartlink\fR
+will be disabled by the \fBstoplink\fR command.  For more information on the
+link commands' options, see the "CCD Software Observer's Manual" or the
+appropriate instrument manual.
+.PP
+Problems which might occur during data transfer usually cause the
+link command to abort with a "time out" error.  This error can be
+caused either by the CCD computer reading out the chip during transfer (and
+stealing all the cpu cycles) or by the CCD link task hanging.  If you
+suspect the first cause, wait for the CCD to finish reading out and
+try transferring again.  Delete the last image copied before the error and
+begin the \fBgetpix\fR at that point.  If you suspect the second cause, ask
+your night assistant for help.  Also, the telescope control computer
+occasionally misses a resume control-character when the getpix interrupt is
+completed and a plotting routine will stop.  To fix this, just type a '\fB^q\fR'
+(\fBcontrol q\fR) to continue the plot.  See section 3.7 on how to change the
+"\fIimdir\fR" directory.
+.NH 2
+Displaying Images
+.PP
+SUN/IRAF has an image display window \fIimtool\fR.  An \fIimtool\fR 
+window is one of the initial start-up windows on all CTIO IRAF 
+accounts.   The window displays an image in either
+monochromatic, linear pseudo-color, random pseudo-color or continuous random
+pseudo-color.  Cursor readback is also available, as is the
+capability to zoom, blink, and view images larger than 512x512 pixels.
+See section 4.2 for a complete description of the \fIimtool\fR
+window.
+.PP
+The \fIimtool\fR window is accessible through the IRAF \fItv\fR package,
+part of the \fIimages\fR packages.  Both packages are automatically
+loaded by CTIO SUN accounts at log-in time.  An image can be loaded into
+the window by typing
+.DS
+\fBdisplay <imagename> <frame>\fR
+    or
+\fBdisplay obj002 1\fR
+.DE
+where \fI<frame>\fR is the integer frame number (one through four).
+Move the mouse cursor into the \fIimtool\fR window and hold down the
+right button.  Moving the cursor will change the display transfer function
+of the image to bring out subtle features
+of the image.  Releasing the right mouse button quits this mode.
+.PP
+Some data devices generate images larger than the default 512x512 pixels;
+the \fIimtool\fR window can be enlarged to display these pictures in their
+entirety.  In the \fIgterm\fR window, type the command
+.DS
+\fBset stdimage=imt800\fR
+.DE
+to set the default size to 800x800 pixels.  The \fIimtool\fR definitions
+are located in appendix I.  Load an image with the
+above mentioned \fBdisplay\fR command.  Put the mouse cursor on the border
+region of the \fIimtool\fR window and hold down the right mouse button.
+From the pop-up menu now displayed, select the \fIFitFrame\fR line and
+release the mouse button.  The window will now resize itself to 800x800 pixels.
+You may wish to adjust the location of the \fIimtool\fR window by dragging
+it with the middle mouse button while the cursor is placed on a corner or
+edge of the window.
+.PP
+Of course, if the \fIimtool\fR window size is only 512x512 pixels and you
+do not resize the window, some of an 800x800 image will not be displayed
+(the edges).  One way to display these "lost" edges
+is to adjust the \fBdisplay\fR parameters "\fIxcenter\fR, "\fIycenter\fR, 
+"\fIxmag\fR" and "\fIymag\fR".  You might, for instance, magnify the image
+by a factor of two with
+.DS
+\fBdisplay <imagename> 1 xmag=2 ymag=2\fR
+.DE
+.PP
+IR pictures have the opposite problem\-\-there is a lot of white space when
+displaying a 58x64 pixel frame in a 512x512 pixel window.  \fBdisplay\fR
+can fill the window by zooming on the frame.  Set the \fBdisplay\fR parameter
+"\fIfill\fR" to yes (\fBdisplay.fill+\fR) and all subsequent frames will
+be displayed to fill the entire window.  This will also work if the image
+is too big for the specified \fIimtool\fR window, the image will be made
+smaller. There is an enlargement feature in \fIimtool\fR using the middle
+button of the mouse also, see section 4.2, page 12.
+.PP
+Other possibilities exist; do not feel constrained to use the default
+parameters of \fBdisplay\fR.  There are many cursor keys that help zoom,
+blink between frames,...etc, (see section 4).
+.PP
+Several features can be selected from the \fIimtool\fR "Setup" menu (figure 2),
+including
+grey scale, blink, display, clear, reset, and hardcopy.  Place the
+mouse cursor on the top border of the \fIimtool\fR window.
+Hold down the right mouse button and a pop-up menu
+appears.  Place the cursor on either the "\fIImcopy\fR" line to make a
+hardcopy or on the "\fISetup\fR" line to get the setup menu.  Release the
+right mouse button.  If you made a hardcopy, the present image, with
+current windowing, will be printed on the laser printer.  Expect at least
+a five minute delay.  \fBDoing many 'imcopies' can tie up the laser printer
+for long periods of time so be careful in using this (note the F7 key
+is equivalent to an "imcopy", see section 4.3)\fR. If you selected the
+"\fISetup\fR" option, another window
+will appear inside the \fIimtool\fR window.  Select any of the options
+inside this window by clicking the left mouse button on that option.
+Several options, such as color, will cycle through many different choices.
+You can quit the "\fISetup\fR" menu by clicking the left mouse button on
+the "Quit" option.
+.KF
+.sp 3i
+.IP
+\s-2\fIFigure 2. The imtool setup menu.\fR\s+2
+.sp .3i
+.KE
+.PP
+\fIImtool\fR will also read the cursor position and mark positions.  Positions
+are saved as (x,y) coordinates in a user defined file in the IRAF
+\fIwcsdir$\fR directory (note that \fIwcsdir$\fR is an IRAF variable
+defined in the \fI.login\fR file).  Load an image into the \fIimtool\fR
+window with \fBdisplay\fR.  Move the cursor into the \fIimtool\fR window
+and press the F6 function key to enable cursor readout mode.  While the
+cursor readout mode is in effect, the cursor coordinates are continually
+displayed in a box in the lower right corner of the display.  To mark the
+position of the cursor, press the left mouse button while in cursor readout
+mode.  Coordinates are saved in the \fIwcsdir$\fR directory in a file
+defined on the \fIimtool\fR banner.  The positions in this file can be
+plotted on the image by pressing the F5 function key.  Each new \fBdisplay\fR
+creates a new cursor position file only if the left mouse button is used in
+cursor readout mode.  These files can be listed by typing 
+.DS
+\fBtype wcsdir$frame.<f>.<n>\fR
+.DE
+where \fI<f>\fR and \fI<n>\fR are the frame and sequence number displayed
+in the upper border of the \fIimtool\fR window.
+.NH 2
+Printing Files and Plots and Other Things
+.PP
+Any ASCII-text file can be printed from the IRAF \fIgterm\fR window
+by typing 
+.DS
+\fBlprint <filename>\fR
+.DE
+Text can also be piped to \fBlprint\fR, such as printing a help file
+on a command or the parameter set of a command:
+.DS
+\fBhelp <command> | lprint
+lparam <command> | lprint\fR
+        or
+\fBhelp editor | lprint
+lparam ccdproc | lpr\fR
+.DE
+The pipe character '|' sends the output from commands like \fBhelp\fR
+to the input of \fBlprint\fR.
+.PP
+Printing a plot is not very difficult either.  In fact, there are three
+different ways to print an IRAF plot on the laser printer.  If you are
+inside the \fBimplot\fR task you can press the equal sign key '\fI=\fR' to
+make a copy.  If you are in the \fIgterm\fR text window you can type
+\fB=gcur\fR to get into the graphics window, then press the equal sign key
+for a copy of the plot.  Or, alternatively, you can put the mouse
+cursor on the top \fIgterm\fR border and hold down the right mouse button.
+A pop-up menu will appear; place the cursor on either "\fITextcopy\fR",
+"\fIGraphcopy\fR" or "\fIScreencopy\fR" and release to copy the \fIgterm\fR text
+window, graphics window or entire screen, respectively.
+.PP
+The UNIX commands for the printers are aliased within IRAF.  To look at the
+printer queue you must execute a UNIX command \fBlpq\fR.  Therefore, the
+commands to look at the printer queue and remove files from the queue are
+.DS
+\fBlpq [-P<printer>]
+lpdel [-P<printer>] <job number>\fR
+     or
+\fBlpdel -Plw2 812\fR
+.DE
+The printer argument is optional; the default printer is the one closest to
+the workstation, named "\fIlw\fR".  In addition, each printer is given a 
+physical name, ie: ctios1's printer is "\fIlws1\fR", ctios2's is "\fIlws2\fR"
+and ctios3's is "\fIlws3\fR".  A complete list of the printers is in appendix
+I.  \fBNote that the IRAF default for each machine may be different from the
+true hardwire links between machines and printers\fR.  Inside IRAF, if you
+wish to send output to a printer other than "\fIlw\fR" you must first set
+the IRAF variables \fIprinter\fR and \fIstdplot\fR to the correct printer,
+as in
+.DS
+\fBset printer=lw4m
+set stdplot=lw4m\fR
+.DE
+to send output to the 4 Meter printer.  Remember to set the variables back
+to "\fIlw\fR" when you write to the printer nearest your workstation.  Logging
+off the computer will not save any IRAF variables that may have been changed.
+Only modifying the \fIloginuser.cl\fR file will save these changes.
+.NH 2
+Allocating the Tape Device
+.PP
+The magnetic tape device is a 6250/1600 bpi \(12" tape drive.  If you
+need to read or write to this device you must allocate it to your account
+before using it.  Allocate the tape drive inside IRAF by typing (in the
+\fIgterm\fR window)
+.DS
+\fBallocate mta\fR
+.DE
+There is no way to allocate the tape drive outside IRAF.  Once the tape drive is
+allocated to you no other user can access it.
+.PP
+There is only one tape drive on each workstation, named "\fImta\fR"
+by IRAF.  The tape drive can read and write at two different rates: 1600 bpi
+and 6250 bpi.  Telling IRAF programs at which rate a tape has been written
+is not necessary; the bit rate will be automatically detected as long as
+the tape drive front panel switch is set to "\fIHOST\fR".  The density can
+be set explicitly on the tapedrive by hitting the density button.  This
+will cycle through the choices designated on the device.  Tape
+input to programs such as \fBrfits\fR and \fBrcamera\fR need only mention
+"\fImta\fR" as the input file name.
+.PP
+Writing a file to tape requires the bit rate to be set. 
+Programs such as \fBwfits\fR set the bit rate output by identifying the
+output file as either "\fImta.1600\fR" or "\fImta.6250\fR".
+.PP
+.B1
+\fIOnce you have successfully read or written the information off the
+magnetic tape, please deallocate the tape device.  Typing
+.DS
+\fBdeallocate mta
+.DE
+\fIin IRAF will deallocate the device and allow another user to use it.
+Remember, we only have one tape drive on each system; do not hoard
+this resource by not deallocating it.  Be sure to deallocate the tape drive
+and retrieve your tape before exiting IRAF.
+.sp .5
+.B2
+.PP
+Tape drives on other machines can also be allocated.  If you wish to
+allocate the tape drive on "ctio1m"  and you are on ctio36, allocate it
+by typing
+.DS
+\fBallocate ctio1m!mta\fR
+.DE
+and use it by typing "\fIctio1m!mta.6250\fR" rather than the string
+"\fImta.6250\fR" in the parameter set-up for the \fBrfits\fR and
+\fBwfits\fR tasks.  This is the method for writing tapes at the 0.9-meter 
+since the 0.9-meter SUN does not have its own tape drive and must use the
+1.0-meter tape drive.  \fBOnce a rfits or wfits task has begun, never use
+a "^c" (control-c) to stop the job.  This has killed the link between the
+computer and the device resulting in a needed reboot of the computer to
+fix the problem.  It is best to wait for the task to finish\fR.  If you
+absolutely must stop a command, go to the tape drive and push the reset
+button.  This will interrupt the job without harming the link.
+.NH 2
+Managing Disk Space
+.PP
+Images take considerable disk space to store, the FITS header file and the
+pixel file are stored separately on the computer.  The headers are kept in
+the directory being used and the large pixel files are stored on a scratch
+disk.  On the mountain the observer has priority in using space since the
+observer is the only "big" user of the SUN, therefore it is considered
+impolite to change your \fIimdir\fR to another computer.  Downtown where
+the machines have shared disks, just be considerate to other users.  You
+need to be aware of the capacity of each disk and be able to conserve space
+when you have many images.  Such strategies as using short integer datatype
+when possible, deleting unnecessary images, and switching image directories,
+will give you more disk space and prevent other users from also running
+out of disk space.
+.PP
+There is a scratch disk set up for IRAF use, for example
+\fI/us11/iraf/<user>\fR, where \fI<user>\fR is the login account name.  Where
+several machines share disks, then the \fIimdir\fR can be set to the other
+disks, ie \fIus12\fR, or \fIus22\fR.  Each of these disks can hold
+over two hundred images, depending upon the site, disk and image
+sizes.  Checking the amount of free disk space is a necessary part of
+your disk management procedure.  If you are creating or reading many
+pictures during a night you should frequently check the amount of disk
+space used with the \fBdiskspace\fR command.  The response to \fBdiskspace\fR
+on the ctios1 will look something like this:
+.DS
+.ps -2
+.vs -2
+.ta 1.75iR 2.5iR 3.25iR 4.0iR 4.25i
+\fBFilesystem\tkbytes\tused\tavail\t capacity\t Mounted on
+/dev/xd0a\t15519\t7310\t6657\t52%\t/
+/dev/xd0g\t506575\t402210\t89167\t82%\t/usr
+/dev/xd2c\t799669\t525420\t250258\t68%\t/us12
+/dev/xd1c\t799669\t585184\t190494\t75%\t/us11
+s2:/us20\t505235\t261837\t233293\t53%\t/tmp_mnt/usr/remote/us20
+s3:/us32\t274117\t237401\t9304\t96%\t/tmp_mnt/usr/remote/us32
+l3:/usr/ul30\t249408\t222774\t14163\t94%\t/tmp_mnt/usr/remote/ul30
+s3:/usr/local/emacs\t 275824\t238342\t23690\t91%\t/tmp_mnt/usr/remote/emacs
+s3:/usr/iraf\t275824\t238342\t23690\t91%\t/tmp_mnt/usr/remote/iraf
+s3:/usr/games\t275824\t238342\t23690\t91%\t/tmp_mnt/usr/remote/games\fR
+.ps +2
+.vs +2
+.DE
+In this example, disk \fI/us11\fR is 75% full; it can still accept
+more pictures.  Disk \fI/us10\fR (or \fIhome\fR) is 82% full and disk
+\fI/us20\fR is half full at 53%.  Notice that the last six disks are
+remotely mounted from another machine.  If a disk reaches 100% the system
+will refuse to create another picture on that disk.  When a disk
+reaches 90% you may wish to either delete some images with \fBimdelete\fR
+or switch your image pixel directory to the other disk.  If "\fIimdir\fR"
+is set to \fI/us11/iraf/<user>/\fR you can change to
+the \fI/us22\fR disk by typing (in the \fIgterm\fR window)
+.DS
+\fBset imdir="/us22/iraf/<user>/"\fR
+.DE
+where \fI<user>\fR is the name of your login account.  Notice the '/'
+character at the end of the string\-\-don't forget to put it there.
+When you switch to another image directory, that directory must
+exist\-\-IRAF will not create it. This is easy to check, just type "\fBdir
+/us22/iraf/\fR". This will list the existing directories in this area. To
+check the current "\fIimdir\fR" directory, type
+.DS
+\fBshow imdir\fR
+.DE
+to get the directory pathname.  To see what image pixel files exist, type
+.DS
+\fBdir imdir\fR
+.DE
+This will list the image pixel files that correspond to the header files
+in your directory.  If you get error messages saying that the
+pixel file does not exist, then do a directory of the \fIimdir\fR to be
+sure.
+.NH 2
+Using Sub-Directories
+.PP
+When you log into CTIO accounts, you are placed in the account's home
+directory.  This directory contains the basic start-up tools of
+IRAF.  If you create files or images they are placed in this
+directory.  To keep organized, it is often useful to create sub-directories
+for each night's data.  To make such a directory and to go to it, type
+.DS
+\fBmkdir <dirname>
+cd <dirname>\fR
+     or
+\fBmkdir night1
+cd night1\fR
+.DE
+where \fI<dirname>\fR is a unique name for your directory; i.e., \fInight1\fR
+would be a directory name for the first night's data.  To return to the 
+previous directory, use \fBcd ..\fR and type \fBcd\fR to go to the IRAF home
+directory.
+.NH 2
+Using the Exabyte Devices
+.PP
+The machines that have exabyte drives are s0, s2, s4, and 4m. In iraf the device
+name is mtx. Problems with computer hardware and the Exabyte driver prohibits
+the use of the IRAF fits read and write tasks on some computers. The possible
+combinations are as follows:
+.DS
+.ps -2
+.vs -2
+.ta 1.75iR 2.5iR 3.25iR 4.0iR 4.25i
+\fBMachine\tCTIO name\trfits\twfits
+sun4/75\ts0,s4\tworks\tfails
+sun4/280\t4m\tfails\tworks
+sun4/370\ts2\tworks\tworks
+sun4/470\t\tfails\tworks
+sun4/490\t\tfails\tworks\fR
+.ps +2
+.vs +2
+.DE
+If you use the 4m sun to write fits files, be warned that you must use the
+exabyte at s2 to confirm the images are written on the tape. Also, you need not
+move to the end of the tape before continuing to write fits images on the
+tape. This is done by setting the newtape parameter to "no".
+You should not have to keep track of the number of files you have written
+to tape. If your machine at home is in the wrong category such that you
+cannot read the tapes then you should use \fBtar\fR.
+
+The UNIX tar command is the best method for writing to exabyte tapes, since it
+is more universally used. The UNIX device
+name on all these machines is '/dev/rst1'. Putting an "n" in front of the device
+name means that it will not rewind the tape after performing an operation, so
+if you are writing more than one file to exabyte, use '/dev/nrst1'. There are
+two methods for writing to tapes. The suggested procedure for writing an
+exabyte tape is to first wfits all iraf images into one directory. Once all
+the images to be backed up are in the same place, then use tar:
+.DS
+\fB!tar cvf /dev/rst1 .\fR
+.DE
+\fBNOTE: If you specify the full path name including the disk name, you will
+have trouble reading the files back off at your home institution. Go directly
+into the directory being backed up and the path name will not prefix all your
+files saved to tape.\fR To read the tape, simply change the \fB"c"\fR to an
+\fB"x"\fR for extract. Then rfits must be run on the IRAF images to restore
+them to separate header and pixel files.  To list the contents of the tape,
+change the \fB"c"\fR to a \fB"t"\fR. It is a good idea to write magtapes to
+backup your images before writing to exabyte tape in case files are corrupted
+by writing to exabyte.
+
+If you don't have enough room on disk to fit all your images on at one time,
+it would be better to write each nights data separately. This has been
+simplified by a special task written here at CTIO. To use this command you
+must first define the tasks in IRAF and allocate the exabyte tape drive:
+.DS
+\fBset source="/us20/steve/source/"
+task wrk=source$work/wrk.cl
+wrk
+alloc mtx\fR
+.DE
+Typing \fBwrk\fR will load a package with the tasks \fBarchive\fR and
+\fBrestore\fR. The task \fBarchive\fR is for writing multiple tar files onto
+the end of a tape. Write each nights data separately making sure you specify
+"no" for the newtape option and the end of the tape will be found before
+writing begins on the second file. This can also be done by writing the header
+and pixel files separately. First write the main visitor directory with all
+the header files and then move to the pixel directory using \fB"cd imdir"\fR.
+To read a specific file, just use the task \fBrestore\fR to restore a directory
+or entire file.  To read the second file on a tape using UNIX, we must advance
+the tape beyond the end of file marker of the first file. The tape can be
+advanced beyond the end of file marker using:
+.DS
+\fBmt -f /dev/nrst1 fsf\fR
+.DE
+To rewind the tape, replace the \fB"fsf"\fR in the command with \fB"rewind"\fR.
+Another way to read beyond the first file is to use \fB/dev/nrst1\fR as the
+device name (add an "n" in front of the original name), and use the "\fBtar
+xvf /dev/nrst1\fR" command to read the first file. Then type it again, this
+will skip over the end of file marker of the first file. Now typing it again
+the next file will be read. So you type the command three times in a row. You
+must type the command 5 times in a row to read the 3rd file. The first 4
+commands, a \fB"t"\fR can be substituted for the \fB"x"\fR to simply list the
+first two files. Tapes are available on the mountain and downtown from Mario
+Hamuy or Lisa Wells and will be charged to your account when you leave.
+.NH
+Doing More with \fISunView\fP Windows
+.PP
+By now hopefully you've decided that windows are a pretty neat idea. This
+section will show you how to exploit the window environment to fit your needs.
+This section also describes the fundamental IRAF window types, \fISunView\fR
+environment accelerators, window manipulation, and \fISunView\fR
+initialization files.
+.NH 2
+Pop-up Menus
+.PP
+Pop-up menus are used to control the \fISunview\fR windows environment.
+The two important places where "pop-up" menus can appear are the background
+areas between windows and the border of windows.  To demonstrate:
+Place the mouse cursor in a blank area of the display
+console (an area without a window or icon).  Hold down the right mouse button.
+A "pop-up" menu will appear with several options.  Currently the following 
+options are available: "\fIimtool\fR", "\fIgterm\fR", "\fIshelltool\fR", 
+"\fIRedisplay All\fR" and "\fIExit Suntools\fR".  Releasing the mouse
+button while one of these options is selected (high-lighted) by the
+mouse cursor will execute that function.  In the case of the first three
+options, a new window will appear on the display running that option's job.
+.PP
+A window's pop-up menu can
+be activated by moving the mouse cursor to the window border and
+holding down the right mouse button.  This "\fIFrame\fR" menu controls the
+physical parameters of the window.  By selecting one of the presented options
+and releasing the right mouse button, that option will be executed.  Options
+include closing, resizing, moving, exposing, hiding and quitting the window.
+Quitting the window will permanently remove it, but will not affect any
+background jobs started in that window.
+.NH 2
+Specific Tools
+.PP
+The current implementation of \fISunView\fR windows on the workstations have
+three default window tools available: \fIgterm\fR, \fIimtool\fR and
+\fIshelltool\fR.
+Each of these has a special task it performs best; you should use the correct
+window for your particular task.  The default list of windows can be shown
+through the "pop-up" menu from a blank part of the screen, as seen in the
+preceding section.
+.PP
+Many windows can be created on the display console using the above method.
+A note of caution should be inserted at this point:  \fBWhen you create
+another window you use up valuable computer time and memory, slowing the
+system down.  Try to create only the windows you need and quit any
+window when you are finished with it.  Multiple copies of\fR \fIgterm\fR 
+\fBor\fR \fIshelltool\fR \fBwindows not only litter the screen, they also waste
+cpu cycles\fR.
+.RS
+.SH
+shelltool
+.PP
+The \fIshelltool\fR is a window which executes a UNIX C-shell.  
+An opened \fIshelltool\fR can have any title in the upper border and any size
+of window, but will display a UNIX prompt and execute UNIX commands.  A closed
+\fIshelltool\fR will appear usually on the upper display screen and show an
+icon of a terminal and a title.  Clicking the left mouse button while the
+cursor is in the closed iconic window will re-open the window.
+.SH
+imtool
+.PP
+An \fIimtool\fR window is created for all IRAF accounts.  If there is
+no \fIimtool\fR window operating (either opened or closed), you can
+create one with the \fBimtool\fR command.  Do not use more than
+one \fIimtool\fR.
+.PP
+An open \fIimtool\fR window has a 512x512 pixel region surrounded by
+a border.  The top of the border may contain the name of the current
+\fIimtool\fR cursor readout file if cursor readout is activated.  The file is
+located in the \fIwcsdir$\fR directory.
+The closed \fIimtool\fR window is a small icon of a television and is usually
+located at the top of the display.
+.PP
+The pop-up menu associated with \fIimtool\fR has many selections:
+"\fIFrame\fR", "\fISetup\fR", "\fIRegister\fR", "\fIBlink On\fR",
+"\fIFitFrame\fR", "\fINextFrame\fR", "\fIGclear\fR", "\fIIclear\fR"
+and "\fIImcopy\fR".  The "\fIFrame\fR" selection has another menu associated
+with it which can be activated by pointing to the arrow on the right side
+of the "\fIFrame\fR" line.  This sub-menu is covered in the above section on
+\fIshelltool\fR.  Releasing the right button on the "\fIBlink On\fR" or 
+"\fIBlink Off\fR" will turn on or off the blinking between frames specified
+in the "\fISetup\fR" menu.  Releasing the right button on the "\fIFitFrame\fR"
+will resize the window if a new size has been specified using
+"\fBset imtool=<imt#>\fR" command.  The options for "\fI<imt#>\fR" are given
+in appendix I.  Releasing the right button on "\fINextFrame\fR" displays
+the next frame in turn.  Releasing the right button on "\fIGclear\fR" will
+clear any graphics written to the window.  Releasing the button on
+"\fIIclear\fR" clears the image from the frame being displayed.  Releasing
+the right mouse button on "\fIImcopy\fR" will send a copy of the image display
+to the laser printer.  This takes a few minutes or more to be printed so
+be patient, and sending many of these to the printer can monopolize it
+so beware.  Releasing the right mouse button on the "\fISetup\fR" selection
+will open a setup panel in the \fIimtool\fR window.  The setup panel is
+used to modify \fIimtool\fR options interactively.
+.PP
+Options on the setup panel which are currently active are the following:
+.RS
+.ps -2
+.nr PS -2
+.vs -2
+.nr VS -2
+.SH
+Number of Frame Buffers
+.LP
+Specifies the number of frames(beginning at #1) to blink when the "Alt"
+key is used to blink the frames.
+.SH
+Greyscale Mapping
+.LP
+Specifies the method used to map pixel intensity values onto the display.
+"\fImono\fR" specifies shades of gray, "\fIlinear pseudocolor\fR" specifies
+a range of colors from black to blue to green to red to white.  "\fIrandom
+pseudocolor\fR" assigns a random color to each pixel intensity value.
+"\fIcontinuous random pseudocolor\fR" is the same, except the color values
+are changed every few seconds, at a rate specified by the "\fBrate\fR"
+option below.
+.SH
+rate (sec) for Crandom Option
+.LP
+Specifies the frequency (1 to 32 seconds) for the "\fIcontinuous random
+pseudocolor\fR" option.
+.SH
+Background Color
+.LP
+Specifies the color of the background, white or black.
+.SH
+Include Frame Border in Imcopy
+.LP
+Enables or disables the printing of the border area in image hardcopies.
+.SH
+Show Colorbar
+.LP
+Specifies displaying the colorbar at the bottom of the image window.
+.SH
+Blink Rate(sec)
+.LP
+Specifies the time, in seconds, between displays when blinking frames.
+.SH
+Frames to be blinked
+.LP
+Specifies the frames to be blinked when using the setup panel "\fIblink\fR"
+or the menu "\fIBlink On\fR" options.
+.SH
+Zoom Factors
+.LP
+Specifies the zoom factor cycling when using the middle mouse button for
+zooming.
+.SH
+Coordinate list output file
+.LP
+Specifies the root name of the output file for marked cursor coordinates.  The
+name is printed in the upper border of succeeding images. 
+.SH
+Fit Window
+.LP
+Set the window to fit the \fIimtool\fR definition given by \fIstdimage\fR in
+IRAF.
+.SH
+Reset
+.LP
+Resets the display to its initial state.
+.SH
+Iclear
+.LP
+Clears the display window.
+.SH
+Gclear
+.LP
+Clears the graphics from the display window.
+.SH
+Load
+.LP
+Loads the raster filename.
+.SH
+Save
+.LP
+Saves the raster filename.
+.SH
+Blink
+.LP
+Blinks the frames specified by "Frames to be blinked:" setup parameter. 
+.SH
+Frame
+.LP
+Switch to display the next frame. 
+.SH
+Quit
+.LP
+Closes the setup panel.
+.ps +2
+.nr PS +2
+.vs +2
+.nr VS +2
+.RE
+.LP
+Mouse buttons used by \fIimtool\fR are the following:
+.RS
+.ps -2
+.nr PS -2
+.vs -2
+.nr VS -2
+.SH
+Left Button
+.LP
+In cursor readout mode (the F6 key), used to mark cursor position, adding
+the coordinates of the cursor to a cursor file.  Ignored otherwise.
+.SH
+Middle Button
+.LP
+Pressing the button centers the image at the cursor position providing there
+image is much smaller than the window definition.
+.LP
+Pressing the button twice
+quickly will zoom the window and if the cursor is not moved, pressing it
+again will zoom it further. This continues until the cycling of the
+setup parameter "\fIZoom Factors\fR" is completed.
+.LP
+While in cursor readout mode, holding down this button freezes the displayed
+cursor coordinates when moving the mouse.  This is useful when moving the
+mouse to a different window.
+.SH
+Right Button
+.LP
+Used to adjust the colortable for the window interactively.
+.ps +2
+.nr PS +2
+.vs +2
+.nr VS +2
+.RE
+.SH
+gterm
+.PP
+The \fIgterm\fP \fISunView\fR window has been developed specifically with
+IRAF reductions in mind.  All IRAF processing must take place within
+this window.  The \fIgterm\fP window
+has two parts: the text screen and the graphics screen.  All
+user accounts come with the \fIgterm\fP window open and running IRAF.
+The \fIgterm\fR "Setup" menu (figure 3) controls the parameters of this
+window.
+.KF
+.sp 3i
+.IP
+\s-2\fIFigure 3. The gterm setup menu.\fR\s+2
+.sp .3i
+.KE
+.RS
+.ps -2
+.nr PS -2
+.vs -2
+.nr VS -2
+.SH
+Text Screen
+.PP
+The text screen is the window used by IRAF for character input and output. 
+The IRAF terminal type is set to \fBgterm\fR in the \fIloginuser.cl\fR file
+for this window and if you log in at a pc, it is set to \fBpc640\fR.  If
+a \fIgterm\fP window is open but not running IRAF, the command \fBcl\fR
+will start an IRAF process.  Be certain that you execute \fBcl\fR from
+the user account's home directory.
+.PP
+The text screen pop-up menu includes several useful commands.  You can print
+the text screen, print the graphics screen,  print the entire display,
+close the \fIgterm\fP window, or set-up the \fIgterm\fP window.  The first
+three commands are useful for quick snapshots of the screen; the last command
+interactively changes the \fIgterm\fR window features.  
+.SH
+Graphics Screen
+.PP
+The \fIgterm\fR graphics screen is the output device for all IRAF terminal
+graphics.  The screen will be exposed when active, and
+hidden when the text screen is in operation.  If the graphics screen
+is hidden when you wish to see it, place the mouse cursor in the graphics
+screen and press the L5 key.  To expose the text screen,
+place the mouse cursor in the text screen and press the L5 key again.
+.PP
+The graphics screen uses the mouse as a graphics cursor controller. 
+The motion of the mouse moves the graphics cross hairs.  The cross hairs are
+only displayed when activated by an IRAF plotting function.
+.SH
+Resetting the \fIgterm\fP Window
+.PP
+Occasionally IRAF gets confused and begins using the graphics window as
+the text window.  If this happens, try selecting the text screen by placing
+the mouse in the text screen window and pressing the F9 key.  If this
+does not cure the problem, the
+IRAF \fIgterm\fP window may need to be reset.  Place the mouse cursor on the
+\fIgterm\fP
+window border and depress the right button.  While holding down the button,
+point the cursor to the "Setup" line of the pop-up menu.  Release the button.
+Another pop-up menu will appear in the middle of the \fIgterm\fP window.
+A variety of things can be done inside this window; one is the reset command,
+located on the
+bottom line.  Place the mouse cursor on the "Reset" box and press the left
+button.  The \fIgterm\fP window will now be reset to its original state.  Place
+the mouse cursor on the "Quit" box and press the left button to exit the
+setup mode.
+.RE
+.ps +2
+.nr PS +2
+.vs +2
+.nr VS +2
+.RE
+.NH 2
+Accelerators
+.PP
+Accelerators are features of the workstations which allow you to execute
+functions quickly, without going through menus or typing commands. 
+Accelerators work both from the mouse and from the keyboard function
+keys.  The following list shows the accelerators currently implemented
+on the CTIO SUN workstations.  Some of these features may not work on the
+new SUN SPARC stations.
+.RS
+.SH
+.ps -2
+.nr PS -2
+.vs -2
+.nr VS -2
+Function Keys
+.IP F1 12
+F1 is a \fIgterm\fR accelerator.  This key executes the IRAF command
+\fB=gcur\fR, which enables the graphics cursor.
+.IP F2 12
+F2 is a \fIgterm\fR accelerator.  This key executes the IRAF command
+\fB=imcur\fR, which enables the graphics cursor.
+.IP F4
+F4 is an \fIimtool\fR accelerator.  This key brings up the setup window
+for the \fIimtool\fR.
+.IP F5
+F5 is an \fIimtool\fR accelerator.  Pressing this key causes the current
+cursor list file to be rewound and reread, marking all objects on the
+cursor list by drawing a number beside each object in the display window.
+.IP F6
+F6 is an \fIimtool\fR accelerator.  Pressing this key alternately enables
+and disables
+cursor readout mode.  When this mode is enabled the cursor coordinates are
+continually displayed and updated in a box in the lower right corner of
+the display window.
+.IP F7
+F7 is an \fIimtool\fR accelerator.  Pressing this key will generate a
+hardcopy output of the display window.  This is identical to the \fIimtool\fR
+"\fIImcopy\fR" item in the display menu.
+.IP F8
+F8 is a \fIgterm\fR accelerator.  Pressing this key causes a switch to 
+graphics mode.  If you are in graphics mode this clears the graphics screen.
+.IP F9
+F9 is a \fIgterm\fR accelerator.  Pressing this key causes a switch to
+text mode.  If you are in text mode this clears the text screen.
+.IP L5
+L5 is a \fISunView\fR accelerator.  Pressing this key causes the window
+currently selected by the mouse to become exposed or hidden, switching
+between these two states.
+.IP L7
+L7 is a \fISunView\fR accelerator.  Pressing this key causes the window
+currently selected by the mouse to close.  The window icon is displayed
+at the upper screen.  Clicking the left mouse button on this icon will
+open the window again.
+.IP R1
+R1 is a \fISunView\fR accelerator.  Pressing this key changes the current
+window size to 24 lines by 80 columns.  If selected in the \fIgterm\fR
+window, IRAF must be notified of the screen size change by typing
+\fBstty gterm24\fR.
+.IP R2
+R2 is a \fISunView\fR accelerator.  Pressing this key changes the current
+window size to 34 lines by 80 columns.  If selected in the \fIgterm\fR
+window, IRAF must be notified of the screen size change by typing
+\fBstty gterm34\fR.
+.IP R3
+R3 is a \fISunView\fR accelerator.  Pressing this key changes the current
+window size to 40 lines by 80 columns.   If selected in the \fIgterm\fR
+window, IRAF must be notified of the screen size change by typing
+\fBstty gterm40\fR.
+.IP R5
+R5 is a \fISunView\fR accelerator.  Pressing this key changes the current
+window size to 54 lines by 80 columns.   If selected in the \fIgterm\fR
+window, IRAF must be notified of the screen size change by typing
+\fBstty gterm54\fR.
+.KS
+.SH
+Mouse Buttons
+.LP
+These buttons are currently set to accelerate several \fISunView\fR
+functions.  For their usage inside certain windows, see the above description
+of the appropriate window and tool.
+.IP Left 12
+This button is normally considered an "execute" button.  On window borders,
+clicking the button will expose the window, causing all other overlapping
+windows to become hidden.  Inside closed "icon" windows, clicking this button
+will re-open the window in its previous position.
+There are no functions outside the windows.
+.IP Middle
+This button, when pressed inside a window's border, will drag the window
+in the direction the mouse is moved.  Select the side or corner toward the
+direction you wish to move the window and hold down the middle button.
+Release the button when you reach the desired location.  There are no functions
+inside icons or outside the windows.
+.IP ^Middle
+This button, when pressed inside a window's border, will allow the resizing
+of the window from the corner closest to the cursor.  Select the corner
+toward the direction you wish to resize the window and hold down both the
+"\fBcontrol\fR" and "\fBmiddle\fR" buttons.  Release the button when you
+reach the desired location.  There are no functions inside icons or
+outside the windows.
+.IP Right
+This button brings up "pop-up" menus.  On window borders or icons, that
+window's "pop-up" menu will appear while the right button is held down.  Moving
+the cursor into the "pop-up" menu will high-light each line pointed to by the
+cursor.  Releasing the cursor will execute that function.  Outside the windows,
+the \fISunView\fR default menu will appear.  One of these functions is to
+exit the \fISunView\fR environment.
+.KE
+.ps +2
+.nr PS +2
+.vs +2
+.nr VS +2
+.RE
+.NH 2
+\fISunView\fP Default Tool Files
+.PP
+Default files for \fISunView\fR windows are located in each account's
+home directory.  These files control the user's \fISunView\fR windows
+by initializing the windows at login time and setting the default
+parameters.  These files probably should not be modified by the user unless
+there is an overwhelming need to change a \fISunView\fR parameter.  \fBIf
+you customize your login files, please tell Mario Hamuy or Lisa Wells
+before leaving Chile\fR.  Appendix II shows several of the default
+initialization files for the CTIO workstations.
+.PP
+The \fI.suntools\fR file describes the initial windows created by executing
+\fBsuntools\fR.  In the CTIO SUN/IRAF accounts the following windows are
+created by \fI.suntools\fR: a \fIgterm\fR window, and an \fIimtool\fR window.
+.PP
+The \fI.defaults\fR file describes the environmental defaults for \fISunView\fR
+and some of its windows.  Items such as default font, icon location and 
+emboldening method are set here.
+.PP
+The \fI.rootmenu\fR file contains a list of executable window commands which
+appears as the \fISunView\fR rootmenu (\fIi.e.\fR the "pop-up" menu which
+appears in the background area of the windows).  This menu contains lines
+for the opening of additional \fIgterm\fR, \fIimtool\fR and \fIshelltool\fR
+windows and the "Exit Suntools" command.  Additional types of windows can also
+be placed in the \fI.rootmenu\fR file to appear whenever the third mouse
+button is held down in the display background area.
+.PP
+The \fI.alias\fR file specifies some aliases for the VMS user.  It sets up
+some command word to be used in the place of the standard UNIX command.
+.PP
+The \fI.ttyswrc\fR file sets up the mapping for some of the keyboard keys.
+This file should not be changed unless a working knowledge of the key
+board mapping is known.
+.NH
+Other UNIX Features
+.PP
+Besides processing data in IRAF, the SUN workstations can perform many
+other tasks from its native UNIX environment.  If you are familiar with
+UNIX, or would like to use it anyway, you can format a document, dial-up
+a remote site, send mail, access any other CTIO computer and many
+other things.  Here we will describe several of these for those who wish
+to use them.
+.PP
+All of the following procedures probably should not be executed from the
+IRAF \fIgterm\fR window.  With the exception of \fBmongo\fR, use or create a
+\fIshelltool\fR window.
+.NH 2
+man
+.PP
+If information is required on any UNIX command, online help pages are accessed
+using the command \fBman\fR;
+.DS
+\fBman ftp\fR
+     or
+\fBman shelltool\fR
+.DE
+There is a manual page on \fBman\fR, for more information about it, type
+"\fBman man\fR".
+.NH 2
+enscript
+.PP
+Text files that are have longer than standard lines may be printed on the
+laser printers located throughout the offices
+on the mountain and downtown. A list of the printers and their locations can be
+found in appendix II. The UNIX command \fBenscript\fR can be used to rotate the
+output. If you have a long file with short lines, you may compact the output
+by printing two pages on one sheet of paper. To print out a file with long
+lines on lw3, with a gaudy appearance, use;
+.DS
+\fBenscript -rG -Plw3 filename
+.DE
+If you wish to rotate a file and put two pages on one, use the "\fB-r2\fR"
+option.
+.NH 2
+TEX and LATEX
+.PP
+\fBTEX\fR and \fBLATEX\fR are document formatters used at CTIO.  These may be
+used from any standard \fIgterm\fR or \fIshelltool\fR window outside of the
+IRAF environment.  This consists of writing a '.tex' file and then running
+this file through the formatter using
+.DS
+\fBtex file.tex\fR
+     or
+\fBlatex file.tex\fR
+.DE
+The resulting file will be called 'file.dvi' which is then printed on the laser
+printer by typing
+.DS
+\fBdvilw file.dvi\fI
+.DE
+Manuals are available at random sites around CTIO offices
+and telescope console rooms.
+.NH 2
+mongo
+.PP
+The graphics plotting program \fImongo\fR must be executed from a
+\fIgfxtool\fR window.  One of these windows can be opened by
+typing in any open text window(which is not running IRAF)
+.DS
+\fBgfxtool &\fR
+.DE
+If you are in IRAF, you must precede this command with an exclamation point
+"!".  A split window will appear on the screen; this is the "graphics tool"
+window.  The upper half is for text input, the lower half for graphics
+output.  In the upper half type \fBmongo\fR.  The program will start
+and await input.  In \fBmongo\fR the terminal type is six, printer
+type three is portrait, and printer type four is landscape.  For more
+information on \fBmongo\fR, see the "\fIMongo User's Manual\fR".
+.NH 2
+visual (vi) screen editor and emacs
+.PP
+The \fBvi\fR editor is the UNIX editor on the SUNs.  It is not very complicated
+and the casual user of IRAF usually doesn't need complete knowledge of the
+commands.  This is the set default in the \fIlogin.cl\fR file when IRAF is
+entered.  There is an online help page in the \fIctio\fR package which lists
+the most important commands.  To get a copy of these pages, load the
+\fIctio\fR package in IRAF, and type:
+.DS
+\fBhelp editor | lpr\fR
+.DE
+This will queue a copy of the help page to the laser printer.  The \fIctio\fR
+package must be loaded to access this help page.  More help can
+be found using \fBman vi\fR in UNIX or \fB!man vi\fR from within IRAF.
+Another editor \fBemacs\fR is available for those who wish to use it.
+.NH 2
+mail
+.PP
+You can send mail to any site which supports a mail service reachable
+from the CTIO computers.  See the \fBmail\fR manual page for more
+information on syntax.
+.DS
+\fBmail <user>@<host>.<domain>\fR
+     or
+\fBmail jones@yalastro.bitnet\fR
+.DE
+Incoming mail should be addressed to '\fBv#ctio@noao.edu\fR' (where # is the
+visitor account number, ie, v4).  Mail to
+other institutions can be routed through the CTIO computers
+on \fIUUCP\fR, \fIARPA Internet\fR, \fIBITNET\fR, and \fISPAN\fR e-mail
+networks.  An e-mail directory is also available with individual and
+institution addresses.  A help page with examples of usable addresses is
+available in the \fIctio\fR package for use of the UNIX mailer.  Currently
+the IRAF \fIctio\fR package must be loaded to access this help page.  See
+a computer support person for help with the correct address.  \fBMail messages
+larger than 20,000 bytes will not be sent, so if you have large files to send,
+see Jim Hughes. Also binary files may be messed up if mailed and you will
+have to encode the file to send it, again see Jim Hughes.\fR
+.NH 2
+rlogin, telnet, rcp and ftp
+.PP
+Other workstations can be reached through TCP/IP.  You can log onto another
+SUN computer by using \fBrlogin\fR.  If you wish to connect to one of the
+VAXs, \fBtelnet\fR should be used with the correct machine name, ctiov1 or
+ctiov2. It is possible to telnet to a machine in the US, just use the correct
+internet machine name, ie. "128.196.128.98" or "noao.edu". \fBDo not try to
+copy images or big files to your home machine in the US unless you know what
+you are doing. Big files will tie up the network so be courteous.\fR So to
+connect to ctios2 or ctiov1 from the 4-meter SUN type;
+.DS
+\fBrlogin ctios2
+telnet ctiov1\fR
+.DE
+The \fBrlogin\fR command will automatically log into your account on that
+machine.  The \fBtelnet\fR command will bring up the login prompt on the
+VAX, and your account and password are the same as on the SUN to make logging
+in simple.  The keypad commands for the \fBedt\fR
+editor on the VAX will not work unless the \fBvt100tool\fR is run.  You can copy
+a remote file with either \fBrcp\fR or \fBftp\fR.  To use the copy command
+between machines, try:
+.DS
+\fBrcp <from> <to>\fR
+     or
+\fBrcp ctio4m:/u4m0/v0/csccd.dat ccd.dat\fR
+.DE
+The file 'csccd.dat' will be copied to the directory in which you are
+currently, and will call it 'ccd.dat'.  If you were logged in on
+\fIctios1:/us10/v0/night1\fR then it would be copied to that directory, and
+since you are pulling down from the mountain, it may take a minute depending
+upon the amount of traffic there is on the network link between the machines.
+\fBDo not use either of these commands on IRAF images, it will only copy one of
+the two files (header or pixel) specified and will leave dangling files\fR.
+With in IRAF \fBimcopy\fR will copy between machines but takes a very long
+time so always use tapes to bring your files down the mountain with you. See
+the manual pages on these commands for more information.
+.NH
+IRAF Examples
+.PP
+The following sections describe procedures for several SUN/IRAF commands
+using the \fISunView\fR environment.  Examples of procedures for several
+actions are given in a step-wise fashion.  As with most all IRAF commands,
+use the \fBlparam\fR or \fBeparam\fR command to list or edit a command's
+parameter set before executing it.  Use the \fBhelp\fR command to read
+the on-line help information about a command.  There is a tutorial for a
+few more important IRAF commands in the CTIO Reductions Manual, Version 2.0.
+.NH 2
+rfits and rcamera
+.PP
+To read a FITS or CAMERA format magnetic tape, use the \fBrfits\fR or
+\fBrcamera\fR command.  Mount the tape on the SUN tape drive and move
+the tape to the load point with the tape drive's "Reset" and "Start" button.
+Make certain that the tape drive density "Select" switch is set to "Host" or
+you may explicitly set the tape density on the device.
+.PP
+The IRAF \fIdataio\fR package should be loaded for \fBrfits\fR; the
+\fInoao\fR and \fImtlocal\fR packages for \fBrcamera\fR.  Typing
+\fBpackage\fR will display the packages currently loaded.  All CTIO IRAF
+accounts load some necessary packages automatically.  Allocate the
+tape drive to your account by typing
+.DS
+\fBallocate mta\fR
+.DE
+If the tape drive is allocated to another account, or already allocated to
+you, an error message will be printed.  Otherwise, edit the \fBrfits\fR
+or \fBrcamera\fR parameter set:
+.DS
+\fBepar rfits\fR
+.DE
+and select the options you desire.  For both commands make certain that the
+"\fIMake IRAF image\fR" flag is set to "\fIyes\fR" and the "\fIdatatype\fR"
+is set to either "\fIshort\fR" or "\fIreal\fR".  Exit \fBepar\fR by
+typing the '\fB^Z\fR' (control-Z) key.  Read FITS images by typing
+.DS
+\fBrfits mta [filelist] [filename]\fR
+     or
+\fBrfits mta 1-20 obj\fR
+.DE
+and read CAMERA images by typing
+.DS
+\fBrcamera mta [filelist] [filename]\fR
+.DE
+where \fI[filename]\fR is the root file name for the created images and
+\fI[filelist]\fR is the list of files you wish extracted from the tape.  You
+can preserve the name of the file that was written to tape by setting the
+"\fIoldirafname\fR" parameter to "\fIyes\fR".  If you want
+all the files, try something like \fB1-999\fR; for specific files,
+use commas and hyphens to describe your list.  For example, if you want
+files 1 through 6 and file 9, type \fB1-6,9\fR for the \fI<files>\fR
+argument.
+.PP
+When the files have been extracted, deallocate the tape drive with the
+command
+.DS
+\fBdeallocate mta\fR
+.DE
+The tape will rewind and the drive will be available for other users.  \fBSee
+the warning in section 3.6\fR.
+.NH 2
+wfits
+.PP
+Write a FITS file by using the \fBwfits\fR command.  First allocate
+the tape drive (if not already allocated)
+.DS
+\fBallocate mta\fR
+.DE
+Next, edit the \fBwfits\fR parameter set with \fBepar\fR to select some
+suitable options.  You might, for instance, wish a different type of 
+datatype (a blank line will use the images pixel datatype) or a higher
+blocking factor (when in doubt, use a factor of one).
+Execute the command by typing
+.DS
+\fBwfits [filenames] [output device] [yes/no]
+.DE
+where \fI[filenames]\fR is a list of output images, \fI[output device]\fR
+is either tape device \fImta.6250\fR or \fImta.1600\fR for a 6250 or 1600
+bpi tape and [yes/no] identifies the tape as new or not.  After
+writing all images, deallocate the tape drive.  \fBSee the warning in
+section 3.6\fR.
+.NH 2
+ctio
+.PP
+CTIO has an IRAF programmer and thus the \fIctio\fR package has many
+tasks that have been requested by staff members.  All these tasks have
+online help pages.  This includes a fits reader to make listings of tapes
+pulling off specific header parameters, image sorting by a header parameter,
+an aperture photometry task \fBsphot\fR, and a 'universal time' calculator for
+computing the ut in the middle of an exposure, plus many more.  If you would
+like more information about these tasks or copies of the executables, 
+contact Pedro Gigoux.
+.NH 2
+ccdred
+.PP
+\fBccdred\fR is the IRAF CCD reduction package used to process
+CCD images.  A CCD image fresh from the chip may need to be bias subtracted,
+trimmed, flat field divided, dark count subtracted, illumination corrected,
+or fringe corrected, depending upon the application and extent of the
+observer's patience.
+.PP
+The \fIccdred\fR package is loaded from the \fInoao\fR and \fIimred\fR
+packages.  The package then needs to be initialized by typing
+.DS
+\fBsetinstrument\fR
+.DE
+which will ask for the instrument and enters two parameter sets to be edited:
+\fBccdred\fR and \fBccdproc\fR.  The appropriate instrument name depends upon
+the instrument being used.  In the future, there
+may be specific instrument files describing trim parameters, bad pixel maps,
+and other specific descriptions of a particular CCD instrument or chip
+application. Due to a bug in IRAF, the general parameters for ccdred are
+fixed and unchangeable when this package is loaded when logging into IRAF.
+\fBDo not load this package in the login.cl or loginuser.cl files.\fR
+.NH
+Documentation
+.PP
+The following documentation will be useful during any foray into data reduction
+software but may not be available everywhere on Tololo:
+.IP \(bu
+"\fICTIO Reduction Manuals, Version 2.0 (IRAF 2.8)\fP" give specific recipes
+for reduction of data from NOAO/CTIO instruments and help pages for the
+\fIvi\fR editor, e-mail, and other useful tools.
+.IP \(bu
+"\fICCD Software Observer's Manual\fP" give specifics on the software commands
+for the CTIO CCD control systems.
+.IP \(bu
+"\fIThe IRAF User's Handbook: Vol 1A, IRAF System\fP" describes the syntax
+and structure of IRAF.
+.IP \(bu
+"\fIThe IRAF User's Handbook: Vol 2B, NOAO Cookbooks\fP" give specific recipes
+for reduction of data from NOAO/CTIO instrument.
+.IP \(bu
+"\fIUNIX Command Reference Manual: Vol 1\fP" describes the syntax of UNIX
+commands.
+.IP \(bu
+"\fIWindows and Window-based Tools\fP" describes \fISunView\fP windows and the
+windows environment of the SUN workstation.
+.IP \(bu
+"\fIText Utilities\fP" contains valuable information on the UNIX \fIvi\fP
+editor.
+.NH
+Games
+.PP
+There are some games available for use in the \fISunView\fR environment.  They
+all reside in the directory '/usr/games'.  To run the chess game, from your
+gterm window type;
+.DS
+\fB!/usr/games/chesstool &\fR
+.DE
+This will bring up a window in which a chess board is set up and ready to be
+played.  To quit the game, just move the mouse cursor to quit and press the
+right button.  The available games are:
+.DS
+\fBchesstool
+canfieldtool
+gammontool
+boggletool
+mahjongg
+tetris\fR
+.DE
+Some of the games must be run in a gterm window since they do not have their
+own window.  Using another gterm window, other games available are:
+.DS
+\fBadventure\thangman
+boggle\t\tmille
+chess\t\tquiz
+craps\t\trobots
+cribbage\t\tsnake
+fish\t\twump
+hack\fR
+.DE
+Enjoy these games and good luck.
+.bp
+.SH
+Appendix I: System Information
+.RS
+.ps -2
+.nr PS -2
+.vs -2
+.nr VS -2
+.SH
+Workstations
+.DS
+.ta 2.3i 3.6i 4.9i 
+\fRctio4m\a4 meter\aSUN 4/280
+ctio60\a1.5 meter\aSUN 3/280
+ctio1m\a1.0 meter\aSUN 3/180
+ctio36\a0.91 meter\aSUN 3/280
+ctios1\aLa Serena\aSUN 4/280
+ctios2\aLa Serena\aSUN 4/370
+ctios3\aLa Serena\aSUN 4/75 SPARC Station
+ctios4\aLa Serena\aSUN 4/75 SPARC Station
+.DE
+.SH
+The 4 Meter Workstation
+.PP
+The 4 meter has a SUN 4/280 workstation named "ctio4m".  It consists of a
+sparc cpu with a floating point accelerator and 16 Mbytes memory, EtherNet
+port, two 560 MByte disks, a 6250/1600 bpi tape drive, a DR11-W high speed data
+link to the CCD computer, and an Apple laser printer located in the computer
+room on the mezzanine floor.  An 1152x900 pixel color display console is
+located in the control room and terminals are located in the computer room,
+console room and in the observer support offices.
+.SH
+The 1.5 Meter Workstation
+.PP
+The 1.5 meter has a SUN 3/280 workstation named "ctio60".  It consists of a
+68020 cpu with a floating point accelerator and 8 Mbytes memory, EtherNet
+port, two 380 MByte disks, a 6250/1600 bpi tape drive, a DR11-W high
+speed data links to the 1.5 meter CCD computers, and an Apple laser printer
+located in the console room.  An 1152x900 pixel color display
+console is located in the control room and terminals are located in the
+computer room, and console room.
+.SH
+The 1.0 Meter Workstation
+.PP
+The 1.0 meter has a SUN 3/180 workstation named "ctio1m".  It consists of a
+68020 cpu with a floating point accelerator and 8 Mbytes memory, EtherNet
+port, two 380 MByte disks, a 6250/1600 bpi tape drive, a DR11-W high speed data
+link to the CCD computer, and an Apple laser printer located in the computer
+room.  An 1152x900 pixel color display console is located in the control
+room.
+.SH
+The 0.9 Meter Workstation
+.PP
+The 0.9 meter has a SUN 3/280 workstation named "ctio36".  It consists of a
+68020 cpu with a floating point accelerator and 8 Mbytes memory, EtherNet
+port, two 380 MByte disks, a DR11-W
+high speed data link to the CCD computer and an Apple laser printer located
+in the console room.  An 1152x900 pixel color display console is located
+in the control room.
+.SH
+The SUN-1 Workstation
+.PP
+The La Serena computer room has a SUN 4/280 workstation named "ctios1".  It
+consists of a SPARC cpu with a floating point accelerator and 16 Mbytes
+memory, EtherNet port, two 560 MByte disks, a 6250/1600 bpi Fuji tape drive, 
+an ITI display monitor, an Apple laser printer located in the computer room,
+and an HP Laserjet+ printer for administration use.  An 1152x900 pixel color
+display console is located in the SUN computer room.
+.SH
+The SUN-2 Workstation
+.PP
+The La Serena computer room has a SUN 4/370 workstation named "ctios2".  It
+consists of a SPARC cpu with a floating point accelerator and 16 Mbytes
+memory, EtherNet port, a 560 MByte disk, a 1 GByte disk, a 6250/1600 bpi
+Fuji tape drive, an Apple laser printer located in office 24, and an ITI
+display monitor.  An 1152x900 pixel color display console is located in the
+SUN computer room.
+.SH
+The SUN-3 Workstation
+.PP
+The La Serena computer room has a SUN 4/75 workstation named "ctios3".  It
+consists of a SPARC cpu with a floating point accelerator and 16 Mbytes
+memory, EtherNet port, a 685 MByte Wren Runner disk, and Apple laser printer
+located in the computer room. An 1152x900 pixel color
+display console is located in the SUN computer room.
+.SH
+The SUN-4 Workstation
+.PP
+The La Serena computer room has a SUN 4/75 workstation named
+"ctios4".  It consists of a SPARC cpu with a floating point accelerator
+and 16 Mbytes memory, EtherNet port, a 685 Mbyte Wren Runner disk, and an HP
+Laserjet+ printer for simple text and TeX. An 1152x900 pixel color display
+console is located in the VAX computer room, across the hall from the
+Director's office.
+.SH
+Accounts
+.DS
+\fRv0\-\-v12\avisitor0\-\-visitor12\fR
+.DE
+.SH
+Devices
+.DS
+.ta 2.3i 3.3i 4.3i 5.3i
+printers\tctios0\alw, lws0 \fIor\fP lw2\aOffice 24 
+\tctios1\alw, lws1 \fIor\fP lw1\aSUN console room
+\tctios3\alw, lws3 \fIor\fP lw3\aSUN console room
+\tctio4m\alw, lw4m \fIor\fP lw4\a4-meter computer room, mezzanine floor
+\tctio60\alw, lw60 \fIor\fP lw5\a1.5-meter console room
+\tctio1m\alw, lw1m \fIor\fP lw6\a1-meter computer room
+\tctio36\alw, lw36 \fIor\fP lw7\a0.9-meter console room
+.sp
+printers IRAF defined\tctios1\alw, lws1 \fIor\fP lw1\aSUN console room
+\tctios2\alw, lws1 \fIor\fP lw1\aSUN console room
+\tctios3\alw, lws3 \fIor\fP lw3\aSUN console room
+\tctios4\alw, lws3 \fIor\fP lw3\aSUN console room
+\tctio4m\alw, lw4m \fIor\fP lw4\a4-meter computer room, mezzanine floor
+\tctio60\alw, lw60 \fIor\fP lw5\a1.5-meter console room
+\tctio1m\alw, lw1m \fIor\fP lw6\a1-meter computer room
+\tctio36\alw, lw36 \fIor\fP lw7\a0.9-meter console room
+.sp
+terminals\tctio4m\aconsole\acontrol room
+\t\tpc\atelescope console room
+\t\tpc\acomputer room
+\tctio1m\aconsole\acontrol room
+\t\tpc\atelescope console room
+\tctio60\aconsole\atelescope console room
+\t\tpc\atelescope console room
+\tctio36\aconsole\atelescope console room
+\tctios1\aconsole\aSUN computer room
+\tctios2\aconsole\aSUN computer room
+\t\tpc\aSUN computer room
+\tctios3\aconsole\aSUN computer room
+\tctios4\aconsole\aVAX computer room
+.DE
+.SH
+Imtool Formats
+.DS
+.ta 2.3i 3.6i 4.9i 
+imt1 | imt512\a512x512\astandard format
+imt2 | imt800\a800x800\astandard format
+imt3 | imt1024\a1024x1024\astandard format
+imt4 | imt1600\a1600x1600\astandard format
+imt5 | imt2048\a2048x2048\astandard format
+imt6 | imt4096\a4096x4096\astandard format
+imt7 | imt4x1\a4096x1024\astandard format
+imt8 | imt1x4\a1024x4096\astandard format
+imt9 | imtfs\a1144x880\afull screen format
+imt10 | imtfs35\a1144x764\afull screen at 35mm
+imt11 | imt128\a128x128\astandard format
+imt12 | imt256\a256x256\astandard format
+imt20 | imtgec\a388x576\aGEC CCD detector format
+imt21 | imtkpca\a3040x976\aKPCA detector format
+imt22 | imt2df1\a128x1520\a2D-Frutti detector format
+imt23 | imt2df2\a256x1520\a2D-Frutti detector format
+imt24 | imt2df5\a512x1520\a2D-Frutti detector format
+imt25 | imt2df9\a960x1520\a2D-Frutti detector format
+imt26 | imtcryo\a512x800\aCryogenic camera format
+imt27 | imtgcam\a348x800\aGold camera format
+imt28 | imt2df9x3\a976x3040\a2D-Frutti detector format
+.DE
+.ps +2
+.nr PS +2
+.vs +2
+.nr VS +2
+.bp
+.RE
+.SH
+Appendix II: Default Initialization Files
+.RS
+.ps -2
+.nr PS -2
+.vs -2
+.nr VS -2
+.KS
+.SH
+login.cl
+.ta 0.5i 1.5i
+.DS
+\fR# LOGIN.CL -- User login file for the IRAF command language.
+
+set	home		= "/us01/v7/"
+set	uparm		= "home$uparm/"
+set	userid		= "v7"
+
+# for getpix and ITI at CTIO 08aug89jbh
+set	imdir 		= envget("imdir")
+set	wcsdir 		= envget("wcsdir")
+
+#reset	bin = envget("IRAFBIN")			# SUN floating point option
+#print	"setting terminal type to gterm..."	# warn user
+stty	gterm					# set terminal protocol
+
+# Uncomment and edit to change the defaults.
+
+#set	editor		= vi			# environment stuff
+#set	printer		= lw
+#set	stdimage	= imt800
+#set	stdimcur	= stdimage
+#set	stdplot		= lw2
+#set	clobber		= no
+#set	filewait	= yes
+
+# IMTOOL/XIMAGE stuff.
+#set	node		= "ctios2"		# set to name of your WS
+#set	wcsdir		= "node!" // osfn("uparm$")
+
+#ehinit   = "nostandout eol noverify"		# CL parameters
+#epinit   = "standout showall"
+#showtype = no
+
+# Default USER package; extend or modify as you wish.  Note that this can
+# be used to call FORTRAN programs from IRAF.
+
+package user
+if (access ("home$loginuser.cl")) cl < "home$loginuser.cl"
+task	$mail $man $lpq $diff $od $find $touch $w $ls	= "$foreign"
+task	$adb $rsh $rcp $rlogin $rwho $telnet $ruptime	= "$foreign"
+task	$xc $mkpkg $generic $rtar $wtar $buglog		= "$foreign"
+task	$sps $top $mon $bgrep $su $less			= "$foreign"
+task	$fget $fput $fls $fcp				= "$foreign"
+task	$startlink $stoplink $getpix $getud		= "$foreign"
+task	$fc = "$xc -h $* -limfort -lsys -lvops -los"
+task	$nbugs = ("$(setenv EDITOR 'buglog -e';" //
+	    "less -Cqm +G " // envget ("iraf") // "local/bugs.*)")
+keep;	clpackage
+
+prcache directory
+cache	directory page type help
+
+# Print the message of the day.
+clear;	type hlib$motd
+
+# Delete any old MTIO lock files or display WCS (do NOT delete this).
+delete uparm$mt?.lok,uparm$*.wcs verify-
+
+# List any packages you want loaded at login time, ONE PER LINE.
+# noao		# (uncomment to load package `noao')
+keep\fR
+.DE
+.KE
+.KS
+.SH
+loginuser.cl
+.DS
+.ta 0.60i 1.71i 3.3i
+\fR# USER DEFINED COMMANDS
+
+# Set defaults
+set	clobber		= no
+set	cmbuflen	= 256000
+set	editor		= vi
+set	ehinit		= "nostandout eol verify"
+set	epinit		= "standout showall"
+set	imdir		= (envget ("imdir"))
+set	min_lenuserarea	= 20000
+set	node		= (envget ("node"))
+set	printer		= lw
+set	stdimage	= imt1
+set	stdimcur	= stdimage
+set	stdplot		= lw
+set	wcsdir		= (envget ("wcsdir"))
+
+# Set terminal type
+if (envget ("TERM") == "sun") {
+   print ("Help I'm lost in RESETTING TERMINAL TYPE TO GTERM")
+   stty gterm
+} else {
+   print ("Resetting terminal type to vt640 (whether you want it or not)")
+   stty pc640
+}
+
+# Define foreign tasks
+task	$ftp		= "$foreign"
+task	$latex		= "$foreign"
+task	$lpdelete	= "$lprm"
+task	$mongo		= "$foreign"
+task	$rmdir		= "$foreign"
+task	$tex		= "$foreign"
+
+# Load packages
+dataio
+images
+tv
+noao
+
+# Set default task parameters
+cl.showtype = yes
+delete.verify = yes
+imdelete.verify = yes
+
+# Reset the console keyboard
+! setkeys reset
+keep\fR
+.DE
+.KE
+.ta 2.0i 3.0i 4.0i 5.0i
+.KS
+.SH
+ .suntools
+.DS
+# IRAF suntools startup file
+#  - gterm window is cmdtool window for system error messages
+#  - imtool must be opened after gterm in order for color table to work
+gterm      -Wp    0   0 -Ws 655 760 -WP    0 346 -Wf 255   0   0 
+	  -I "source /usr2/v0/.login;cl -G"  -C
+imtool     -Wp  655   0 -Ws 497 535 -WP    0 208 -Wb 255   0 127 
+	  -Wf 255 255   0 -fb 1 
+.DE
+.KE
+.KS
+.SH
+ .rootmenu
+.DS
+#
+#	@(#)rootmenu	1.1 86/07/07 SMI
+#
+#	suntools root menu
+#
+	
+"Imtool"\t\timtool -Wp 614 82 -Ws 522 535 -WP 796 4
+"Gterm"\t\t\tgterm
+"ShellTool"\t\tshelltool
+"Redisplay All"\t\tREFRESH
+"Exit Suntools"\t\tEXIT
+.DE
+.KE
+.KS
+.SH
+ .alias
+.DS
+# Command aliases
+
+alias   ed        vi
+alias   dir       ls -a
+alias   ldir      ls -al
+alias   tools     suntools
+alias   lo        logout
+alias   bye       logout
+alias   type      cat
+alias   page      more
+alias   free      df
+alias   where     pwd
+alias   whe       pwd
+alias   help      man
+alias   del       rm -i
+alias   delete    rm -i
+.DE
+.KE
+.KS
+.SH
+ .ttyswrc
+.DS
+#
+# standard IRAF .ttyswrc file
+#
+# F1 is used on older SUNs as caps lock 
+#
+# L5 & L7 control closing/foreground window
+#
+# F5 used for imtool graphics overlay
+# F6 used to activate/deactivate cursor readout box
+# F7 used for imtool hard copy
+# gterm function keys - F8 used to switch to graphics plane
+mapi F1 =gcur\n
+mapi F2 =imcur\n
+mapo F9 ^L
+#
+# the following control the size of the gterm window - don't
+#  edit these!
+mapo R1 ^[[8;24;80t
+mapo R2 ^[[8;34;80t
+mapo R3 ^[[8;40;80t
+mapo R5 ^[[8;54;80t
+mapi R13 \:s\n
+mapi R15 .?i\n\n\:b\n\:c\n
+.DE
+.KE
+.ps +2
+.nr PS +2
+.vs +2
+.nr VS +2
+.RE

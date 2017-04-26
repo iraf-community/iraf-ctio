@@ -1,0 +1,12 @@
+# apropos mkpkg file (Fri Mar 30 12:35:55 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	helpdir.x	"help.h" "helpdir.h" <ctype.h> <error.h>
+	t_apropos.x	<error.h> <pattern.h>
+	t_mkapropos.x	"help.h" "helpdir.h" <error.h> <syserr.h>
+	;

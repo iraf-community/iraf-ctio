@@ -1,0 +1,146 @@
+.help dfits Sep87 ctio
+.ih
+NAME
+dfits -- display FITS file headers
+.ih
+USAGE
+dfits fits_file file_list
+.ih
+PARAMETERS
+.ls fits_file
+The FITS data source.  This is either a template describing a list of disk files
+or a tape file
+specification of the form mt*[n], where mt indicates a mag tape device,
+* represents a density, and [n] is the tape file number.
+If the tape file number n is specified then only that file
+is converted.  If the general tape device name is given, i.e. mta, mtb800, etc,
+then the files specified by the file_list parameter will be read from the tape.
+.le
+.ls file_list
+The files to be read from a tape are specified by the file_list string.  The
+string can consist of any sequence of file numbers separated by
+at least one of comma, or dash.
+A dash specifies a range of files.  For example the string
+
+	"1,2,3-5,8-6"
+
+will convert the files 1 through 8.
+.le
+.ls long_header = no
+If this switch is set the full FITS header is printed on the standard output,
+and if it is reset the header is printed with the formats specified in
+the format file.
+.le
+.ls format_file = "ctio$src/dfits/format"
+The format file to be used when the long_header switch is reset. This file is a
+list of keywords and formats, one per line, separated by commas. DFITS will
+print only the keywords listed, in the same order on the file, using the
+format specified for each one. No default format file is provided, so it must
+be created by the user.
+Keywords are not case sensitive.
+There is a special keyword named "FILENAME" that may be used to specify
+how to print the FITS file name.
+The formats are string of the form "W.DC", where "W" specifies the filed width,
+"D" the characters to print or precision, and "C" the format code or data
+type (string, integer, floating point number).
+All, "W", "D" and/or "C", may be omitted (including the dot). The default
+format is string.
+The following are the conventions for the "W" (field width) specification:
+
+.nf
+W = n      right justify in field of "n" characters, blank fill
+  = -n     left justify in field of "n" characters, blank fill
+  = 0n     zero fill at left (only if right justified)
+absent, 0  use as much space as needed (D field sets width)
+.fi
+
+The format codes "C" are as follows:
+
+.nf
+d	decimal integer
+e	exponential format ("D" specifies the precision)
+f	fixed format ("D" specifies the number of decimal places)
+g	general format ("D" specifies the precission)
+h	hms format (hh:mm:ss.ss, "D" = number of decimal places)
+m	(mm:ss.ss or hh:mm.mm)
+o	octal integer
+s	string ("D" specifies max characters to print)
+x	hexadecimal integer
+.fi
+.le
+.ih
+DESCRIPTION
+FITS headers are read from the specified source; either disk or
+magnetic tape.  
+At present non-standard FITS files (SIMPLE = F) and files containing
+group data are skipped and a warning message is issued.
+The FITS header may optionaly be printed on the standard output as either
+a full listing or a formatted listing.
+The first one prints all the header keywords for each FITS file in a multiline
+format. Each group of lines is associated with one FITS file.
+The formatted output is a multicolumn output, where each line is
+associated with a different FITS file. Each column contains the value for
+a particular header keyword. There is a title line at the beginning of the
+listing to label the columns. The width, contents, and title for each
+column are specified by the user in the format file.
+A null string is printed if a keyword is specified in the format file by the
+user, but not found in the FITS files.
+The default format file "ctio$src/dfits/format" provides almost the same
+output format than \fBrfits\fR with \fBshort_header=yes\fR.
+.ih
+EXAMPLES
+Display the headers of a set of FITS files on tape using formatted header
+output. The format file is the current default.
+
+.nf
+	cl> dfits mtb1600 1-999
+.fi
+
+
+Display the headers of a set of FITS file on disk, using long header format.
+
+.nf
+	cl> dfits fits* l+
+.fi
+
+
+Display the headers of a set of FITS files on tape, using formatted header
+output, specified in the file new_format.
+
+.nf
+	cl> dfits mtb1600 1-999  fo=new_format
+.fi
+
+
+Format file to print up to eigth characters of the filename, left justified,
+in field of ten characters, as a string.
+Up to three digits of the number of axis, right justified in a field of
+five characters, as a decimal integer.
+The origigin using as much space as needed, as a string (default).
+The universal time, right justified, using as much space as needed, as a real
+number in hour-minutes-seconds format.
+Up to thirty characters of the title, left justified in a field
+of as much space as needed. Remember that keywords are not case sensitive.
+
+.nf
+	FILENAME, -10.8
+	NaXis, 5.3d
+	origin
+	AIRmass, 7.5f
+	UT, h
+	Comment, -.30
+.fi
+
+
+.ih
+BUGS
+1.- If the program runs out of memory to handle keywords, formats or header
+cards, it will discard silently the extra items.
+.br
+.sp
+2.- If two header cards have the same keyword or if there are multiline header
+cards, only the first card or line is printed.
+.ih
+SEE ALSO
+dataio.rfits, dataio.wfits
+.endhelp

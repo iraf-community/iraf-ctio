@@ -1,0 +1,240 @@
+# CTIO external package
+
+# The following changes were made to the initial export tape for CTIO
+# to configure it as an layered package.  There were not changes to
+# source code or basic directory organization. (Valdes, Dec. 14, 1989)
+
+CTIO.cl -> ctio.cl
+CTIO.hd -> ctio.cl
+CTIO.mkpkg -> mkpkg
+CTIO.x -> x_ctio.x
+ctio.par +
+ctio.men +
+lib +
+lib/* +
+bin +
+bin.generic +
+bin.f68881 +
+bin.ffpa +
+bin.sparc +
+lib/mkfloat.csh +
+    1. Renamed CTIO.* files to indicated files.
+    2. Made new ctio.men which only refers to tasks/packages available
+    3. Commented out reference to dst in ctio.cl and mkpkg since this
+       software depends on a nonexported library.
+    4. Added ctio.par file for keeping version.
+    5. Created lib and bin directories.
+    6. Put the standard lib stuff in lib directory
+    7. Changed all logical directory references from local to ctio.
+    8. Changed local$src/ directories to ctio.
+    9. Removed comments about merging into local package.
+    10. Add strip and multiple architecture stuff into mkpkg file.
+    11. Made copy of hlib$mkfloat.csh with fix to allow the parent
+	directory to have libraries and objects without deleting the
+	executables in the bin directories.
+
+# Under the directive of Doug Tody the following further changes were needed.
+
+src/
+apropos/ -> src
+bitstat/ -> src
+colselect/ -> src
+coords/ -> src
+dfits/ -> src
+findfile/ -> src
+imsort/ -> src
+imtest/ -> src
+irlincor/ -> src
+lambda/ -> src
+magband/ -> src
+sphot/ -> src
+statspec/ -> src
+wairmass/ -> src
+x_ctio.e -> src
+mkpkg -> src
+    1. Created a new subdirectory and moved the source subdirectories there.
+    2. Took out architecture stuff and subpackage stuff from mkpkg.
+
+mkpkg +
+    1. Modified to call updates of subdirectories and use standard
+       architecture stuff.
+    2. Includes commented out DST directory.
+
+lib/mkfloat.csh -
+    Removed bug fixed version of this file.
+
+----------------------------------------------------------------------
+# The CTIO local package was merged into the ctio export package in
+# order to have single version of the package to mantain. Both CTIO
+# specific software, and exportable software were included, but
+# references to site specific software are removed when a tape is
+# made to outside sites (Pedro Gigoux, 12 April, 1990).
+
+src/README
+src/amplot/
+src/compairmass/
+src/eqwidths/
+src/findfile/ -> src/findfiles/
+src/fft1d/
+src/fitrad/
+src/helio/
+src/immatch/
+rvxcor/
+	Added subdirectories with source code for new exportable tasks.
+		1. amplot	plot critical airmass
+		2. compairmass	compute airmass
+		3. eqwidths	equivalent widths
+		4. fft1d	one dimesional FFT
+		5. fitrad	radial profile fitting
+		6. helio	helicentric julian date
+		7. immatch	match images
+		8. rvxcor	radial velocities via cross correl.
+	Also the findfile task was renamed findfiles.
+
+photred/
+	Added code for new exportable packages.
+		1. photerd	photometry reductions
+
+ezimtool/
+focus/
+irproc/
+waiter/
+	Added CTIO specific script tasks. Some of these were superseeded
+	by by new tasks in new releases, but they were kept just in case.
+		1. ezimtool	easy imtool (imedit)
+		2. focus	compute telescope focus
+		3. irproc	IR "doit" script ()
+		4. waiter	????
+
+amplot.par
+compairmass.par
+eqwidths.par
+ezimtool.par
+findfile.par -> findfiles.par
+focus.par
+fft1d.par
+fitrad.par
+helio.par
+irproc.par
+immatch.par
+	Added parameter files for new tasks in src/, and script tasks.
+	Renamed parameter file for the findfiles task.
+
+amplot.hlp
+compairmass.hlp
+eqwidths.hlp
+ezimtool.hlp
+findfile.hlp -> findfiles.hlp
+focus.hlp
+fft1d.hlp
+fitrad.hlp
+helio.hlp
+irproc.hlp
+immatch.hlp
+	Added help pages for new tasks in src/, and script tasks.
+	Renamed help page for the findfiles task.
+
+iti/
+manuals/
+rectify/
+softdist/
+softutil/
+visitors/
+	Added CTIO specific packages.
+		1. iti		ITI display stuff
+		2. manuals	CTIO manuals and cookbooks
+		3. rectify	?
+		4. softdist	software distribution
+		5. softutil	software utilities
+		6. visitors	visitor account administration
+
+ctio.cl
+ctio.hd
+ctio.men
+ctio.par
+mkpkg
+	Modified package files to include all previous software.
+
+----------------------------------------------------------------------
+# The CTIO package was reorganized to simplify maintenance and distribution.
+# Two new packages were added: CTLOCAL and CTOBSOLETE. The first one
+# will contain all the site specific software and the second one all the
+# sotware that has be obsoleted by other tasks in the standard IRAF.
+# (Pedro Gigoux, 22, September, 1993)
+
+doc/amplot -> ctlocal/doc
+doc/dopplermap -> ctlocal/doc
+src/amplot -> ctlocal
+ccds -> ctlocal
+destreak -> ctlocal
+src/dopplermap -> ctlocal
+iti -> ctlocal
+seeing -> ctlocal
+softdist -> ctlocal
+temputil -> ctlocal
+visitors -> ctlocal
+
+dst -> ctobsolete
+ezimtool -> ctobsolete
+irproc -> ctobsolete
+rectify -> ctobsolete
+rvxcor -> ctobsolete
+softutil -> ctobsolete
+visitors -> ctobsolete (pervious version)
+waiter -> ctobsolete
+xapphot -> ctobsolete
+
+
+===================================================================== 
+ CTIO package update to aix4. Feb 26 , 1998 (Nelson Zarate)
+
+fabry/rgnfit.f/rngft0()
+   "rngfit.f", line 100.24: 1516-023 (E) Subscript is out of bounds.
+   "rngfit.f", line 101.27: 1516-023 (E) Subscript is out of bounds.
+   "rngfit.f", line 101.51: 1516-023 (E) Subscript is out of bounds.
+	
+	Change (1) for (*) for the routine arguments
+/src/bitstat/bitstat.f
+   "bitstat.f", line 15.31: 1513-041 (W) Arguments of the wrong type were 
+    specified for the INTRINSIC procedure "mod".
+
+	mod(sval,2) change to mod(int(sval),2).
+
+src/fitrad/ftrfit(r,d)
+    "ftrfitd.f", line 164.12: 1513-029 (W) The number of arguments to 
+    "icgfid" difers from the number of arguments in a previous reference. 
+
+	It appears that the non_interactive call needs to be to the
+	routine 'ic_fitr' rather that icg_fitr, just by looking at the
+	number of arguments. Changed.
+
+src/gki2cad/t_gki2cad.x
+
+	Changed "call cad_comment ("GKI_ESCAPE (NEQ)")"
+	to
+	"call cad_comment (cd, "GKI_ESCAPE (NEQ)")"
+
+
+src/helio/helio.f
+
+"helio.f", line 86.65: 1515-020 (S) Syntax Error: Token " ) " is missing. 
+"helio.f", line 119.67: 1515-020 (S) Syntax Error: Token " ) " is missing.
+
+	Lines too long. Edited the file to broke them into 2 lines.
+
+src/iraf2bin/iraf2bin.f
+
+	Several 'call error' have only the string argument. Change to add
+	'0' as 1st argument.
+
+src/iraf2bin/t_iraf2bin.f
+
+	Same 'printf' calls have an extra '0,' as 1st argument. Removed.
+src/sphot/t_sphot.x
+
+	Change 
+	define  ERR_LAST       ERR_SKY
+	to
+	define  ERR_LAST       ERR_NOISE
+
+

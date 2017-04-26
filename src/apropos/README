@@ -1,0 +1,17 @@
+APROPOS			28-Oct-88		(Pedro Gigoux)
+
+This directory contains the files of the apropos and mkapropos tasks. The
+first on is like the UNIX apropos, but for any task that's mentioned in
+a menu file inside IRAF. The second task is for building the apropos database
+text file, and it's similar to the mkhelpdb task. This task was upgraded to
+work with IRAF 2.8. The files are:
+
+help.h		help files copied from system$help/ wihout modification
+helpdir.h
+helpdir.x
+
+mkpkg		mkpkg file
+
+t_apropos.x	main apropos procedure
+
+t_mkapropos.x	main mkapropos procedure

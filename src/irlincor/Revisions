@@ -1,0 +1,6 @@
+irlincor.par
+t_irlincor.x
+	Added a "section" parameter in order to be able to specify the
+	part of the image that should be corrected, leaving the rest of
+	it intact. This change was necessary to deal with quad-readout
+	images where only some quadrants needed correction (PG 23/Jul/93).

@@ -1,0 +1,48 @@
+.help compairmass Oct89 ctio
+.ih
+NAME
+compairmass -- Compute air mass
+.ih
+USAGE
+compairmass
+.ih
+PARAMETERS
+.ls ha = INDEF
+Hour angle in hours.
+.le
+.ls dec = INDEF
+Declination in degrees.
+.le
+.ls ra = INDEF
+Right ascension in hours. This parameter is not needed if the hour angle
+is defined.
+.le
+.ls st = INDEF
+Sidereal time in hours. This parameter is not needed if the hour angle
+is defined.
+.le
+.ls exptime = 0.0
+Exposure time in seconds. If this parameter is zero no attemp is made
+to compute the effective air mass taking into account the exposure time.
+.le
+.ls latitude = ).observatory.latitude
+Observatory latitude in degrees.
+.le
+.ih
+DESCRIPTION
+This task computes the effective air mass and zenith distance for the
+given set of parameters.
+The task first tries to compute the air mass by using \fBha\fR, and if this
+fails it prompts the user for \fBra\fR and \fBst\fR to compute the hour angle.
+If the latter fails or if any other of the parameters is undefined (INDEF)
+the task aborts with and error message.
+.br
+If the exposure time is set to zero no weighting is done in order to compute
+the effective air mass for the observation. This is because the task tries to
+divide the exposure interval only if it is long enough (about 300 secods)
+to compute air masses for each interval, and then average them to get an
+effective value.
+.ih
+SEE ALSO
+ctio.wairmass, astutil.setairmass
+.endhelp

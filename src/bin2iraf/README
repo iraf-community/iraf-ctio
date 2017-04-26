@@ -1,0 +1,8 @@
+BIN2IRAF		05-Nov-90	Pedro Gigoux
+
+This directory contains the code for the binary file to iraf image
+conversion task. The files contained here are:
+
+mkpkg			mkpkg file
+
+t_bin2iraf.x		main task procedures

@@ -1,0 +1,93 @@
+.help fitsread Jan92 compression
+.ih
+NAME
+fitsread -- Create an IRAF image from a compressed FITS file.
+.ih
+USAGE
+fitsread fitsfiles images
+.ih
+PARAMETERS
+.ls fitsfiles
+List of input compressed FITS file names. They must have the ".Z". suffix.
+.le
+.ls images
+List of output IRAF image names.
+.le
+.ls datatype = "" 
+This parameter has the same meaning as the \fBdatatype\fR parameter
+of \fBrfits\fR.
+The IRAF image file may be of a different data type than the FITS image data.
+The data type may be specified as \fBs\fR for \fBshort\fR, \fBi\fR for
+\fBinteger\fR, \fBl\fR for \fBlong\fR, \fBr\fR for \fBreal\fR, and \fBd\fR
+for \fBdouble\fR. The user must beware of truncation problems if an
+inappropriate data type is specified.  If an incorrect data type or a
+null string is given for this parameter then a default data type is used
+which is the appropriate minimum size for the input pixel values.
+If the \fBbscale\fR and \fBbzero\fR parameters in the FITS header are
+undefined or equal to 1.0 and 0.0 respectively, \fBrfits\fR selects datatype
+\fBs\fR or \fBl\fR depending on \fBbitpix\fR. If \fBbscale\fR and \fBbzero\fR
+are set to other than 1.0 and 0.0, \fBrfits\fR selects datatype \fBr\fR.
+.le
+.ls blank = 0.0
+This parameter has the same meaning as the \fBblank\fR parameter
+of \fBrfits\fR, i.e. the IRAF image value of a blank pixel.
+.le
+.ls scale = yes
+This parameter has the same meaning as the \fBscale\fR parameter  
+of \fBrfits\fR. If \fBscale\fR equals \fBno\fR the integers are read
+directly off the FITS file. Otherwise \fBrfits\fR checks the values of
+\fBbscale\fR and \fBbzero\fR. If these numbers are not 1. and 0.
+respectively, \fBrfits\fR scales the data before output.
+.le
+.ls oldirafname = no
+This parameter has the same meaning as the \fBoldirafname\fR parameter   
+of \fBrfits\fR
+If the oldirafname switch is set \fBrfits\fR will attempt to restore the
+image to disk with the filename defined by the IRAFNAME parameter in the
+FITS header.
+.le
+.ls verbose = yes
+Verbose operation ?. If this switch is set to \fByes\fR then the task
+will output information about the uncompress operation and the FITS
+to IRAF conversion.
+.le
+.ls fitscomp = yes
+Leave the FITS file compressed ?. If this switch is set to \fByes\fR then
+the FITS file recompressed back to its original state. Otherwise it is left
+uncompressed.
+.le
+.ls flist1, flist2
+Used internally by the task.
+.le
+.ih
+DESCRIPTION
+This is a CL script that, for each FITS file in the input list, it
+uncompresses the FITS file and then it converts it into an IRAF image.
+The FITS file must have a ".Z" suffix in its name.
+The uncompress operation is performed by the UNIX utility \fBuncompress\fR,
+called as a foreign task, and the FITS to IRAF conversion is performed by
+the \fBrfits\fR task.
+.ih
+EXAMPLES
+Create an IRAF image from a compressed FITS file, using verbose output, and
+then recompress back the FITS file.
+.nf
+
+co> fitsread fits1.Z image1 verbose=yes fitscomp=yes
+fits.Z:  -- replaced with fits
+File: image  m51  B  600s          Size = 512 x 512
+fits: Compression: 53.46% -- replaced with fits.Z
+.fi
+.ih
+TIME REQUIREMENTS
+The full process, with FITS file recompression, takes about fifteen seconds
+for a 512x512 short image, on a Sparcstation-1 with a SCSI disk.
+.ih
+BUGS
+The task might leave some temporary files in the current directory if it's
+aborted by the user before it completes.
+.ih
+SEE ALSO
+compression.fitswrite,
+dataio.rfits, (UNIX) compress, (UNIX) uncompress.
+.endhelp

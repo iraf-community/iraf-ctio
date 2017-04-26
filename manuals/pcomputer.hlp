@@ -1,0 +1,49 @@
+.help pcomputer Mar88 manuals
+.ls USING A PC AT TOLOLO
+
+There are many pcs being used at CTIO to log onto the mainframe computers.
+this is done by running an emulator program on the pc which makes it simulate,
+more or less, a vt100+retrographics terminal. If the pc is off, turning it
+on will boot the disk. If the pc is on but nothing is setup, ie; the prompt
+looks like " A> ", then you can run the emulator by typing 'vt'. Most of the
+pcs are equiped with hard disks. For those that are not; check to see that the
+correct floppy is installed. If this doesn't work, boot the disk again by
+typing Alt/Shift/Delete. Press all three keys at the same time. Then type 'vt'
+again. Once the pc runs the emulator, type 'return' several times. On the
+mountain each pc is connected directly to a specific SUN computer; you should
+get the normal login prompt for that computer. In La Serena the pcs are
+connected to a 'micom' terminal switcher, which allows them to be used to
+log on to any of the La Serena computers. You will then be prompted for the
+number of the computer you wish to log onto, so type the number and hit
+'return'. You may now log onto the computer at the prompt. 
+
+If you are logged in and using IRAF from a pc, it is a good idea to set the
+terminal to the proper identification. This helps when you are using the
+help facility for example by setting the screen size to the proper format.
+Do this by typing;
+
+.nf
+      cl> stty pc640
+.fi
+
+This will properly set the terminal type.
+
+There is a difference between text and graphics screens and there are two
+commands which link the two. In the vt100 screen you press Alt g to get into
+graphics mode. To get back to the text screen, type F3 or Alt v. In graphics
+mode, for terminals which have only one arrow keypad, the cursor movement is
+in small steps, but using shift and the arrow gives larger steps. For terminals
+which have two arrow keypads, use the cursor pad key. The numlock key will
+light up as well. This uses the far right keypad for small increments and the
+left one for large increments in the cursor movement.
+
+When you are finished first log off the mainframe computer in the normal way.
+In La Serena you must then type Alt/Shift b (type all three at once) to break
+the connection between the micom and the host computer. Finally, you can type
+Alt x to exit from the emulator program. The Ctrl/Shift key toggles back and
+forth between using the terminal emulator to talk to the mainframe and talking
+directly to the pc. You can safely switch back and forth without logging out,
+and can even leave a program running on the sun while you play chess on the
+pc.
+.le
+.endhelp

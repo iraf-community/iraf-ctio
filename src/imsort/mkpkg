@@ -1,0 +1,10 @@
+# imsort mkpkg file (Fri Mar 30 12:05:28 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_imsort.x	"imsort.com" <error.h>
+	;

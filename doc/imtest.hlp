@@ -1,0 +1,110 @@
+.help imtest Sep88 ctio
+.ih
+NAME
+imtest -- test image headers an pixel files
+.ih
+USAGE
+imtest imhdir pixdir
+.ih
+PARAMETERS
+.ls imhdr = "home$"
+The list of directories containing image header files. Any template
+including @ list may be used.
+.le
+.ls pixdir = "imdir$"
+The list of directories containing image pixel files. Any template
+including @ list may be used.
+.le
+.ls verbose = no
+Verbose output ?. If this switch is set ti \fByes\fR all files processed
+by the task are printed on the standard output, but good files are preceeded
+by a sharp sign (#).
+.le
+.ls verify = yes
+Verify before deleting files ?. If this switch is \fByes\fR then the user
+will be prompted by the \fBdelete\fR and \fBimdelete\fR commands before
+actually deleting files. Otherwise they will work silently.
+.le
+.ls ignore = yes
+Ignore node name in pixel file names ?. If this switch is set to \fByes\fR
+the task will ignore the node name at the beginning of the pixel file name
+in the image header. This is usefull when two or more hosts (nodes) share
+the same filesystem or directory with the same name. In this case the task
+would report pixel files without header because of different node names,
+although the pixel files are the same.
+.le
+.ih
+DESCRIPTION
+This task traverses the image header directories recursevely looking
+for all the header files, and trying to determine if they have a
+coresponding pixel file. All the headers wihout pixel file are reported
+to the standard output. The names of the existing pixel files are
+stored in a symbol table. Once all the header directories are traversed,
+the task starts traversing recursevely all the pixel files directories
+looking for all the pixel files. The pixel file names found are
+searched in the symbol table, and if they are not there, they are
+reported to the standard output.
+.br
+This task reports \fBall\fR the image headers wihout pixel
+files. The pixel files reported at least don't have a header in the list of
+the header directories traversed, but this \fBdoes not\fR mean that
+they dont have a header file in another directory not traversed. The
+latter is true only if the list of header directories contain \fBall\fR the
+possible image headers for a given user.
+.br
+The output of the program is a CL script containing \fBimdelete\fR and
+\fBdelete\fR statements for the image headers and pixel files repectively.
+When this script is executed it will delete all the image headers
+with no pixel file and all the pixel files wihout header.
+This script is \fBnot\fR executed automatically, so the user may store
+it into a file and modify it before executing it.
+If \fBverify=yes\fR then the user will be prompted by \fBimdelete\fR
+and \fBdelete\fR before actually deleting files.
+.ih
+EXAMPLE
+Generate a report and store it into the file \fIreport\fR. The ctio$
+directory contains all the header files, and the imdir$ contains all
+the pixel files. Neither verbose output, nor ignore node name are selected.
+.nf
+
+cl> imtest ctio$ imdir$ verbose- verify+ ignore- > report
+
+[Now look at the report to find possible errors]
+
+cl> type report
+# -- Headers without pixel file in (ctio$):
+imdelete ctios2!/tmp4/pedro/ctio/specred/data/junk.0001.imh verify=yes
+imdelete ctios2!/tmp4/pedro/ctio/spcombine/data/output.imh verify=yes
+
+# -- Pixel files without header in (imdir$):
+delete ctios2!/tmp5/iraf/pedro/dcstd14.0001aa.pix verify=yes
+delete ctios2!/tmp5/iraf/pedro/dcstd14.0001ab.pix verify=yes
+delete ctios2!/tmp5/iraf/pedro/dcstd14.0001ac.pix verify=yes
+delete ctios2!/tmp5/iraf/pedro/dircon.pix verify=yes
+delete ctios2!/tmp5/iraf/pedro/dcstd14.0001ad.pix verify=yes
+delete ctios2!/tmp5/iraf/pedro/dcstd14.0001ae.pix verify=yes
+delete ctios2!/tmp5/iraf/pedro/dcstd14.0001af.pix verify=yes
+delete ctios2!/tmp5/iraf/pedro/dirint.pix verify=yes
+delete ctios2!/tmp5/iraf/pedro/direvdaa.pix verify=yes
+
+.fi
+[All seems to be right, so let the CL execute the report script to delete
+the header an pixel files]
+.nf
+
+cl> cl < report
+.fi
+[CL asks for confirmation for each file before deleting since the verify switch
+was set to yes]
+.nf
+delete image 'ctios2!/tmp4/pedro/ctio/specred/data/junk.0001.imh' ? (yes): 
+delete image 'ctios2!/tmp4/pedro/ctio/spcombine/data/output.imh' ? (yes):
+.fi
+.ih
+TIME REQUIREMENTS
+The task may take a couple of minutes to execute if the directories to
+traverse contains many files and subdirectories.
+.ih
+SEE ALSO
+images.imdelete, system.delete
+.endhelp

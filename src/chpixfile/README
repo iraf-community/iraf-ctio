@@ -1,0 +1,8 @@
+CHPIXFILE		22-Sep-92		Pedro Gigoux
+
+This directory contains the code for the task to change the pixel file name
+in the image header of a list of images. The files contained here are:
+
+mkpkg			mkpkg file
+
+t_chpixfile.x		main task procedures

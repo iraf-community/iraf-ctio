@@ -1,0 +1,35 @@
+# library mkpkg file (Wed Apr 11 15:28:16 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+generic:
+	$ifnewer (bsearch.gx, bsearch.x)
+	    $generic -k -o bsearch.x bsearch.gx
+	$endif
+	;
+
+libpkg.a:
+	$ifeq (USE_GENERIC, yes) $call generic $endif
+
+	@mctable
+	bsearch.x	<mach.h>
+	addflux.x	
+	confnu.x	
+	directory.x	<error.h>
+	dtgastr.x	<pkg/dttext.h>
+	fft1d.x	
+	format.x
+	julian.x	
+	puttime.x	<time.h>
+	sort.x	
+	strext.x	<ctype.h>
+	strins.x	
+	strrep.x	
+	strsubs.x	
+	strwht.x	<ctype.h>
+	strwrd.x	
+	wairmass.x	<math.h>
+	;

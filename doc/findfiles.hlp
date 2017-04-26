@@ -1,0 +1,92 @@
+.help findfiles Apr89 ctio
+.ih
+NAME
+findfiles -- Find files
+.ih
+USAGE
+findfiles rootdir name
+.ih
+PARAMETERS
+.ls rootdir
+Root directory name from where start the search.
+This directory and all its subdirectories will be traversed during the
+search.
+.le
+.ls name
+File name template to match against the names of the files found.
+All meta-characters used for file name templates are supported.
+.le
+.ls type = "plain"
+File type to match against the type of the files found.
+Possible file types are: \fBnone\fR, \fBplain\fR, and \fBdirectory\fR,
+meaning any type of file, text or binary files, and directories, repectively.
+.le
+.ls print = yes
+Print file names as files are found ?.
+.le
+.ls nflush = 10
+Maximum number of files to store in the standard output buffer before
+printing them.
+This parameter may be set to a low value if the program is being used
+interactively, and to a high value if the output of the programm is being
+redirected to a file.
+The task runs faster with higher values.
+An INDEF value is traslated to the largest possible value.
+.le
+.ls execute = ""
+Command to execute on every file that matches all the conditions imposed
+by the other parameters.
+It can be any command that the CL would accept.
+All ocurrences of the string "$file" in the command string will be replaced
+by the matching file.
+.le
+.ls wait = yes
+Wait for command completion before proceding with the next matching file ?.
+.le
+.ls skip = yes
+Skip hidden files ?.
+.le
+.ih
+DESCRIPTION
+This task recursively descends the specified directory hierarchy seeking
+for files that match the conditions imposed by \fBname\fR, and \fBtype\fR.
+There are two possible actions to take on every file matching the
+previous conditions: print its name and/or execute a CL command.
+.sp
+The following meta-characters are recognized by the task in the
+file name template to match against file names:
+.nf
+
+	*	Match zero or more characters, e.g. *.cl
+	[...]	Any character in class, e.g. [a-z]
+	[^...]	Any character no in class, e.g. [^A-Z]
+	?	Match any single character, e.g. a?c
+	{...}	Ignore case for enclosed string, e.g. {Lroff}
+
+.fi
+If no meta-characters are used a plain string comparison is used.
+.ih
+EXAMPLES
+1.- Find all imaage header files in the user account, and print their names:
+.nf
+
+lo> findfiles home$ "*.imh" type=plain print+
+
+.fi
+2.- Find all subdirectories in the user account, and give a directory listing
+for each one:
+.nf
+
+lo> findfiles home$ "*" type=directory execute="dir $file"
+
+.fi
+3.- Delete all images in the user account, but prompting the user for
+confirmation (otherwise it would be very dangerous):
+.nf
+
+lo> findfiles home$ "*.imh" type=plain exec="imdelete $file ver+"
+.fi
+.ih
+SEE ALSO
+files, match
+.endhelp

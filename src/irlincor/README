@@ -1,0 +1,8 @@
+IRLINCOR		08-Jun-88	(Steve Heatcote, Pedro Gigoux)
+
+This directory comtains the source for the correction of IR imager frames
+for non linearity. The files are:
+
+mkpkg			mkpkg file
+
+t_irlincor.x		SPP source

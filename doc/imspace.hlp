@@ -1,0 +1,52 @@
+.help imspace Apr92 ctio
+.ih
+NAME
+imspace -- determine disk space used by IRAF images.
+.ih
+USAGE
+imspace images
+.ih
+PARAMETERS
+.ls images
+List of images to process.
+.le
+.ls vebose = yes
+Print space used by each image in the input list? If this switch is
+set to \fBno\fR then only a summary of the space for all images in
+the input list is printed.
+.ih
+DESCRIPTION
+This task determines how much space on disk is used by IRAF images. The
+size of the header and the pixel file are computed separately. The output
+of the task consists of three numbers: the space used by the image header,
+the space used by the pixel file, and the sum of both. If \fBverbose\fR
+is set, the space of each image  is printed separately. Otherwise
+only the total space is printed. The image names are printed in the first
+column when the \fBverbose\fR switch is set, or when there is only one
+image in the input list.
+.ih
+EXAMPLES
+1. Determine the size of a list of images using verbose output.
+.nf
+
+cl> imspace image*.imh verbose+
+image1.imh                           9344     525312     534656
+image2.imh                           9508     525312     534820
+TOTAL                               18852    1050624    1069476
+.fi
+
+2. Determine the size of the same list of images, but without verbose output.
+.nf
+
+cl> imspace image*.imh verbose-
+18852  1050624  1069476
+.fi
+.ih
+BUGS
+The image names MUST be fully specified, i.e. the extension cannot
+be ommited. This is because the task is using the file input/output (FIO)
+routines to open the image header and pixel files.
+.ih
+SEE ALSO
+images.imhead
+.endhelp

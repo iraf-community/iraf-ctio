@@ -1,0 +1,38 @@
+#  mkpkg file (Fri Jun 24 11:38:39 AST 1988)
+
+$call	relink
+$exit
+
+update:
+	$call	relink
+	$call	install
+	;
+
+relink:
+	$update	libpkg.a
+	$omake	x_spcombine.x
+	$link	x_spcombine.o libpkg.a -lxtools -liminterp -o xx_spcombine.e
+	;
+
+install:
+	$move	xx_spcombine.e pkgbin$x_spcombine.e
+	$purge	pkgbin$
+	;
+
+libpkg.a:
+	comrebin.x	"idsmtn.h" "spcombine.h" <imhdr.h> <math/iminterp.h>
+	debug.x		"idsmtn.h" "spcombine.h" <imhdr.h>
+	edit.x		"spcombine.h" <pkg/gtools.h> <pkg/xtanswer.h> \
+			<imhdr.h> <idsmtn.h>
+	expscale.x	"idsmtn.h" "spcombine.h"
+	idsm_keywrds.x	"idsmtn.h" <imhdr.h>
+	lam2pix.x	
+	load_hdr.x	"idsmtn.h" <imhdr.h>
+	plot.x	
+	rebin.x		"spcombine.h"
+	setdef.x	"idsmtn.h" "spcombine.h" <imhdr.h> <mach.h>
+	sort.x		"idsmtn.h" "spcombine.h"
+	spcombine.x	"spcombine.h" <pkg/gtools.h> <mach.h>
+	struct.x	"spcombine.h"
+	t_spcombine.x	"idsmtn.h" "spcombine.h" <error.h> <imhdr.h>
+	;

@@ -1,0 +1,128 @@
+.help fitrad Dic89 ctio
+.ih
+NAME
+fitrad -- Fit a function to circular image subrasters
+.ih
+USAGE
+fitrad images
+.ih
+PARAMETERS
+.ls images
+List of input images to process. Any image template can be used.
+.le
+.ls outroot = ""
+The output root image names. This name is preppened to each input image
+name in order to get the actual output image name.
+If null an ".out" string is appended to the input image name.
+.le
+.ls option = "fit"
+The output image option. The choices are:
+.ls fit     
+An image is created from the function fit to the image subsraster.
+The fit is made equal to the input image outside the subraster.
+.le
+.ls difference
+The difference between the input image and the fit (i.e. residuals).
+The fit is made equal to zero outside the subraster.
+.le
+.ls ratio
+The ratio of the image and fit.
+The fit is made equal to one outside the subraster.
+.le
+.le
+.ls xcenter = INDEF, ycenter = INDEF
+Center coordinates of the image subraster.
+If INDEF the center of the image is used.
+.le
+.ls radius = INDEF
+The maximum radius of the image subraster from the center defined above.
+All pixels out of this radius will not be processed at all.
+If INDEF the maximum radius within the image is used.
+.le
+.ls ringavg = "none"
+The ring averaging method. The choices are:
+.ls none
+No averaging is done.
+.le
+.ls median
+The azimuthal median of the pixel values is used.
+.le
+.ls mode
+The azimuthal mode of the pixel values is used.
+.le
+.ls mean
+The azimuthal mean of the pixel values is used.
+.le
+.le
+.ls minpts = INDEF
+The minimum number of pixels in a given ring when averaging.
+.le
+.ls minwith = INDEF
+The minimum ring width when averaging. The actual ring width may be
+increased if the number of pixels in the ring is less than this value.
+.le
+.ls function = spline3
+Function to be fit to the resulting radial profile. The 
+functions are "legendre" (legendre polynomial), "chebyshev" 
+(chebyshev polynomial), "spline1" (linear spline), and 
+"spline3" (cubic spline). The functions may be abbreviated.
+.le
+.ls order = 1
+The order of the polynomials or the number of spline pieces.
+.le
+.ls low_reject = 0., high_reject = 0.
+Rejection limits below and above the fit in units of the
+residual sigma.
+.le
+.ls niterate = 1
+Number of rejection iterations.
+.le
+.ls grow = 0.
+When a pixel is rejected, pixels within this distance of the
+rejected pixel are also rejected.
+.le
+.ls interactive = yes
+Run the task iteractively ?.
+.le
+.ls verbose = yes
+Print status information while the program is running ?. This option is
+usefull to know the status of processing for large images.
+.le
+.ls calctype = "real"
+Internal calculation type. It can be \fBreal\fR or \fBdouble\fR.
+.le
+.le
+.ls graphics = "stdgraph"
+Graphics output device for interactive graphics.
+.le
+.ls cursor = ""
+Graphics cursor input.
+.le
+.ih
+DESCRIPTION
+For each image in the list, the task fits radial profiles to circular
+image subrasters, either interactively or non-interactively.
+.br
+If \fBringavg=none\fR the task calculates the radius for each
+pixel, and a fit is made to the resulting radial profile. Otherwise the
+task divides the image in concentric annulii, and averages all the pixel
+values in each annulus according to the averaging method selected.
+.br
+Averaging is also controlled by the \fBminwidth\fR and \fBminpts\fR
+parameters. At least one of them must be defined or the task will abort
+with an error message. If \fBminwidth\fR is undefined then the annulii
+will have an even number of pixels defined by \fBminpts\fR.
+Otherwise, if \fBminwidth\fR is defined, then each annulus will have an
+even width with a variable number of pixels in each ring. The minimum
+number of pixels in all rings can be constrained to be grater than a
+certain value if the \fBminpts\fR parameter is also defined.
+.br
+The output of the program is an image, of the same dimension of the
+corresponding input image, created from the function fit, the difference
+between the original image and the fit, or the ratio between the original
+image and the fit. The pixel type of this image will be defined by the
+\fBcalctype\fR parameter, and not from the input image pixel type.
+.ih
+SEE ALSO
+fit1d
+.endhelp

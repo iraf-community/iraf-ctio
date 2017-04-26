@@ -1,0 +1,8 @@
+IMSPACE			27-Apr-92		Pedro Gigoux
+
+This directory contains the code for the task that determines how much
+space does an image use on disk (header + pixel).  The files are:
+
+mkpkg			mkpkg file
+
+t_imspace.x		main tasks procedure

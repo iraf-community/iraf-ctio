@@ -1,0 +1,1105 @@
+.help photman Aug92 Version-3.0
+
+.ce
+\fIVI. Photometry\fR
+
+.nf
+                1. Introduction
+                2. Options and data
+                3. Reading the data from tape
+                4. Photometry with SPHOT
+                   4.1 Obtaining the object coordinates
+                       4.1.1 Centers using DAOFIND
+                       4.1.2 Centers using Imtool
+                       4.1.3 Centers using rimcursor
+                       4.1.4 Using SPHOT in batch mode
+                   4.2 Using SPHOT interactively
+                5. Photometry with APPHOT
+		   5.1 APPHOT With the Imtool Window
+                   5.2 APPHOT With Graphics : Making the image plots
+                   5.3 Setting the parameters
+                   5.4 Running the task phot
+
+
+                                                      Lisa Wells
+
+                                                    August 31, 1992
+.fi
+.bp
+.ls \fI1. Introduction\fR
+
+This document is intended as a guideline for using aperture photometry
+reduction packages available at CTIO. The transformation of instrumental
+magnitudes to standard magnitudes is handled by the package PHOTCAL, see
+section VIII of this manual. If you do not have experience with
+the software there are staff members who can assist you. If you do
+not have experience using IRAF then we suggest you start by reading
+through, "An Introduction to IRAF" which will give you a general idea
+of IRAF structure as well as a few fundamental tools. If you are a
+first time user of the CTIO computers, there is a document available
+called "Using the Computers at CTIO". There is a copy near every console
+terminal and it can also be found in the last appendix of the IRAF
+Reduction Manuals found in the red binder in each console room. If you
+have never used DAOPHOT, it is strongly suggested that you read through
+the manual. DAOPHOT manuals can be found in the computer rooms in La
+Serena and in the computer rooms at the 1 and 4 meter telescopes.
+
+The examples shown here are just that, examples. The user
+must decide upon the reduction procedure, naming, convention,
+etc., appropriate for his own data and use the cookbook and
+examples as guidelines only. The IRAF examples are shown with prompts
+for the package containing the tasks (do not type the prompts,
+of course). It is strongly recommended that you perform an lpar
+on every task immediately before using it, unless you are
+familiar with all of its parameters. This is not always shown in
+the examples, but is normal practice even among seasoned IRAF
+users.
+
+IRAF uses two conventions that you should always keep
+in mind. First, images consist of lines and columns (not rows
+and columns). Second, the "order" of a function is the number of
+independent coefficients for a polynomial, or the number of intervals
+for a spline curve. For example, a cubic (third-degree) polynomial
+is described as "order=4" (four coefficients).
+
+If you require personal assistance in using IRAF for your reductions
+please contact either Mauricio Navarrete or Nelson Saavedra on Tololo,
+or Mario Hamuy in La Serena (ex 210). If you have trouble with DAOPHOT,
+contact Alistair Walker, Doug Geisler, or Mario Hamuy.
+.le
+.bp
+.ls \fI2. Options and Data\fR
+
+There are many photometry software packages now available at CTIO. We
+do not directly support this phase of data reduction however we felt
+it necessary to inform the users of the options. DAOPHOT has been
+incorporated into IRAF with minor changes in the parameters files.
+However, it still runs the same. There is also the APPHOT package in
+IRAF. There is another program in IRAF which was taken from the mountain
+photometry program used in FORTH on the LSI11s. This is called sphot, it
+was written for use at the telescope to do quick look photometry but it
+can be used for the final product as well. A note of warning however,
+the output format for sphot is not standard and therefore does not
+have a preprocessor for use in the photometric transformation package.
+If you plan to use PHOTCAL to transform your magnitudes, do not use
+sphot. However, both DAOPHOT and APPHOT have output which may be
+handled by the PHOTCAL package. The possible photometry options are:
+
+1. If your images are not crowded fields of stars, a quick method is
+available. This is also used on the mountain at the telescope for quick
+look photometry. It is a two step process of first making a list of the
+object positions on the image and then doing the aperture photometry in
+batch mode using SPHOT. This method doesn't work well in crowded fields,
+and in this case you should probably be using DAOPHOT. There are two ways
+to make a list of your objects and this is all described in section 3.
+This may also be run interactively with the imtool display window.
+
+2. APPHOT is a package in IRAF which works with the imtool display window
+or graphics window on the SUN console. This is a very versatile and
+complicated method of doing photometry. This manual is an attempt to
+clarify its operation and use. There are many algorithms incorporated
+for the experienced photometrist with special needs.
+
+3. DAOPHOT is used to find objects, calculate the aperture photometry,
+calculate the point spread function, calculate the coordinates and
+magnitudes, and subtract stars from the image. It is quite useful for
+crowded fields. A typical run of DAOPHOT is described in the standard
+DAOPHOT manual, though the IRAF convention is very different. 
+
+The PHOTCAL package can be used to transform photometry done using DAOPHOT
+or APPHOT. The PHOTCAL package is relatively new and has some naming
+conventions that you must be made aware of, for example the filter header
+keyword is very important. The preprocessor which formats the instrumental
+magnitudes for use in the package pulls out the filter parameter called
+IFILTER in the output files from APPHOT and DAOPHOT but reads only the
+first number in the field. If your images headers tabulate several filter
+bolts, then the first number may not correspond to the main filter being
+used as is the case at CTIO. Direct imaging on the 0.9 meter telescope
+records two filter bolt positions in the fits image header, which for the
+V filter looks like this "0 3". The preprocessor takes the 0 for the filter
+type not the 3. Editing the image headers or editing the photometry
+output files so that the filter type is set to "3 3" will take care of
+this. In making the instrumental magnitude tables the objects in an image
+are sorted in the y-coordinate.  It is easiest then, to mark your objects
+in increasing y order to ensure proper tracking of the object names. You
+must keep track of the object coordinates so that you can name them
+properly.
+
+Reading images from a tape is shown first but if your objects
+are already on the computer, skip this section and go on to the next one.
+Each option has a brief introduction which should help you in deciding
+which method is the best for you.
+.le
+.bp
+.ls \fI3 Reading the data from tape\fR
+
+If your data is currently on a computer disk then skip this section. Load the
+dataio package, allocate the appropriate tape drive, and mount your tape:
+
+.nf
+      cl> dataio
+      da> epar rfits
+      da> alloc mta
+.fi
+
+Read the data using the routine rfits. You must specify the tape-drive
+name, the list of files you wish to read in and the "root" file name.
+In choosing the root file name, it's usually a good idea to include a
+digit in the name to indicate the tape number (e.g., "tape2" for the
+second tape; files would be called "tape2001, tape2002, tape2003...");
+alternatively, an offset may be added (eg, offset=89 means the first
+files would be called "tape2090, tape2091, tape2092..." (1+89, 2+89...)).
+
+.nf
+      da> rfits mta 1-999 tape1
+.fi
+
+or
+
+.nf
+      da> rfits mta 1-999 tape1 off=43
+.fi
+
+In the above examples, the file list "1-999" should more than cover the
+number of files on tape; the task will end gracefully at the end of
+tape.  When finished, rewind the tape and deallocate the drive,
+
+.nf
+      da> rew mta
+      da> dealloc mta
+.fi
+
+and remove your tape from the drive.
+
+.nf
+
+                  \fIrfits\fR
+
+    fits_file = "mta"       FITS data source
+    file_list = "1-999"     File list
+    iraf_file = "tape1"     IRAF filename
+  (make_image = yes)        Create an IRAF image?
+ (long_header = no)         Print FITS header cards?
+(short_header = yes)        Print short header?
+    (datatype = "")         IRAF data type
+       (blank = 0.)         Blank value
+       (scale = yes)        Scale the data?
+ (oldirafname = no)         Use old IRAF name in place of iraf_file?
+      (offset = 0)          Tape file offset
+        (mode = "ql")           
+.fi
+.le
+.bp
+\fI4. Photometry with SPHOT\fR
+
+There are two possible modes of using SPHOT, interactively with the imtool
+window or in batch by supplying a coordinate list of objects in your image.
+As stated previously, your images should already be processed, i.e. trimmed,
+bias subtracted,...etc, unless you are at the telescope and just need a quick
+magnitude. If you have not processed the images, see section II, "CCD
+Reductions" or load the ctio package and type 'help ccdman'.
+
+There are several ways of making your list of object coordinates and the
+method you use depends upon the number of objects in the image. If there
+are a large number of objects it is best to use "daofind" in the apphot
+package in IRAF. If there are only a few objects then it is easiest to
+use the current interactive capabilities of the imtool display window. There
+are two possibilities to be used here and both are described.
+This is very simple and quick so you may wish to use this method for
+frames with many objects also. The options are given in section 4.1. For
+interactive use of SPHOT, see section 4.2.
+
+SPHOT will give you the counts or instrumental magnitudes. It is left to
+the observer to do the final processing from instrumental to standard
+magnitudes however, this is possible in IRAF using the PHOTCAL package.
+A good reference for this is the article by Harris et al., PASP, \fI93\fR,
+507 (1981). If you require assistance, see Alistair Walker, Doug Geisler,
+or Mario Hamuy.
+.le
+.bp
+.ce
+\fI4.1 Obtaining coordinate lists for your objects\fR
+.ls \fI4.1.1 Centers using DAOFIND\fR
+
+It is best to use daofind for cluttered images with a large number of objects
+in the field. This task convolves the data with a truncated, lowered
+elliptical Gaussian function to find the objects. There are other
+parameters which are used to locate the stars and eliminate galaxies and
+cosmic rays. These are the shape characteristics given by "roundlo",
+"roundhi", "sharplo", and "sharphi". You may wish to play with these
+parameters. Later you may delete other objects which you do not want.
+First you must load the apphot package,
+
+.nf
+      cl> ctio
+      ct> apphot
+      ap>
+.fi
+
+The ap> prompt means that the apphot package has been loaded. Now edit the
+parameters of daofind using an epar. You must have calculated the full width
+half maximum and have an idea what the pixel level is to set the parameter
+threshold. This is usually set to a few times the error in one pixel.
+These parameters are in a subset listing. If you move to the "datapars"
+parameter in the daofind setup, and type ':e' you will go into another
+setup which must be modified. The header parameters for the exposure time,
+airmass and filter. Also it is a good idea to set the CCD readout noise
+and gain parameters so the magnitude errors are calculated properly. When
+these parameters are set, type '^z" and you will go back to the daofind
+parameters. Type '^z' again to exit this. Now run it:
+
+.nf
+      ap> epar daofind
+      ap> daofind
+.fi
+
+The file specified by the parameter output now contains the object coordinates
+obtained by daofind. You may repeat these steps specifying different output
+files for each image. Once you have all your coordinates, you may proceed to
+the next section.
+
+.nf
+		    \fIdaofind\fR
+
+        Image = "tape1003" Input image
+       output = "out1003"  Results file (default: image.coo.?)
+ (convolution = "conv")    Output convolved image
+    (datapars = "")        Data dependent parameters (fwhmpsf, threshold, 
+       (\fIratio\fR = 1.)        Ratio of sigmay to sigmax of Gaussian kernel
+       (theta = 0.)        Position angle of major axis of Gaussian kernel
+      (\fInsigma\fR = 1.5)       Width of convolution kernel in sigma
+     (sharplo = 0.2)       Lower bound on sharpness for feature detection 
+     (sharphi = 1.)        Upper bound on sharpness for  feature detection
+     (roundlo = -1.)       Lower bound on roundness for feature detection
+     (roundhi = 1.)        Upper bound on roundness for feature detection
+    (\fIboundary\fR = "nearest") Boundary extension (constant, nearest, reflect,
+    (constant = 0.)        Constant for boundary extension
+    (graphics = "stdgraph") Graphics device
+     (display = "stdimage") Display device
+    (commands = "")        Image cursor: [x y wcs] key [cmd]
+      (cursor = "")        Graphics cursor: [x y wcs] key [cmd]
+(mkdetections = no)        Mark detected stars on the display
+ (\fIinteractive\fR = no)        Interactive mode
+      (verify = yes)       Verify critical parameters in non interactive m
+      (update = no)        Update critical parameters in non interactive m
+     (verbose = no)        Print messages in non interactive mode
+        (mode = "ql")
+
+                     \fIdatapars\fR
+
+       (scale = 1.)        Image scale in units per pixel
+     (\fIfwhmpsf\fR = 1.)        FWHM of the PSF in scale units
+    (emission = yes)       Features are positive ?
+       (sigma = INDEF)     Standard deviation of background in counts
+     (datamin = INDEF)     Minimum good data value
+     (datamax = INDEF)     Maximum good data value
+   (threshold = 0.)        Detection threshold in counts above background
+  (cthreshold = 0.)        Centering threshold in counts above background
+       (noise = "poisson") Noise model
+     (ccdread = "")        CCD readout noise image header keyword
+        (gain = "")        CCD gain image header keyword
+   (\fIreadnoise\fR = 5.7)       CCD readout noise in electrons
+       (\fIepadu\fR = 2.7)       Gain in electrons per count
+    (\fIexposure\fR = "exptime") Exposure time image header keyword
+     (\fIairmass\fR = "airmass") Airmass image header keyword
+      (\fIfilter\fR = "filters") Filter image header keyword
+     (\fIobstime\fR = "exptime") Time of observation image header keyword
+       (itime = INDEF)     Exposure time
+    (xairmass = INDEF)     Airmass
+     (ifilter = "INDEF")   Filter
+       (otime = "INDEF")   Time of observation
+        (mode = "ql")
+.fi
+
+You may wish to look at this output, just type 'type out1003' and you will
+see:
+
+.nf
+      #K IRAF       = NOAO/IRAF V2.6 version   %-15s     
+      #K USER       = v10            name      %-15s     
+      #K HOST       = ctios3         name      %-15s     
+      #K DATE       = 08-18-88       mm-dd-yr  %-15s     
+      #K TIME       = 15:52:11       hh:mm:ss  %-15s     
+      #K PACKAGE    = apphot         name      %-15s     
+      #K TASK       = daofind        word      %-15s     
+      #K IMAGE      = tape1003       imagename %-15s     
+      #K FWHMPSF    = 4.             pixels    %-15.7g   
+      #K NSIGMA     = 1.5            number    %-15.7g   
+      #K RATIO      = 1.             number    %-15.7g   
+      #K THETA      = 0.             degrees   %-15.7g   
+      #K THRESHOLD  = 350.           counts    %-15.7g   
+      #K SHARPLO    = 0.2            number    %-15.7g   
+      #K SHARPHI    = 1.             number    %-15.7g   
+      #K ROUNDLO    = -1.            number    %-15.7g   
+      #K ROUNDHI    = 1.             number    %-15.7g   
+      #
+      #N XCENTER  YCENTER  MAG      SHARP   ROUND   ID      \
+      #U pixels   pixels   #        #       #       #       \
+      #F %-12.2f  %-9.2f   %-9.3f   %-8.3f  %-8.3f  %-6d    \
+      #
+         179.10   45.25    -1.869   0.606   0.295   54    
+         195.74   91.04    -5.414   0.382   0.067   106   
+         304.99   145.91   -5.338   0.345   0.080   167   
+         273.96   168.81   -5.219   0.559   0.252   195   
+         282.97   181.74   -4.221   0.763   0.297   217   
+         290.92   184.94   -5.127   0.647   0.206   222   
+         286.06   286.21   -1.472   0.682   0.227   363   
+         288.68   305.03   -0.073   0.604   -0.093  387   
+         298.23   335.88   -1.373   0.568   0.022   419   
+         284.96   343.81   -3.996   0.771   0.202   433   
+         327.05   431.84   -4.287   0.752   0.212   543   
+         149.69   468.57   -5.143   0.277   0.036   583   
+         119.95   492.87   -4.296   0.609   -0.000  609   
+         205.22   495.12   -5.402   0.323   -0.027  613   
+.fi
+.le
+.bp
+.ls \fI4.1.2 Centers using Imtool\fR
+
+Now that you have your data read in, we begin by displaying an image
+using the imtool window, you must be logged in at a SUN console to do 
+this. This first method is best used when you have a few objects in the
+image or you have a few in a cluttered field for which you need
+magnitudes.  This can be used quickly for crowded images with many
+program objects but a better method for these is explained in section
+3.3.2. First load the tv package by typing:
+
+.nf
+      cl> noao
+      no> tv
+      tv>
+.fi
+
+The tv> prompt means that the tv package has been loaded. Now display one
+of your images using display:
+
+.nf
+      tv> display tape1003 1
+.fi
+
+The "1" at the end of the command is the frame number in which you would
+like your image to be displayed. There are 4 frames that can be used. If
+you would like more information about the console windows, type 'help
+console' while logged into IRAF or read the manual "Using the Computers
+at CTIO" located in the computer room near each console. The image
+specified is now visible in the imtool window. Next press the 'F6' key.
+You will see coordinates appear at the lower right of the screen. Now
+when you move the cursor, the coordinates keep track of where you are.
+It is a good idea to check the coordinates by moving the cursor to the
+lower left corner of the image to look for the origin (1,1). If one of
+the corners doesn't give the origin coordinates then the imtool is not
+set up properly and you should ask Mario Hamuy, Mauricio Navarrete, or
+Nelson Saavedra for assistance.  The frame number at the top of the
+screen is important here since now you will begin writing the
+coordinates of your objects to a file by that title.
+
+Now move the cursor to your object and press the left button on the
+mouse. A number will appear up and to the right of your object to
+indicate your choice and the coordinates are written to the file called
+frame.1.1 in your uparm directory. The cursor position is important
+since this does not use a centering algorithm. Do this for all the
+objects in this frame for which you need magnitudes. When you are
+finished repeat the process on your next image and mark the objects.
+The title of the image is written to the output file and is taken from
+the comment header parameter. Now if you wish to look at one of your
+coordinate files:
+
+.nf
+      tv> type uparm/frame.1.1
+.fi
+
+This will show:
+
+.nf
+      # Thu Aug 18 15:38:26 1988
+      # [1] frame.1.1: tape1003 - Cen A R
+      206.646 494.282
+      119.793 492.055
+      148.744 467.558
+      328.018 430.812
+      285.705 342.845
+      305.748 336.164
+      309.088 303.873
+      285.705 287.17
+      290.159 184.728
+      285.705 181.387
+      274.569 169.139
+      305.748 145.755
+      195.511 91.1937
+      159.879 46.6536
+.fi
+
+Now you may skip section 3.3.2 and go on to the photometry reduction in
+section 3.4.
+.le
+.bp
+.ls \fI4.1.3 Centers using rimcursor\fR
+
+This is an interactive task using the imtool window. It is first
+necessary to display the object in the imtool window using the tv
+package and run the task rimcursor. First load the lists package;
+
+.nf
+      cl> tv
+      tv> lists
+      li> display tape1003 1
+      li> rimcursor > out1003
+.fi
+
+This will run the task rimcursor and open the file "out1003". The cursor
+loop has been entered and the objects in the image can be put in the
+file list by moving the cursor to an object and pressing the 'space
+bar'. There is a zoom option used by typing 'Z'. To get the whole image
+back, type '0'. Typing 'return' will quit the task. An example of the
+format of this file is shown below. Now this file can be used as the
+input coordinate list in sphot.
+
+.nf
+      li> type out1003
+      205.000 495.000 101 \040 
+      122.000 490.000 101 \040 
+      148.000 465.000 101 \040
+      329.000 346.000 101 \040 
+      285.000 342.000 101 \040 
+      305.000 334.000 101 \040 
+      308.000 301.000 101 \040 
+      282.000 286.000 101 \040 
+      288.000 186.000 101 \040 
+      285.000 179.000 101 \040 
+      275.000 167.000 101 \040 
+      302.000 147.000 101 \040
+      194.000 94.1000 101 \040
+      157.000 43.0000 101 \040
+.fi
+.le
+.bp
+.ls \fI4.1.4 Photometry using SPHOT\fR
+
+SPHOT is located in the ctio package at CTIO. This task is an IRAF
+adaptation of the FORTRAN program called ssphot (single star photometry
+or the "Harvey Butcher Mountain Photometry Code") used at KPNO. Begin
+by loading the ctio package and editing the sphot parameters:
+
+.nf
+      cl> ctio
+      ct> epar sphot
+.fi
+
+You may wish to change the sky window radii or other parameters. When you
+are satisfied type '^z' to exit. The position file is the output from
+imtool, uparm/frame.1.1 or the file from daofind, tape1003. The output is
+written directly to the terminal so you may wish to redirect the output
+to a file, so run the task,
+
+.nf
+      lo> sphot tape1003 out1003 > phot1003
+.fi
+
+The file phot1003 now contains all the information for that image. If you
+would like a hardcopy of the file, send the file to the laser printer
+using:
+
+.nf
+      lo> lpr phot1003
+.fi
+
+This will show the calculated parameters, there is a verbose boolean
+parameter which will give a long explanation if set to yes. It is up to
+you to choose the setting required. Typing out the file will result in
+the following:
+
+.nf
+      Image = dev$pix    Title = Cen A R
+      Exp. time = 300.00    Airmass = no data    Filter = no data
+
+      Setup parameters:
+      radius of stellar aperture          = 10.000
+      inner sky radius                    = 10.500
+      outer sky radius                    = 18.000
+      maximum shift from initial position =  5.000
+      number of iterations for centroid   =   5
+      half width of centering box         =   3
+      sky                                 = mode
+      sigma rejection parameter           =  3.000
+      magnitude zero point                = 23.500
+      gain (electrons/ADU)                = 10.500
+
+      Star # 1:
+      number of sky pixels              = 672
+      sky mean                          = 794.56
+      sky median                        = 745.25
+      sky mode                          = 646.64
+      sigma sky                         = 219.55
+      number of pixels in star aperture = 315
+      total star counts                 = 43142.0
+      error in magnitude: dm(n)         =  0.002
+      error in magnitude: dm(sky)       =  0.004
+      error in magnitude: dm(noise)     =  0.098
+      x position                        =   179.38
+      y position                        =    44.80
+      magnitude                         =  18.106
+      sigma magnitude                   =  0.098
+
+      Star # 2:
+      number of sky pixels              = 671
+      sky mean                          = 879.25
+      sky median                        = 835.33
+      sky mode                          = 747.49
+      sigma sky                         = 270.31
+      number of pixels in star aperture = 316
+      total star counts                 = 326918.9
+      error in magnitude: dm(n)         =  0.000
+      error in magnitude: dm(sky)       =  0.000
+      error in magnitude: dm(noise)     =  0.016
+      x position                        =   195.50
+      y position                        =    91.08
+      magnitude                         =  15.907
+      sigma magnitude                   =  0.016
+
+      Star # 3:
+               etc....
+.fi
+
+Now it is up to you to convert to the standard scale and write the paper.
+
+.nf
+                \fIsphot\fR
+
+     images = "tape1003"  Image file names
+    (\fIcursor\fR = "out1003")  Image cursor
+  (\fIstarlist\fR = "")         Star position file
+     (\fIrstar\fR = 10.)        Radius of stellar aperture
+        (\fIr1\fR = 10.5)       Inner sky radius
+        (\fIr2\fR = 18.)        Outer sky radius
+      (rdel = 5.)         Maximum shift from initial position
+     (niter = 5)          Number of iterations for centroid
+     (cside = 3)          Half width of centering box
+       (\fIsky\fR = "mode")     Sky determination
+      (\fIksig\fR = 3.)         Sigma rejection parameter for sky determination
+    (\fIzpoint\fR = 23.5)       Magnitude zero point
+      (\fIgain\fR = 10.5)       Gain (electrons/ADU)
+   (verbose = yes)        Long output format
+      (mode = "ql") 
+.fi
+.le
+.bp
+.ls \fI4.2 Interactive use of SPHOT\fR
+
+Now if you wish to interactively use the task sphot, first load the
+ctio package and edit the parameters of sphot. Since the imtool window
+will be used, the tv package must be loaded also.
+
+.nf
+      cl> noao
+      no> tv
+      tv> ctio
+      ct> epar sphot         (see the parameters below)
+.fi
+
+The major difference from the batch mode is that the parameter cursor
+must be left blank to read from the image cursor. The parameter star
+list must also be blank. The output is written directly to the terminal
+so you may wish to redirect the output to a file, so run the task,
+
+.nf
+      lo> sphot tape1003 out1003 > phot1003
+.fi
+
+Now you are interactively using sphot. Just move the cursor to the stars
+for which you want magnitudes and press the 'space bar'. The output will
+go directly into the file phot1003 and will not echo on the terminal.
+When all your stars have been done, just type 'q'. The file "phot1003"
+now contains all the information for that image. If you would like a
+hardcopy of the file, send the file to the laser printer using:
+
+.nf
+      lo> lpr phot1003
+.fi
+
+An example of the format of this file in shown in the previous section.
+Now it is up to you to convert to the standard scale and write the paper.
+
+.nf
+                \fIsphot\fR
+
+     images = "tape1003"  Image file names
+    (cursor = "")         Image cursor
+  (starlist = "")         Star position file
+     (\fIrstar\fR = 10.)        Radius of stellar aperture
+        (\fIr1\fR = 10.5)       Inner sky radius
+        (\fIr2\fR = 18.)        Outer sky radius
+      (rdel = 5.)         Maximum shift from initial position
+     (niter = 5)          Number of iterations for centroid
+     (cside = 3)          Half width of centering box
+       (\fIsky\fR = "mode")     Sky determination
+      (\fIksig\fR = 3.)         Sigma rejection parameter for sky determination
+    (\fIzpoint\fR = 23.5)       Magnitude zero point
+      (\fIgain\fR = 10.5)       Gain (electrons/ADU)
+   (verbose = yes)        Long output format
+      (mode = "ql")
+.fi
+.le
+.bp
+.ls \fI5. Photometry using APPHOT\fR
+
+APPHOT runs a bit differently than SPHOT and there are many more options
+for the centering, sky evaluation, and photometry algorithms. It also
+has many modes of use, interactively with the imtool or graphics windows,
+or in batch. Only one of these methods, using the graphics window is
+shown below. As stated previously, your images should already be
+processed, i.e. trimmed, bias subtracted,...etc, unless you are at the
+telescope and just need a quick magnitude. If you have not processed the
+images, see section V, CCD  Direct Imaging Reductions or load the ctio
+package and type 'help ccdman'. If you have crowded fields, use DAOPHOT.
+It is important to know what mode is best to use for your images. This
+section examples only one mode but there are many ways to use apphot. If
+you would like to know about the other ways to use this package see the
+help page for the task phot which gives examples of the different modes
+of use.
+
+There are a few standard things about running the photometry task in
+apphot, called "phot". First, the definition of the 'stdimcur' is very
+important. To check its current value, type 'show stdimcur'. Depending
+upon the mode you are using, this may need to be changed. Every time
+phot is run interactively, a help menu first appears and typing 'q' will
+begin the interactive mode you are using. Also, the parameters must be
+set either interactively or by editing the parameters of all the relevant
+tasks. This can be done all in one step by editing the parameters for
+phot. All other relevant parameters are linked to this one. There may be
+some special preparation necessary before running phot like displaying
+images or making contour plots of images. While running phot, radial
+profiles of stars may be performed as an option. This is complicated
+since there are many levels to the program and you have different keypad
+mappings depending on the level. If at any time you don't know the
+command needed, just type '?' and a help page will come up on the gterm
+screen. This only works if you are in the interactive mode.
+
+The easiest way to use the task phot is with the imtool display window.
+This is done by first displaying the image and then running phot. Now
+you must set up the many parameters used by phot. This method creates a
+single file of output for each image and is very slow unless you only
+have a few images. There are 4 planes of memory in the imtool window
+which can be used at one time and using all of them with phot will give
+one output file for four images. This could also be used at the
+telescope for quick look photometry.
+
+If you have many images and only a few objects in each but would like
+one large output file for a night's worth of data, then using the
+graphics window with contour plots of your images is the best method.
+This involves some amount of typing which is tedious, but is the most
+convenient for large amounts of data. Contour plots of all your images
+must be made and reviewed to be sure that the correct objects appear.
+The environment variable 'stdimcur' must be set properly. Now phot can
+be run using the graphics window. This method will be described in the
+following sections.
+
+To run in batch mode you must first create a file with the positions of
+your objects. This is done one file at a time using any of the methods
+described in section 4.1 of this manual. The parameters must also be
+specified before running the task phot. This also is meant to do images
+one at a time and a coordinate list must be done for each image.
+
+Other programs in apphot that do the photometry calculations are qphot
+(quick photometry), and polyphot which uses polygon shaped apertures.
+The latter is currently being written and is not yet ready. The qphot
+task is just like the sphot in the ctio package used here at CTIO but
+has many parameters. It prompts the user for all the important
+parameters used in the photometry algorithms. The task sphot has a much
+more simplified parameter setup which hopefully won't confuse the first
+time users of aperture photometry methods.
+
+The output file from phot, qphot or polyphot (not yet completed) is a
+large file containing first the parameters used in running the task.
+This is to ensure that the parameters can be duplicated at a later date
+if necessary. Following this header information is the object header
+format and the individual photometry for each object. Certain fields can
+be pulled out of this file to create a small file to be plotted for
+example or to be input into another task to calculate the standard
+magnitudes for that night. A package called photcal was written to do
+this calculation in IRAF. For more information about this, load the
+ctio package and type "help stphot".
+.le
+.bp
+.ls \fI5.1 APPHOT With the Imtool Window\fR
+
+The parameters that govern the photometry calculations are different for
+use of the Imtool window. First we need to edit the parameters of the task
+phot. An example of this setup is given below. The four parameter files,
+datapars, centerpars, fitskypars and photpars are all linked to other
+parameter sets.  To get into these, move the cursor to this parameter using
+the arrow cursor pad and type ':e'. This will bring up the other parameter
+set. To get back to the original setup just type the usual escape command
+'^z'. In general the defaults are used in the centerpars and fitskypars but
+other algorithms are available. To get more information about these tasks,
+just type 'help centerpars' or 'help fitskypars'. 
+
+It is possible to interactively set up all these parameters but it is
+easier to set them in the task set ups and then they won't vary. All the
+examples below show one possible setup, but do not be afraid to change
+some of the parameters. The parameters in datapars are not terribly
+important but the fwhmpsf should be left to "1" to ensure that the rest
+of the parameters are specified in pixels. You may however wish to use
+the scale of the CCD in this parameter to set up everything in arcseconds
+for example. The choice of aperture size and sky annulus are completely
+up to the observer. Also, the readnoise and epadu parameters are only
+used in the error determinations. Be sure that exposure is set to the
+proper header keyword for the exposure time. Using "default" as the value
+in the "output" parameter, the output file will be the same base name
+of the image with a ".mag.#" applied to the end.
+
+.nf
+                      \fIphot\fR
+
+        image = "obj1002"  Input image
+      skyfile = ""        Sky file
+    (datapars = "")       Data dependent parameters
+  (centerpars = "")       Centering parameters
+  (fitskypars = "")       Sky fitting parameters
+    (photpars = "")       Photometry parameters
+      (coords = "")       Coordinate list
+      (\fIoutput\fR = "default") Results file
+    (plotfile = "")       File of plot metacode
+    (graphics = "stdgraph") Graphics device
+     (display = "stdimage") Display device
+    (commands = "")       Image cursor: [x y wcs] key [cmd]
+      (cursor = "")       Graphics cursor: [x y wcs] key [cmd]
+    (radplots = no)       Plot the radial profiles
+ (\fIinteractive\fR = yes)      Mode of use
+      (verify = yes)      Verify critical parameters in non interactive mode
+      (update = no)       Update critical parameters in non interactive mode
+     (verbose = no)       Print messages in non interactive mode
+        (mode = "ql")     
+
+                   \fIdatapars\fR
+
+       (scale = 1.)       Image scale in units per pixel
+     (\fIfwhmpsf\fR = 1.0)      FWHM of the PSF in scale units
+    (emission = yes)      Features are positive
+       (sigma = 15.)      Standard deviation of background in counts
+     (datamin = INDEF)    Minimum good data value
+     (datamax = INDEF)    Maximum good data value
+   (threshold = 0.)       Detection threshold in counts above background
+  (cthreshold = 0.)       Centering threshold in counts above background
+       (\fInoise\fR = "poisson") Noise model
+     (ccdread = "")       CCD readout noise image header keyword
+        (gain = "")       CCD gain image header keyword
+   (\fIreadnoise\fR = 8.)       CCD readout noise in electrons
+       (\fIepadu\fR = 4.)       Gain in electrons per count
+    (\fIexposure\fR = "exptime") Exposure time image header keyword
+     (\fIairmass\fR = "airmass") Airmass image header keyword
+      (\fIfilter\fR = "filters") Filter image header keyword
+     (\fIobstime\fR = "exptime") Time of observation image header keyword
+       (itime = INDEF)    Integration time
+    (xairmass = INDEF)    Airmass
+     (ifilter = "INDEF")  Filter
+       (otime = "INDEF")  Time of observation
+        (mode = "ql")           
+
+                   \fIcenterpars\fR
+
+  (calgorithm = "centroid") Centering algorithm
+        (\fIcbox\fR = 3.)       Centering box width in scale units
+    (\fImaxshift\fR = 5.)       Maximum center shift in scale units
+  (minsnratio = 1.)       Minimum SNR ratio for centering
+    (cmaxiter = 20)       Maximum iterations for centering algorithm
+       (clean = no)       Symmetry clean before centering
+      (rclean = 1.)       Cleaning radius in scale units
+       (rclip = 2.)       Clipping radius in scale units
+      (kclean = 3.)       K-sigma rejection criterion in skysigma
+    (mkcenter = no)       Mark the computed center
+        (mode = "ql")     
+
+                   \fIfitskypars\fR
+
+  (salgorithm = "mode")   Sky fitting algorithm
+     (\fIannulus\fR = 15.00000000) Inner radius of sky annulus in scale units
+    (\fIdannulus\fR = 10.00000000) Width of sky annulus in scale units
+    (skyvalue = 0.)       User sky value
+    (smaxiter = 10)       Maximum number of sky fitting iterations
+    (\fIsnreject\fR = 50)       Maximum number of sky fitting rejection iterati
+    (skreject = 3.)       K-sigma rejection limit in sky sigma
+       (khist = 3.)       Half width of histogram in sky sigma
+     (binsize = 0.10000000149012) Binsize of histogram in sky sigma
+      (smooth = no)       Lucy smooth the histogram
+       (rgrow = 0.)       Region growing radius in scale units
+       (mksky = no)       Mark sky annuli on the display
+        (mode = "ql")     
+
+                      \fIphotpars\fR
+
+   (\fIweighting\fR = "constant") Photometric weighting scheme for wphot
+   (\fIapertures\fR = "6.0,9.0,12.0,15.0") List of aperture radii in scale units
+        (zmag = 26.)      Zero point of magnitude scale
+     (mkapert = no)       Draw apertures on the display
+        (mode = "ql")           
+
+
+You must first display up to 4 images in the imtool window by using the
+task display.  You must be logged in at a SUN console to do this. First
+load the tv package by typing:
+
+.nf
+      cl> noao
+      no> tv
+      tv>
+.fi
+
+The tv> prompt means that the tv package has been loaded. Now display one
+of your images using display:
+
+.nf
+      tv> display tape1002 1
+.fi
+
+The "1" represents the frame number in which you would like your
+image to be displayed. There are 4 frames that can be used. If you
+would like more information about the console windows, type 'help console'
+while logged into IRAF with the ctio package loaded or read the manual
+"Using the Computers at CTIO" located in the computer room near each
+console or in the red binder at the end of the appendices. The image
+specified is now visible in the imtool window. Next press the 'F6' key.
+You will see coordinates appear at the lower right of the screen. Now when
+you move the cursor, the coordinates keep track of where you are. It is
+a good idea to check the coordinates by moving the cursor to the lower
+left corner of the image to look for the origin (1,1). If one of the
+corners doesn't give the origin coordinates then the imtool is not set
+up properly and you should ask Mario Hamuy, Mauricio Navarrete, or
+Nelson Saavedra for assistance.
+
+If your images are not on the computer, see section 3 of this document.
+Check the environment variable stdimcur. This should be set to stdimage.
+
+.nf
+      cl> show stdimcur
+.fi
+
+If the response is other than "stdimage" then change it by typing;
+
+.nf
+      cl> set stdimcur=stdimage
+.fi
+
+Now you are ready to run phot, do this by typing 'phot'. A circular
+cursor will appear in the imtool window. Now move the cursor to your
+objects and type the space bar at each. To step through the image planes
+in the imtool window type "^f". You must also reset the image name for
+each image plane by typing ":image obj1003", for example for the image
+displayed in the second frame. Now do the same for this image and continue
+through all your images. When you are finished type 'q' twice, in openwin
+you might have to type this 3 times. Now look at the output file and you
+will see that a large header precedes the image photometry. Currently,
+you must keep good notes about each object and its position so that you
+remember which one you did first. This will hopefully be taken care of
+in the future.
+
+If you would like to make a table of the magnitudes from the largest of
+the apertures used, use the task "txdump". You used 4 apertures and so
+"txdump" should look like the setup below. Running this will pull all
+the fields specified out of the output file from phot and create a table
+with 4 columns, one for each field.
+
+.nf
+                        \fItxdump\fR
+
+     textfile = "obj1002.mag.1" apphot output textfile(s)
+       fields = "image,rapert[4],mag[4],merr[4]" fields to be extracted
+         expr = "yes"     boolean expression
+     (headers = no)       Print the field headers ?
+  (parameters = yes)      Print the parameters if headers is yes ?
+        (mode = "ql")     mode of task
+.fi
+.le
+.bp
+.ls \fI5.2 APPHOT With the Graphics Window: Making the image plots\fR
+
+First we begin by making a list of your objects, and edit this file to make a
+short script.
+
+.nf
+      cl> plot
+      pl> files *.imh > proc
+      pl> ed proc
+	  :1,$s/.imh//
+	  :1,$s/.*/contour & >G plot&
+	  :1,$s/plotobj/plot
+	  :wq
+.fi
+
+The package containing the task contour must be loaded at the same time. Now
+we have a script that will make a contour plot of all the images. Next we
+run this by typing 'cl < proc'. You will get a short message from the task
+contour for each image. Now look at all the plots to be sure that they all
+have the images at the right contour level to be shown. This is done using
+the task gkimosaic, just type 'gkimosaic plot*'. Four plots will be shown at
+a time and the space bar will go on to the next four plots. If you have any
+plots that are missing one of you stars for example, do an implot of that
+image and get a value of the background and set the floor and ceiling
+parameters in the task contour and run it again. When all you images are
+visible in the image you are ready. Usually the defaults are good enough. If
+you find that too many objects are lost in many images, increase the number of
+contours to be plotted in the contour parameters, delete the plots and run
+the script again. About 20-30 is a good number to try.
+
+This is being done because the tasks cannot access the display window while
+it is being accessed and so the best way to do a large number of images is
+to use the graphics window. Also, all the photometry will be output to one
+big file as opposed to one file per image.
+.le
+.bp
+.ls \fI5.3 Setting the parameters\fR
+
+Now it is time to set the parameters that will govern the photometry
+calculations. First we need to edit the parameters of the task phot. An
+example of this setup is given below. The four parameters, datapars,
+centerpars, fitskypars and photpars are all linked to other parameter sets.
+To get into these, move the cursor to this parameter using the arrow cursor
+pad and type ':e'. This will bring up the other parameter set. To get back
+to the original setup just type the usual escape command '^z'. In general
+the defaults are used in the centerpars and fitskypars but other algorithms
+are available. To get more information about these tasks, just type 'help
+centerpars' or 'help fitskypars'. 
+
+It is possible to interactively set up all these parameters but it is easier
+to set them in the task set ups and then they won't vary. All the examples
+below show one possible setup, but do ntot be afraid to change some of the
+parameters. The parameters in datapars are not terribly important but the
+fwhmpsf should be left to "1" to ensure that the rest of the parameters are
+specified in pixels. Also, the readnoise and epadu parameters are only used in
+the error determinations. Be sure that exposure is set to the proper header
+keyword for the exposure time.
+
+.nf
+                      \fIphot\fR
+
+        image = "obj201"  Input image
+      skyfile = ""        Sky file
+    (datapars = "")       Data dependent parameters
+  (centerpars = "")       Centering parameters
+  (fitskypars = "")       Sky fitting parameters
+    (photpars = "")       Photometry parameters
+      (coords = "")       Coordinate list
+      (\fIoutput\fR = "magnsfeb13") Results file
+    (plotfile = "")       File of plot metacode
+    (graphics = "stdgraph") Graphics device
+     (display = "stdgraph") Display device
+    (commands = "")       Image cursor: [x y wcs] key [cmd]
+      (cursor = "")       Graphics cursor: [x y wcs] key [cmd]
+    (radplots = no)       Plot the radial profiles
+ (\fIinteractive\fR = yes)      Mode of use
+      (verify = yes)      Verify critical parameters in non interactive mode
+      (update = no)       Update critical parameters in non interactive mode
+     (verbose = no)       Print messages in non interactive mode
+        (mode = "ql")     
+
+                   \fIdatapars\fR
+
+       (scale = 1.)       Image scale in units per pixel
+     (\fIfwhmpsf\fR = 1.0)      FWHM of the PSF in scale units
+    (emission = yes)      Features are positive
+       (sigma = 15.)      Standard deviation of background in counts
+     (datamin = INDEF)    Minimum good data value
+     (datamax = INDEF)    Maximum good data value
+   (threshold = 0.)       Detection threshold in counts above background
+  (cthreshold = 0.)       Centering threshold in counts above background
+       (\fInoise\fR = "poisson") Noise model
+     (ccdread = "")       CCD readout noise image header keyword
+        (gain = "")       CCD gain image header keyword
+   (\fIreadnoise\fR = 8.)       CCD readout noise in electrons
+       (\fIepadu\fR = 4.)       Gain in electrons per count
+    (\fIexposure\fR = "exptime") Exposure time image header keyword
+     (\fIairmass\fR = "airmass") Airmass image header keyword
+      (\fIfilter\fR = "filters") Filter image header keyword
+     (\fIobstime\fR = "exptime") Time of observation image header keyword
+       (itime = INDEF)    Integration time
+    (xairmass = INDEF)    Airmass
+     (ifilter = "INDEF")  Filter
+       (otime = "INDEF")  Time of observation
+        (mode = "ql")           
+
+                   \fIcenterpars\fR
+
+  (calgorithm = "centroid") Centering algorithm
+        (\fIcbox\fR = 3.)       Centering box width in scale units
+    (\fImaxshift\fR = 4.)       Maximum center shift in scale units
+  (minsnratio = 1.)       Minimum SNR ratio for centering
+    (cmaxiter = 20)       Maximum iterations for centering algorithm
+       (clean = no)       Symmetry clean before centering
+      (rclean = 1.)       Cleaning radius in scale units
+       (rclip = 2.)       Clipping radius in scale units
+      (kclean = 3.)       K-sigma rejection criterion in skysigma
+    (mkcenter = no)       Mark the computed center
+        (mode = "ql")     
+
+                   \fIfitskypars\fR
+
+  (salgorithm = "mode")   Sky fitting algorithm
+     (\fIannulus\fR = 15.00000000) Inner radius of sky annulus in scale units
+    (\fIdannulus\fR = 10.00000000) Width of sky annulus in scale units
+    (skyvalue = 0.)       User sky value
+    (smaxiter = 10)       Maximum number of sky fitting iterations
+    (\fIsnreject\fR = 50)       Maximum number of sky fitting rejection iterati
+    (skreject = 3.)       K-sigma rejection limit in sky sigma
+       (khist = 3.)       Half width of histogram in sky sigma
+     (binsize = 0.10000000149012) Binsize of histogram in sky sigma
+      (smooth = no)       Lucy smooth the histogram
+       (rgrow = 0.)       Region growing radius in scale units
+       (mksky = no)       Mark sky annuli on the display
+        (mode = "ql")     
+
+                      \fIphotpars\fR
+
+   (\fIweighting\fR = "constant") Photometric weighting scheme for wphot
+   (\fIapertures\fR = "6.0,9.0,12.0,15.0") List of aperture radii in scale units
+        (zmag = 26.)      Zero point of magnitude scale
+     (mkapert = no)       Draw apertures on the display
+        (mode = "ql")           
+.fi
+.le
+.bp
+.ls \fI5.4 Running the task phot\fR
+
+If your images are not on the computer, see section 3 of this document. The
+first step is to check the environment variable stdimcur. This should be set to 
+stdgraph.
+
+.nf
+      cl> show stdimcur
+.fi
+
+If the response is "stdgraph" then don't change it, if this is not the
+setting then set it by typing;
+
+.nf
+      cl> set stdimcur=stdgraph
+.fi
+
+Now you are ready to run phot, do this by typing 'phot'. Initially the
+help page will come up on the screen. Type 'q' to enter the interactive
+mode. Now you must call up the contour plot corresponding with your
+first image. Do this by typing ':.read plot201'. Now move the cursor to
+your objects and type the space bar at each. To load the next image to
+be done, type ':image obj202' followed by ':.read plot202'. Now do the
+same for this image and continue through all your images. When you are
+finished type 'q' twice. Now look at the output file and you will see
+that a large header precedes the image photometry. Currently, you must
+keep good notes about each object so that you remember which one you
+did first. This will hopefully be taken care of in the future.
+
+If you would like to make a table of the magnitudes from the largest of
+the apertures used, use the task "txdump". You used 4 apertures and so
+"txdump" should look like the setup below. Running this will pull all
+the fields specified out of the output file from phot and create a
+table with 4 columns, one for each field.
+
+.nf
+                        \fItxdump\fR
+
+     textfile = "SN89Bfeb13" apphot output textfile(s)
+       fields = "image,rapert[4],mag[4],merr[4]" fields to be extracted
+         expr = "yes"     boolean expression
+     (headers = no)       Print the field headers ?
+  (parameters = yes)      Print the parameters if headers is yes ?
+        (mode = "ql")     mode of task
+.fi
+.le
+.endhelp

@@ -1,0 +1,6 @@
+FIXTAIL			29-Oct-90		(Pedro Gigoux)
+
+This directory contains the code for the CL script that fixes the last
+lines or columns of an image:
+
+fixtail.cl		CL script task

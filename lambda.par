@@ -1,0 +1,6 @@
+# lambda parameter file
+input,s,a,"",,,Input images
+start,s,h,"W0",,,Starting wavelength keyword
+delta,s,h,"WPC",,,Wavelength increment keyword
+number,b,h,no,,,Print pixel number in third column ?
+convert,b,h,yes,,,Convert small wavelengths to Angstroms ?

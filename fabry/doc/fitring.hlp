@@ -1,0 +1,62 @@
+.help fitring July87 fabry
+.ih
+NAME
+fitring -- compute the dispersion solution using the ring parameters
+.ih
+USAGE
+fitring ringfile output
+.ih
+PARAMETERS
+.ls ringfile
+the text file containing the ring parameters, most likely the output
+file from RINGPARS.
+.le
+.ls output
+text file name for the output summary.
+.le
+.ls insdel = ""
+control parameter for user input to the fit. May be either "d"
+to delete an entry from the fit, "i" to insert a previously deleted
+entry, or "q" to qut and accept the current fit.
+.le
+.ls del_line = 
+the line number to be deleted if "insdel" was set to "d" during the
+fitting.
+.le
+.ls ins_line =
+the line number to be re-inserted if "insdel" was set to "i"
+during the fitting.
+.le
+.ih
+DESCRIPTION
+The ring parameters, radius, wavelength, and etalon gap are fit
+to an equation of the form:
+
+	Lambda = (A + B*z) * Cos (Atan (R/C))
+
+to determine the constants A, B, and C. The results of the
+fit are presented in tabular form, and the user may delete
+("d") an outlying entry. Once deleted, an entry can be reinstated
+("i").  To accept the presented solution, a "q" will exit the
+query loop, and write the solution to the "output" file.
+
+The constants A, B, and C are later used by the task VELOCITY
+to determine the wavelengths of each pixel in the image cube.
+.ih
+EXAMPLES
+For a ringfile named "rings", compute the constants A, B, and C.
+The solution is written to the file "constants".
+
+	cl> fitring rings constants
+
+.ih
+TIME REQUIREMENTS
+Doesn't do much, but does it very fast.
+.ih
+BUGS
+Probably doesn;t work if there are only 3 entries in the ring parameter
+file, even though a solution is possible.
+.ih
+SEE ALSO
+RINGPARS, VELOCITY
+.endhelp

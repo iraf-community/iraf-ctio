@@ -1,0 +1,7 @@
+# colselect parameter file
+files,s,a,,,,Files from which to extract columns
+columns,s,q,,,,Columns to extract
+lines,s,h,"1-9999",,,Lines from which to extract columns
+repstr,s,h,"",,,String value to replace blank columns
+replace,b,h,no,,,Replace string for blank columns
+print_file_names,b,h,no,,,Print file names if multiple files?

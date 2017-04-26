@@ -1,0 +1,7 @@
+helio.f
+	Fixed a problem detected by Skip Shaller with the Data General
+	compiler. The problem was the use of DFLOAT() instead of DBLE(),
+	so they were changed (PG, SS 07/Mar/91).
+
+helio.par
+	Set the default latitude and longitude to INDEF (PG 29/May/92).

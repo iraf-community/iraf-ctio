@@ -1,0 +1,54 @@
+.help title Aug92 manuals
+.nf
+        \fIxxxxxx xxxxx xxxxx xxxxxx         xxxxx  xxxxx    x    xxxxx
+        x        x     x   x    x           x    x   x   x x   x
+        x        x     x   x    x           x    xxxxx  x   x  xxxx
+        x        x     x   x    x           x    x x    xxxxx  x
+        x        x     x   x    x           x    x  x   x   x  x
+        xxxxxx   x   xxxxx xxxxxx         xxxxx  x   x  x   x  x
+
+
+	 			 xxxxxxxxx
+                                xxxxxxxxxxxx
+                               xxxxxxxxxxxxxx
+			      xxxxxxxxxxxxxxxx
+			     xxxxxxxxxxxxxxxxxx
+              x              xxxxxxxxxxxxxxxxxx          xxxxx
+            xxx             xxxxxxxxxxxxxxxxxxxx       xxxxxxx
+          xxxxxxxxxxxxxxxxxxxxxxx   xxxx   xxxxxxxxxxxxxxxxxxx
+        xxxxxxxxxxxxxxxxxxxxxxxx     xx     xxxxxxxxxxxxxxxxxx
+          xxxxxxxxxxxxxxxxxxxxxx     xx     xxxxxxxxxxxxxxxxxx
+	    xxx            xxxxxx   xxxx   xxxxx       xxxxxxx
+	      x            xxxxxxxxxxxxxxxxxxxxx         xxxxx
+			    xxxxxxxxxx xxxxxxxx
+                             xxxxxxxxx  xxxxxx 
+                             xxxxxxxx   xxxxxx 
+                              xxxxxxx   xxxxxx 
+                             x xxxxxxxxxxxxx x 
+                             xx xxxxxxxxxxx  x 
+                             xxx xxxxxxxxxxx x 
+			     xxxx xxxxxxxx xxx
+			     xxxx  x x x  xxxx
+			     xxxxxx  x  x xxx 
+			        xxxxxxxxxxxx  
+			        xxxxxxxxxxx   
+			            xxxxxx    
+
+
+      xxxxx             x                  x    x
+      x   x  xxxxx      x  x   x  xxxxx  xxxxx      xxxxx  x xx   xxxxx
+      xxxxx  x   x  xxxxx  x   x  x        x    x   x   x  xx  x  x
+      x x    xxxxx  x   x  x   x  x        x    x   x   x  x   x  xxxxx
+      x  x   x      x   x  x   x  x        x    x   x   x  x   x      x
+      x   x  xxxxx  xxxxx  xxxxx  xxxxx    xx   x   xxxxx  x   x  xxxxx
+
+
+                   x    x                              x
+                   xx  xx  xxxx   x xx   x   x  xxxx   x
+                   x xx x  x  x   xx  x  x   x  x  x   x
+                   x    x  x  x   x   x  x   x  x  x   x
+                   x    x  x  x   x   x  x   x  x  x   x
+                   x    x  xxx x  x   x  xxxxx  xxx x  x\fR
+
+.fi
+.endhelp

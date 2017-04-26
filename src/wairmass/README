@@ -1,0 +1,11 @@
+WAIRMASS		28-Sep-88	(Pedro Gigoux)
+
+This directory contains the code of the task that computes the weighted
+airmass, and optionally updates the header, for a list of images.
+The files are:
+
+mkpkg			mkpkg file
+
+t_wairmass.x		main task procedure
+
+wairmass.x		weighted airmass procedures

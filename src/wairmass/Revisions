@@ -1,0 +1,17 @@
+t_wairmass.x
+wairmass.par
+	Added epoch parameter. This upgrade was installed, but not working
+	yet. Anyway, the parameter must be there in order to avoid crashing
+	the task (PG 23/apr/90).
+
+t_wairmass.x
+	Added wrm_gethdr() procedure to get the hour angle, right ascension,
+	and siderial time from the image header. The new procedure performs
+	consistency checks to avoid null values in the image header in order
+	to come up with good values (PG 23/Mar/92).
+
+t_wairmass.x
+wairmass.par
+	Removed parameter "epoch" from the parameter file until the
+	precession for epoch is really implemented. The code was
+	modified accordingly (PG 23/Mar/92)

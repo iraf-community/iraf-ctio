@@ -1,0 +1,5 @@
+# pixselect parameter file
+images,s,a,,,,Images to process
+lower,r,a,INDEF,,,Lower limit for pixels
+upper,r,a,INDEF,,,Upper limit for pixels
+verbose,b,h,no,,,Print banner for each input image

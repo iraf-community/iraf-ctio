@@ -1,0 +1,11 @@
+COMPAIRMASS		13-Oct-89	(Pedro Gigoux)
+
+This directory contains the code of the task that computes the weighted
+airmass from data input by the user, i.e., not coming from an image header.
+The files are:
+
+mkpkg			mkpkg file
+
+t_compmass.x		main task procedure
+
+wairmass.x		weighted airmass procedures

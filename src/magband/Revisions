@@ -1,0 +1,62 @@
+t_magband.x
+	Added flux switch to output either the flux (yes) or the magnitude
+	(no). The parameter file was updated as well. Also minor changes in
+	the output format were made in order to fit flux numbers and add
+	comment character is title lines (PG 17/Jan/90).
+
+t_magband.x
+	Added check for zero flux when computing the magitude, since
+	it has to compute the logarithm of it. It will return an INDEF
+	value in this case (PG 08/Jun/90).
+
+t_magband.x
+	Splitted output format for magnitudes and fluxes, in order to get
+	a fixed format for magnitudes and a variable (g) format for fluxes
+	(PG 16/Oct/90).
+
+mkpkg
+t_magband.x
+	Fixed a bug with the determination of the starting and ending pixel
+	positions for the integration limits. The problem was that the pixel
+	positions were computed taking into account the "center of the pixel"
+	correction. This was fine when the mode was MODE_STANDARD, but it was
+	wrong when the image interpolation library was being used, since the
+	latter makes this correction internaly. Other minor fixes were done
+	as well, like not including imhdr.h anymore, allocating the right
+	size for the structure (it was being allocated too big), and removing
+	lines that were commented out (PG 19/Jul/91).
+
+t_magavg.x
+	Moved this file to this directory in order to keep the code of
+	MAGBAND and MAGAVG together (PG 14/Oct/91).
+
+t_magavg.x
+	Added extra column in the output to print the error, computed as
+	the sigma divided by the number of effective points, i.e. without
+	the rejected points (PG 14/Oct/91).
+
+magavg.com
+t_magavg.x
+	The code was completely revised in order to allow for spectra with
+	different lenghts. In the previous version all bandpasses had to
+	be same for all spectra, thus rejecting spectra shorter or longer
+	than the first spectrum in the input list. A common block was added
+	since the sort procedures need to pass the table pointer to a user
+	defined comparison procedure (PG 17/Oct/91).
+
+t_magavg.x
+	Increased maximum number of spectra (MAX_SPECTRA), and specially the
+	maximum number of bands (MAX_BANDS). The number of bands was too small
+	and the task was crashing with large data sets. The problem arises
+	because the tables used to sort bandpasses don't reallocate memory as
+	needed, as opposed to the spectrum table (PG 09/Dec/91).
+
+magband.par
+t_magband.x
+	Added "convert" parameter to disable the conversion of wavelengths
+	from meters to Angstroms (PG 19/May/92).
+
+t_magband.x
+	Defined independent output formats for the wide and long outputs,
+	and modified the code acordingly. This change was done to allow
+	for decimal places in the wavelength and width (PG 20/May/92).

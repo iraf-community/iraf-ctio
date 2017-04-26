@@ -1,0 +1,28 @@
+# fitrad mkpkg file (Mon Nov 27 17:34:57 CDT 1989)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+generic:
+	$set	GEN = "$$generic -k -t rd"
+	$ifolder (ftrfitr.x, ftrfit.gx)	    $(GEN) ftrfit.gx	$endif
+	$ifolder (ftravgr.x, ftravg.gx)	    $(GEN) ftravg.gx	$endif
+	$ifolder (ftroutr.x, ftrout.gx)     $(GEN) ftrout.gx	$endif
+	$ifolder (ftrsortr.x, ftrsort.gx)   $(GEN) ftrsort.gx	$endif
+	;
+
+libpkg.a:
+	$ifeq (USE_GENERIC, yes) $call generic $endif
+
+	ftravgd.x	"fitrad.h"
+	ftravgr.x	"fitrad.h"
+	ftrfitd.x	"fitrad.h"
+	ftrfitr.x	"fitrad.h"
+	ftroutd.x	"fitrad.h"
+	ftroutr.x	"fitrad.h"
+	ftrsortd.x	
+	ftrsortr.x	
+	t_fitrad.x	"fitrad.h" <error.h> <pkg/gtools.h>
+	;

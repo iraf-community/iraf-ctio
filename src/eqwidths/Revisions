@@ -1,0 +1,31 @@
+t_eqwidth.x
+	Changed procedure decl for eqw_proc() from real function to
+	subroutine since there was no return value  (9/29/03, MJF)
+
+t_eqwidth.x
+	Changed the radial velocity factor evaluation. The signs were
+	reversed in the square root (PG 8/Feb/90).
+
+t_eqwidth.x -> t_eqwidths.x
+	Changed name of this file to t_eqwidths.x. The name of the task
+	was changed acordingly (PG 06/Mar/90).
+
+t_eqwidths.x
+	Fixed the way the radial velocity factor was being computed. The
+	square root argument was giving negative values because the speed
+	of light was being substracted from the radial velocity of the
+	object instead of substracting the radial velocity of the object
+	from the speed of light (PG 08/Aug/90).
+
+t_eqwidths.x
+	Changed the speed of light from meters/second to kilometers/second.
+	Radial velocities supplied by the user should now be expressed in
+	kilometers/second (PG 08/Aug/90).
+
+t_eqwidths.x
+	Fixed a problem in the way the flux of a line was computed. It now
+	substracts the spectrum from the continuum and then computes the
+	flux, preserving the flux sign. This will give a positive width for
+	emission lines and a negative width for absorption lines. Also, 
+	an unknown problem that showed up when a null radial velocity file
+	name was given, was fixed (PG 27/Oct/93).

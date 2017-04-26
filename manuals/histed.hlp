@@ -1,0 +1,61 @@
+.help histed Nov89 Version-2.0
+.ls \fIThe EPARAM and EHISTORY Editors\fR
+
+There is several ways to recall or change a previously typed command in IRAF.
+The "eparam" and "ehistory" commands have two such modes; an immediate
+execution and editing. A summary of these shortcuts and their function
+follows. The "^" is for immediate execution and the "ehistory" command which
+edits the command line recalled.
+
+.nf
+      cl> ^			Rerun the previous command
+
+      cl> ^nite1^nite2^		Rerun the previous command but
+				substituting 'nite2' for the first
+				appearance of 'nite1' 
+
+      cl> ^nite1^nite2^g	Same as above but subttituting
+				all occurances of 'nite1' with
+				'nite2'
+
+      cl> ^rfits		Rerun the last 'rfits' command
+
+      cl> ^?FLAT		Rerun the last command containing
+				'FLAT' anywhere
+
+      cl> history		List the last few commands in the
+				history buffer
+
+      cl> history 50		List the last 50 commands in the
+				history buffer
+
+      cl> ^37			Rerun command number 37 from the
+				history list
+
+      cl> ^-2			Rerun the command before the
+				previous one
+
+      cl> task ^2 ^1		Run the 'task' with the first
+				and second arguments of the
+				previous command reversed
+
+      cl> task ^$		Run 'task' with the last argument
+				of the previous command
+
+      cl> task ^*		Run 'task' with all the arguments
+				of the previous command
+.fi
+
+Now the "^" command may behave like the editing command if the cl parameter
+"ehinit" is set to "verify". If you wish to change this, edit the parameters
+of "cl". The UNIX "ehistory" is much like the command recall in VMS. Typing
+an 'e' will present the last command in the history list. To scroll up through
+this list just type the up arrow. Now to change something on the line, move the
+cursor using the left arrow, delete and type in the change (this deletes and
+adds to the left). If a task name is specified after the "ehistory" command
+it recalls the last command using that task. For example, typing 'e display'
+will recall the last display command used with its previous parameters. You
+may now edit this command. Typing return, (no matter where the cursor is) will
+run the task.
+.le
+.endhelp

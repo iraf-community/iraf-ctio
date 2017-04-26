@@ -1,0 +1,22 @@
+SPHOT			08-Jun-88 		(Pedro Gigoux)
+
+This directory contains the sources of the star photometry programs. Since
+this program was ported from FORTRAN to SPP, some of the original subroutines
+are still in FORTRAN. Only the I/O and CL interaction was rewritten.
+
+The files contained here are:
+
+mkpkg			mkpkg file
+
+photom.f		mountain photometry subroutine
+
+radius2.f		subroutine to compute the square of the distance
+			beteen two points
+
+sphot.com		sphot common
+
+t_sphot.x		task procedures
+
+value.f			subroutine to compute pixel intensity
+
+xysetup.f		boundary setup subroutine

@@ -1,0 +1,141 @@
+.help fabry July87 fabry
+.ce
+Notes on the Fabry Perot Reduction Package
+.sp 1
+.ce
+George Jacoby
+.sp 1
+.ce
+July 1987
+.sp 3
+.nh
+Introduction
+
+     The Rutgers imaging Fabry Perot (RFP), is an piezo-electric
+controlled etalon imaging system which effectively produces
+very narrow-band images. The wavelength of the device is
+controlled by adjusting the etalon spacing, or gap (associated
+with the variable "z"). 
+
+.nh
+Wavelength Calibration
+
+     The light from the telescope converging
+beam must pass through the etalon as parallel light, and so
+re-imaging optics is also provided. However, images arising
+away from the collimator optical axis pass through the
+etalon at some angle which increases with radius. The effect
+is to reduce the wavelength of light which is passed at that radius,
+and so "rings" of constant wavelength are introduced according
+to the equation
+
+	lambda(R) = Lambda(0) * Cos (arctan (R/C))
+
+where C is a constant to be determined.
+
+Wavelength calibration is determined by observing a lamp
+having emission lines of know wavelength (He-Ne-Ar, for example)
+at a variety of etalon spacings, and for a variety of lines
+from the reference lamp. The ring diameters (or radii), and the
+etalon gaps are used to derive the constants A and B of the dispersion
+solution:
+
+	Lambda(0) = A + Bz
+
+and where the constant C is defined above.
+
+     Generally the constant, B, is very stable over a run,
+and C is reasonably stable, as well. The zero point, A,
+however can drift throughout the night, and so reference
+lamp observations are recommended during the night.
+
+.nh
+Positional Corrections
+
+     Because the images of the object can drift positionally even
+when auto-guiding, the object frames must be shifted to a uniform
+and congruent spatial grid. Thereafter the object frames can be
+built into an image cube. Any postional shifts have to be remembered
+since the wavelength in each frame depends on its radius from the
+optical axis.
+
+.nh
+Other Corrections
+
+     Additional corrections of each frame in the cube are required to
+account for flux normalization (due to atmospheric extinction or clouds),
+and sky subtraction.
+
+.nh
+Velocity Maps
+
+     Once these corrections have been applied, a velocity map can be
+created by fitting a Gaussian to the spectrum at each point in the
+spatial sample. The intensity along the wavelength axis is extracted
+at each pixel, and the wavelength is computed using the constants B and
+C above, plus a revised A derived from recent calibration lamp exposures.
+The radius of the pixel is calculated, with corrections for shifts
+relative to the center of the ring found for the calibration lamp.
+
+The Gaussian is used as an approximation to the instrumental profile.
+If the instrument actually resolves structure in the emission,
+then the derived center may be erroneous. The line center is
+used to compute a velocity for the emission of the pixel and
+placed into an output velocity map. If the signal is adequate,
+a velocity dispersion parameter (the sigma of the Gaussian in
+km/s) is also placed into a second map. The continuum and peak
+intensity derived from the Gaussian fits are 2 more maps
+which are generated. Four additional maps, the error in each of the
+four parameters as derived from the formal fitting procedure,
+are also created.
+
+The basic steps required after the images have been initially
+processed through the flat-field and cosmic ray removal stages,
+are outlined below. Note that for the ring parameter program to
+work well, the ring images should not be flat fielded.
+
+
+.nh
+Summary of Steps Required
+
+1. RINGPARS -- find the ring parameteres: x-center, y-center, and radius
+
+2. FITRING  -- fit the ring parameters to the dispersion equation
+
+3. ICNTR    -- find the centers of stars used to define the shifts
+
+4. MKSHIFT  -- use the centers to create a script for IMSHIFT
+
+5. MKCUBE   -- combine the shifted images into a single cube
+
+6. ICUR     -- Not supported on SUN version, use jdisplay instead
+
+7. FINDSKY  -- using coordinates for sky, estimate the sky in each frame
+
+8. NORMALIZE - enter the normalization factors for each frame
+
+9. RINGPARS -- measure parameters for the recent reference lamp frames
+
+10. ZEROPT  -- compute the wavelength zero points using recent lamp frames
+
+11. VELOCITY - generate velocity map and spectral plots
+
+.nh
+Known Bugs/Problem Areas
+
+     The MKSHIFT routine simply adds an "s" to the image name to create
+an output name to save the user from thinking about more names. If the
+input files have been generated with FILES, they may have ".imh" in their
+names, and the "s" will be appended to create image.imhs.imh kinds of
+files. This should be fixed.
+
+     The etalon zero point may have some thermal drift, and so the
+ZEROPT program needs to interpolate in time if more than one lamp
+observation was taken. This can be entered by hand, at present, using
+HEDIT.
+
+     The plot code is pretty slow. I can't see that much can be
+done about that. The fitting code isn't all that swift either,
+and it may be possible to improve soemthing, but I haven't looked
+at that at all. There is also a different fitting routine which
+I haven't considered.

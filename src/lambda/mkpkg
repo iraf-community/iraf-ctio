@@ -1,0 +1,10 @@
+# lambda mkpkg file (Fri Mar 30 12:06:17 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_lambda.x	<error.h>
+	;

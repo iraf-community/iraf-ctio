@@ -1,0 +1,9 @@
+COLSELECT		09-Jun-89		(Pedro Gigoux)
+
+This directory contains the code for the column extraction program.
+This program extract fixed column ranges from input text.
+The files are:
+
+mkpkg			mkpkg file
+
+t_colselect.x		task procedures

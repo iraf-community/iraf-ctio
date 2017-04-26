@@ -1,0 +1,7 @@
+# cureval parameter file
+input,s,a,"",,,Input file
+curfin,s,a,"",,,Input to CURFIT
+curfout,s,a,"",,,Output from CURFIT
+xmin,r,h,0.0,,,Minimum value in CURFIT input
+xmax,r,h,0.0,,,Maximum value in CURFIT input
+calctype,s,h,"real","|real|double|",,Calculation type

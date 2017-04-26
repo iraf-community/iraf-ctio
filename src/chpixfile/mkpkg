@@ -1,0 +1,10 @@
+# chpixfile mkpkg file (Fri Mar 30 12:02:45 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_chpixfile.x	<chars.h> <error.h> <xtools$xtanswer.h>
+	;

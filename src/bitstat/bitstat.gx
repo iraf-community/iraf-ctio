@@ -1,0 +1,39 @@
+include <mach.h>
+
+# BST_LINE[SIL] -- Process single image line and update the counters
+# for ones and zeroes.
+
+$for (sil)
+
+procedure bst_line$t (line, npix, maxbits, zero, one)
+
+PIXEL	line[npix]		# image line
+int	npix			# line length
+int	maxbits			# max number of bits in data type
+long	zero[NBITS_INT]		# "0" counter (modified)
+long	one[NBITS_INT]		# "1" counter (modified)
+
+int	i, bit
+PIXEL	$tval
+
+begin
+	# Loop over the image line
+	do i = 1, npix {
+
+	    # Get the next pixel value
+	    $tval = line[i]
+
+	    # Loop over all the bits in each pixel until all the pixels
+	    # are traversed. The pixel value is divided by two each time
+	    # in order to have the bit in the LSB position.
+	    for (bit = 1; bit <= maxbits; bit = bit + 1) {
+		if (mod ($tval, 2) == 0)
+		    zero[bit] = zero[bit] + 1
+		else
+		    one[bit] = one[bit] + 1
+		$tval = $tval / 2
+	    }
+	}
+end
+
+$endfor

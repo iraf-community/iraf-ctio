@@ -1,0 +1,14 @@
+         avgvel - Evaluate average velocity for one pixel
+	  fabry - Notes on the Fabry-Perot reduction package
+        findsky - Determine the sky levels in a cube
+	fitring - Perform least squares fit to ring data
+	 fpspec - Plot pixel value for a list of images
+	  icntr - Create center coordinate file
+	 intvel - Interactive average velocity evaluation
+	 mkcube - Combine 2D images into a cube
+	mkshift - Make a script to shift images to common positions
+      normalize - Enter normalization factors into cube image header
+       ringpars - Compute ring parameters for a series of images
+       velocity - Generate velocity maps from a cube
+	 zeropt - Enter the zero point constants into a cube header
+

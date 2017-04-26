@@ -1,0 +1,8 @@
+FFT1D			17-Jan-90	(Pedro Gigoux)
+
+This directory contains the code for the one dimensional Fast Fourier
+Transform. The files contained here are:
+
+mkpkg			mkpkg file
+
+t_fft1d.x		one dimesional FFT task procedures

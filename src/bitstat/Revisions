@@ -1,0 +1,10 @@
+t_bitstat.x
+	Fixed error message that was making reference to "real" pixels
+	intead of "long" (PG 26/Apr/93).
+
+bitstat.gx
+mkpkg
+t_bitstat.x
+	Improved the way the image lines were read. Now there is one
+	procedure per pixel type (short, int, long). Also, support for
+	unsigned shorts was added (PG 27/Apr/93).

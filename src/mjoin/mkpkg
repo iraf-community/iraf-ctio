@@ -1,0 +1,10 @@
+# mjoin mkpkg file (Thu May 24 12:16:04 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_mjoin.x	<error.h>
+	;

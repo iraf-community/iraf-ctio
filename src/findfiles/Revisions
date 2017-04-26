@@ -1,0 +1,18 @@
+t_findfile.x
+	Changed calls to recusive directory procedures to match the
+	change made on them (PG 17/jan/89).
+
+t_findfile.x
+	Changed string matching to full pattern matching (such as in
+	directory) to use a more natural way of using file name
+	templates. Help page changed as well. (PG 09/feb/90).
+
+t_findfile.x
+	Renamed this file to t_findfiles.x and changed the task name
+	acordingly (PG 06/mar/90).
+
+t_findfile.x
+	Fixed problem of assigment of an integer expression to a boolean
+	variable. This problem went undetected on sparc and 68881 machines,
+	and was detected only in the fpa machines, probably because they
+	have the old Fortran compiler (PG 20/apr/90).

@@ -1,0 +1,2407 @@
+.help 2dfrutti Sep92 Version-3.0
+
+.ce
+\fIII. 2D-Frutti Reductions with IRAF\fR
+
+.nf
+        1. Introduction.
+        2. Getting the data.
+        3. Reducing the data.
+           3.1   Introduction.
+		 3.1.1 Displaying 2D Frutti images.
+           3.2   Reading the data from tape.
+           3.3   Fixing bad pixels.
+           3.4   Creating the flat-field and dark images.
+                 Determining scale factors.
+           3.5   Distortion correction: Mapping the distortions.
+           3.6   Distortion correction: Transforming images.
+           3.7   Creating, normalizing and correcting the flat-field.
+           3.8   Applying the flat field correction.
+           3.9   Extracting the spectra.
+           3.10  Wavelength calibration.
+           3.11  Neutral Density filter corrections.
+           3.12  Deriving a sensitivity function.
+           3.13  Applying the sensitivity function.
+.fi
+
+
+
+
+                                                  Mario Hamuy
+
+						  Lisa Wells
+
+                                               September 30,1992
+
+.bp
+.ls \fI1. Introduction\fR
+
+This document is intended as a guideline to reduce
+2D-Frutti spectra using IRAF. If you do not have experience with
+the software we suggest that you start by reading "An Introduction to
+IRAF" which will give you a general idea of IRAF structure as
+well as a few fundamental tools.
+
+The examples shown here are just that, examples. The user
+must decide upon the reduction procedure, naming convention,
+etc., appropriate for his own data and use the cookbook and
+examples as guidelines only. The examples are shown with prompts
+for the package containing the tasks (do not type the prompts,
+of course). It is strongly recommended that you perform an `lpar'
+on every task immediately before using it, unless you are
+familiar with all of its parameters. This is not always shown in
+the examples, but is normal practice even among seasoned IRAF
+users. Task setups are included as examples throughout the
+manual to help you and the most relevant parameters are
+highlighted throughout this manual.
+
+IRAF uses two conventions that you should always keep
+in mind. First, images consist of lines and columns (not rows
+and columns). Second, the 'order' of a function is the number of
+independent coefficients for a polynomial, or the number of 
+intervals for a spline curve. For example, a cubic
+(third-degree) polynomial is described as "order=4" (four
+coefficients).
+
+If you require personal assistance in your reductions
+please contact either Mauricio Navarrete or Nelson Saavedra
+on Tololo (ex 422), or Mario Hamuy in La Serena (ex 210).
+.le
+.bp
+.ls \fI2. Getting the data\fR
+
+Many observers often get confused about the number and kind
+of calibration frames that must be taken to properly reduce
+their data. During a whole run you should get,
+
+.nf
+      + at least one multihole frame taken during the daytime.
+      + at least one long arc taken at the zenith before starting
+        to observe.
+      + as many dome flats as possible. These should be taken during
+        the afternoon with the telescope pointing to the white spot.
+      + as many sky flats as possible taken during twilight (or
+        moonlight).
+      + several dark frames that you should leave running after
+        closing the telescope.
+      + flux standard star(s) if you wish to flux calibrate your
+        spectra.
+      + extinction standards are also suggested if the highest 
+	possible photometric accuracy is desired.
+      + short arcs bracketing your objects, if you wish to derive
+        radial velocities.
+.fi
+
+Multiholes, dome flats, long arcs and sky flats are time
+consuming. Therefore we suggest that you start by taking the
+calibration frames some 4 hours before twilight, so that you
+have enough time left for dinner. See the instrument manual for
+more details about the number and types of calibration frames
+necessary.
+.le
+.bp
+.ce
+\fI3. Reducing the data\fR
+
+
+.ls \fI3.1 Introduction\fR
+
+A full reduction of 2D-Frutti images requires the following
+operations (see the diagram on the next page):
+
+.nf
+      1)  Mapping the distortions using the long arc and multihole.
+      2)  Distortion corrections using the mapping created.
+      3)  Dark-substracting the flat fields.
+      4)  For long slit work, the objects are also dark subtracted.
+      5)  Flat-fielding your arcs and program objects (using dome and
+          sky flats).
+      6)  Extracting the spectra.
+      7)  Wavelength calibration.
+      8)  Deriving a sensitivity function.
+      9)  Flux calibration.
+.fi
+
+Distortions are mapped by tracing profiles in the multihole
+frame and performing a two-dimensional surface fit. The same
+operation is done on a comparison lamp frame to produce a
+two-dimensional dispersion solution. These two mappings are used
+to rectify the images.
+
+The total counts contained in an individual flat-field or dark
+frame are usually quite low, so that all the flats and darks are
+normally coadded to improve the signal-to-noise. Furthermore,
+since the dithering blurs features in the 2DF, it is possible to
+perform a boxcar-smoothing without loss of information while
+significantly decreasing the photon noise. Generally, the dark
+rate is quite low. This means that, if you are working with
+stellar spectra, it is only necessary to dark-subtract the
+flat-field frames. Flat fields are usually normalized so that
+photon counts are preserved after flat-fielding. For convenience,
+flat fielding and dark subtraction are usually deferred until
+after distortion correction. (Note that these steps are the normal
+procedure, but are not necessarily desirable in all cases. You
+should check with a staff member if you are unsure of what is
+appriopriate.) If you like more information about the flat
+field processing of your images, type 'help flatfields' in IRAF.
+
+One-dimensional spectra may be extracted at this point. The 
+extracted spectra may now be wavelength calibrated, extinction
+corrected, and flux calibrated.
+.le
+.bp
+.nf
+        		======================
+                        =  Fixing Bad Pixels =
+                        ======================
+                                 *****
+                                  ***
+                                   *
+               ==========================================
+               = Coadding Domeflats Skyflats and Darks  =
+               ==========================================
+                                 *****
+                                  ***
+                                   *
+                      ============================
+                      = Mapping the Distortions  =
+                      ============================
+                                 *****
+                                  ***
+                                   *
+                      ============================
+                      = Transforming the images  =
+                      ============================
+                                 *****
+                                  ***
+                                   *
+                       ==========================
+                       =  Creating a Flatfield  =
+                       ==========================
+                                 *****
+                                  ***
+                                   *
+                      ===========================
+                      =  Flatfielding the Data  =
+                      ===========================
+                                 *****
+                                  ***
+                                   *
+                    ===============================
+                    =  Extraction of the spectra  =
+                    ===============================
+				 *****
+				  ***
+				   *
+                     ============================
+                     =  Wavelength Calibration  =
+                     ============================
+				 *****
+				  ***
+				   *
+                     ============================
+                     =     Flux Calibration     =
+		     ============================
+.fi
+.le
+.bp
+.ls \fI3.1.1 Displaying 2D Frutti images\fR
+
+SUN/IRAF has an image display window called 'imtool'. An 'imtool'
+window is one of the initial start-up windows on all CTIO IRAF
+accounts.
+Cursor readback is available, as the capability
+to zoom, and review images larger than 512x512 pixels.
+
+The 'imtool' window is accesible through the 'tv' package in the
+'images' package. An image can be loaded into the window by
+typing
+
+.nf
+      cl> images
+      im> tv
+      tv> display <imagename> <frame>
+
+.fi
+where <frame> is the integer frame number (one through four).
+Move the mouse cursor into the 'imtool' window and hold down
+the right button. Moving the cursor will change the display
+transfer function of the image to bring out subtle features
+of the image. Releasing the right mouse button quits this mode.
+
+Pressing F6 within the 'imtool' window 
+alternately enables and disables cursor readout mode.
+When this mode is enabled the cursor coordinates are continually
+displayed and updated in a box in the lower right corner of the
+display window.
+
+The 2D Frutti generates images larger than the default 512x512
+pixels. The 'imtool' window can be enlarged to display these
+pictures in their entirety. In the text window, type the
+command
+
+.nf
+      tv> set stdimage=imt2df1
+
+.fi
+to set the default size to 128x1520 pixels. Load an image with
+the above mentioned 'display' command. Put the mouse cursor on
+the border region of the 'imtool' window and hold down the right
+mouse button. Choose the option "FitFrame', and the window
+will now resize itself to 128x1520 pixels.
+You may wish to adjust the location of the 'imtool' window by
+dragging it with the middle mouse button while the cursor is placed
+on a corner or edge of the window.
+
+You may demagnify, for instance, the image by a factor of two with
+
+.nf
+      tv> display <imagename> 1 xmag=0.5 ymag=0.5
+
+.fi
+Pressing the middle button of the mouse within the 'imtool' window
+centers the image at the cursor position. This feature may be
+particularly useful if your image does not fit in the window.
+
+Pressing the button twice without moving it will zoom the window and,
+if the cursor is not moved, pressing it again will zoom it further.
+This continues until the cycling is completed.
+.le
+.bp
+.ls \fI3.2 Reading the data from tape\fR
+
+Load the 'dataio' package, allocate the appropriate tape drive,
+mount your tape and do an 'epar' on the task 'rfits' according
+to the parameters given below. Remember to remove the write ring.
+
+.nf
+      cl> dataio
+      da> epar rfits          (check the list given below)
+      da> alloc mta
+.fi
+
+Read the data using the task 'rfits'.
+You must specify the tape-drive name, the list of
+files you wish to read in and the 'root' file name.
+In choosing the root file
+name, it's usually a good idea to include a digit in the name
+to indicate the tape number (eg, 'tape2' for the second tape;
+the files would then be called 'tape20001,tape20002,tape20003...').
+Additionally, an offset may be added (eg, offset=89 means the
+first files would be called 'tape20090,tape20091,tape20092...'
+(1+89,2+89...)).
+
+.nf
+      da> rfits mta 1-999 tape2 off=89
+
+.fi
+If you tranfered your data using 'getpix' then you may wish to
+preserve the naming convention given to your files. In this
+case, execute the following,
+
+.nf
+      da> rfits mta 1-999 "" oldiraf+
+.fi
+
+In the above examples, the file list '1-999' should more than
+cover the number of files on tape; (hopefully) the task will end
+gracefully at the end of tape. When finished, rewind the tape
+and deallocate the drive,
+
+.nf
+      da> rew mta
+      da> dealloc mta
+.fi
+
+and remove your tape from the drive.
+.nf
+
+                      \fIrfits\fR
+
+    fits_file = "mta"      FITS data source
+    file_list = "1-999"    File list
+    iraf_file = "tape2"    IRAF filename
+  (make_image = yes)       Create an IRAF image?
+ (long_header = no)        Print FITS header cards?
+(short_header = yes)       Print short header?
+    (datatype = "")        IRAF data type
+       (blank = 0.)        Blank value
+       (scale = yes)       Scale the data?
+ (oldirafname = no)        Use old IRAF name in place of iraf_file?
+      (offset = 0)         Tape file offset
+        (mode = "ql")
+.fi
+.le
+.bp
+.ls \fI3.3 Fixing bad pixels\fR
+
+Before transforming the data it might be necessary to fix
+the bad pixels to avoid spreading them out during the
+distortion corrections.
+We suggest that you examine some of your flat-field and bias
+frames using the 'display' and the 'implot' tasks to determine the
+location of the bad pixels.
+
+.nf
+      cl> images
+      im> tv
+      tv> display flat002    (flat002 being a flat-field)
+      tv> implot flat002
+.fi
+
+Do not exit from the task 'implot', but move the cursor to the imtool
+window and press 'F6'. The cursor coordinates will be displayed.
+Now find the position of the bad pixels and return to the graph
+and plot that line or column using the ':l #'(line) and ':c
+#'(column) commands. You can define them more precisely using
+'implot' by overplotting lines and columns around the center of the
+bad region. Do this by typing 'o' followed by ':c #' or ':l #'.
+Quit the task 'implot' (type 'q') and create a file called
+'badpix' to define the regions you wish to
+fix before executing the 'fixpix' (cl.proto) task.
+
+.nf
+      tv> edit badpix         (according to the following format)
+.fi
+
+The following example illustrates the format of a bad
+pixel file.
+
+.nf
+      1 128 1 24
+      112 125 1489 1512
+      44 71 1450 1482
+.fi
+
+Each line represents a rectangular region of the image to
+be fixed. The regions are specified by four numbers giving
+the starting and ending columns followed by the starting
+and ending lines. The starting and ending points may be
+the same to specify a single column or line. Create a file
+called 'list' containing all the frames to be fixed. You have
+to include the flats, darks, objects, arcs, etc.
+
+.nf
+      tv> files *.imh > list
+      tv> edit list           (optional to add or remove files)
+      tv> proto
+      pr> fixpix @list badpix
+.fi
+
+Since the operation is done in place (i.e. the new image is
+written over the original image), it might be useful, before
+fixing all your images, to carry out a test with one image
+to make sure that everything is going well.
+.le
+.bp
+.ls \fI3.4 Creating the flat-field and dark images\fR
+    \fIDetermining scale factors\fR
+
+The number of counts in your flat fields is typically pretty low.
+In order to improve the photon statistics, flat-field frames
+from the whole run are usually summed. The (almost always
+correct) assumption is
+that the features in the flat frame are consistent on a 
+night-to-night basis both in appearance and location in the 
+images. If the flat frames are not similar, you must modify
+the reduction procedure appropriately.
+
+Load the package 'images'. Add all your darks together,
+summing the exposure times as well. Your blue flats, red flats
+and sky flats must be summed separately.
+Make lists of these images using the 
+editor to ensure the proper frames are added.
+
+.nf
+      cl> images
+      im> edit darks          (make a list with your darks)
+      im> epar imsum          (check the list given below)
+
+                  \fIExample of imsum\fR
+
+        input = "@darks"        Input images
+       output = "dark"          Output image
+       (\fItitle\fR = "Sum of darks") Title for output image
+     (\fIhparams\fR = "exptime,darktime") List of header parameters
+     (\fIpixtype\fR = "r")            Pixel datatype of output image
+    (\fIcalctype\fR = "r")            Calculation type
+      (\fIoption\fR = "sum")          Output option
+  (low_reject = 0.)             Fraction or number of low pixels to reject
+ (high_reject = 0.)             Fraction or number of high pixels to reject
+     (verbose = no)             Print log of operation?
+        (mode = "ql")           
+
+      im> imsum @darks dark title="Sum of darks"
+      im> imsum @blueflats blueff title="Sum of blue flats" 
+      im> imsum @redflats redff title="Sum of red flats"
+      im> imsum @skyflats skyf title="Sum of sky flats"
+.fi
+
+where 'darks', 'blueflats', 'redflats' and 'skyflats' are files
+each containing a list of the images to be coadded.
+We suggest that you verify
+whether the sums were properly performed by 'imploting' and 
+'imheading' the summed images.
+
+.nf
+      im> implot dark
+      im> implot blueff
+      im) implot redff
+      im> implot skyf
+      im> imhead dark,blueff,redff,skyf l+  (check exptime and
+					     darktime)
+.fi
+
+Fig. 1 shows the average of a number of columns of the dome flats
+and the dark.
+
+If disk space is a problem you might delete the individual
+frames previously summed.
+
+.nf
+      im> imdelete @darks     etc...
+.fi
+
+This is the right time to determine the scale factors between
+the dark and the blue and red flats. These factors will be
+applied to create a scaled dark which will be substracted from
+each flat.
+
+For the \fI4-M telescope\fR the scale factor is simply the ratio
+between the exposure times.
+
+For the \fI1-M telescope\fR, because the dark strongly depends on
+dome temperature, you must determine empirically the dark
+contribution in each flat. If you noted the dark rate on the
+ratemeter during the dark and before and after the flats, then
+you may use these values for the scale factor (see observing
+manual). In this case, the scale factor is "flat rate / dark rate". If
+you did not record these numbers then start by ploting the
+blue-flat, expanding the far red end of the image and overploting
+the dark frame. Now determine a region in the blue-flat having
+only dark contribution. Fig. 2a shows the red end of the blue
+flat overplotted with the dark. In this example you can see
+that the shapes of both curves are similar beyond line 1300.
+Select from your data a region where both curves run parallel.
+
+.nf
+      im> implot blueff
+          :c 50 75            (plot several columns)
+          e                   (expand using the cursor to define
+	  e		       a window at the red end)
+          :i dark             (open new image)
+          o                   (overplot)
+          :c 50 75            (overplot the same columns)
+          q                   (quit)
+.fi
+
+Once you have decided the region of interest execute the 'imstat' task
+both for the blue-flat and the dark.
+
+.nf
+      im> imstat blueff[20:60,1300:1430]
+      im> imstat dark[20:60,1300:1430]
+.fi
+
+The 'imstat' task will respond with the MEAN for the specified region
+for both frames. (The [20:60,1300:1430] section is just an
+example). The ratio MEAN(blueff)/MEAN(dark) is the scale factor
+which must be written down for later use.
+
+Repeat the previous steps for the red-flat selecting this time
+a section at the far blue end to determine its MEAN. Fig. 2b
+shows the blue end of the red flat overplotted with the dark. Don't
+forget to record the MEAN(redflat)/MEAN(dark). These determined
+scale factors will be applied later, after transforming your
+images, to create a scaled dark for each flat.
+.le
+.bp
+.ls \fI3.5 Distortion correction: Mapping the distortions\fR
+
+For distortion mapping, you need a multi-hole image and a
+comparison lamp image (in the examples below, we use the names
+"multi1" for the multi-hole image and "comp005" for the arc
+lamp image). Unless the 2D-Frutti was turned off during the
+run, you should be able to use the same multi-hole mapping
+for the entire run. This is also true for your long arc but
+if you wish, you may use a new one for each night.
+
+Depending on your setup, it is sometimes difficult to get good
+signal to noise at the ends of the multihole image. I order to
+get around this inconvenience, some people obtain multiholes
+with two grating tilts. It becomes necessary then to coadd them.
+Before doing this you need to check whether the location of the
+features of your 'blue' multihole match the position of the
+features of your 'red' multihole. Do an 'implot' of your blue
+multihole to plot a group of lines around the central line.
+Overplot the same lines from your red multihole and measure with
+the cursor the relative shift of both images ('nx'). If you find that
+there is a big offset you must use then the task 'imshift' to
+shift one of your multiholes with respect to the other. Then you
+are ready to coadd both images with the task 'imsum'.
+
+Load the 'images', 'twodspec' and 'longslit' packages:
+
+.nf
+      cl> images
+      im> twods
+      tw> long
+      lo> implot bluemulti
+	  :l 750 770     (plot the central lines of the bluemulti)
+	  o
+	  :i redmulti
+	  :l 750 770     (overplot the same lines of the redmulti)
+	  q
+      lo> imshift bluemulti bluemulti nx 0.
+      lo> imsum bluemulti,redmulti multi1 title=multihole
+		calc=r pix=r option=sum
+.fi
+
+\fIMultihole\fR:
+
+Use 'implot' to plot some lines near the middle of your
+multi-hole image to determine a typical FWHM of the profiles. Then
+use 'epar' to set up the parameter files for 'identify' and 'reidentify'
+according to the lists given below. Note the parameter 'fwidth' in the
+'identify' task should be set to \fITWICE THE FWHM\fR. Then run 'identify':
+
+.nf
+      lo> implot multi1
+      lo> epar ident
+      lo> epar reid
+      lo> ident multi1
+.fi
+
+The task will show you a plot corresponding to the sum of
+50 ('nsum') lines centered around the central line (see Fig. 3a).
+Select a profile near the center of the slit by setting
+the cursor on it and typing 'm' (mark feature); enter a
+coordinate of 0 [arcsec]. Now mark a few more features
+(four or five) and give their values in arcsec according to
+Fig. 4. Then type 'l' (locate) to find
+all of the features, which will be picked up from the file
+onedstds$ctio/multi1m.dat ('coordlist'). If everything goes
+well the program should show you the original plot with
+tick marks for all the features (see Fig. 3b). Type 'f' to fit
+these points and you will be presented with a plot of the
+residuals (see Fig. 3c). At this level you may delete the
+nearest point to the cursor by typing 'd' or change the
+function and its order, if not satisfied with the fit.
+To change the function or the order type ':function legendre'
+or ':order 5' followed by 'f' to reperform the fit. When
+satisfied with the residuals, return to the first plot by
+typing 'q'. You can go back to the fit level again by typing 'f'. After
+any modifications exit both sections by typing 'q'. Answer
+'yes' to the question 'Write feature data to the database (yes)?'.
+
+Now run 'reidentify', using the same image as a reference image:
+
+.nf
+      lo> reid multi1 multi1
+.fi
+
+The features will be traced over the entire image.
+This is a non-interactive task.
+
+Now the 'database' directory contains a file (called
+idmulti1) which contains a list with the positions of the 
+features along with the identification of those features
+in arcseconds along the slit. The task 'fitcoords' will
+do a two-dimensional surface mapping of these coordinates
+as a function of position in the image, i.e. S(x,y)
+where S is the position in arcseconds along the slit and
+(x,y) are the pixel values.
+
+.nf
+      lo> epar fitc           (check the list given below)
+      lo> fitc multi1
+.fi
+
+By default the task presents you with a plot of the residuals
+as a function of x (see Fig. 5a).
+The problem here is how to display 3 dimensions of
+information (x, y and residuals) on a two-dimensional screen.
+Imagine a piece of paper representing your surface fit; the
+residuals would appear above and below the paper. Now you may
+view the paper from above, in which case you see (x,y) and
+the residuals are projected onto the plane of the paper; or
+you may view the paper along one edge so that the residuals
+appear compressed in one coordinate (x,r) or (y,r). You may
+select orientations with the cursor commands 'x' and 'y'; these
+will respond with a question asking which axis of the data
+you wish to show in x and y respectively. For example, 'x'='x'
+and 'y'='y' followed by 'r' (redraw) will show the location of
+the data points but no residuals (equivalent to viewing the
+paper from above);  'x'='y' and 'y'='r' (followed by 'r') will
+show the residuals as a function of y (lines) but all
+information in x is lost in the projection (equivalent to
+viewing the paper from the side). 
+
+Start by showing x vs y: type 'x' and specify the x-axis; type
+'y' and specify the y-axis; type 'r' to redraw. You now see a
+map of the multi-hole traces (see Fig. 5b). Trim off the points at the top
+and bottom: move the cursors near one of the points and hit
+'d' (delete); you will be asked whether you want to delete a
+point (p), all points at that same x- or y-location (x or
+y), or the entire feature (z). To trim the top or bottom
+select 'y'. Also, if you see any points that are obviously
+deviant, delete these points as well. Now refit (type 'f') and show
+the residuals in y: 'x'='y', 'y'='r' and 'r' (see Fig. 5c).
+You may wish to delete other discrepant
+data points and/or change the order of the fit (we recommend
+':xord=4', ':yord=6'), changing the axes of the display as
+necessary to understand the residuals as a function of
+position in the image. Fig. 5d shows x vs. y after deleting
+some deviant points drawn as crosses. When satisfied, exit with
+'q'. Answer 'yes' when asked 'Write coordinate map to the
+database (yes)'. Note:
+it's usually worth noting the coordinate values that are
+listed for the four corners of the image. These are crucial
+in deciding on limits for the transformed images. The output
+of running the 'fitcoor' task is a file called 'fcmulti1'
+contained in the database.
+
+\fIComparison\fR:
+
+Now do the same with the comparison image (consult the
+lists given below in order to edit the parameters for
+the tasks),
+
+.nf
+      lo> implot comp005       (plot a column to get the FWHM of
+				a line)
+      lo> epar ident
+      lo> epar reid
+      lo> ident comp005
+      lo> reid comp005 comp005
+      lo> epar fitc
+      lo> fitc comp005
+.fi
+
+During 'identify' you will be presented with a plot of the sum
+of 10 ('nsum') columns around the central column. So far,
+the x-axis is in pixels (see Fig. 6a).
+Consult the appropriate comparison spectrum to mark (type 'm')
+several prominent features evenly spread over the spectrum
+(6 or 7). A tick mark should appear on top of the marked features
+(see Fig. 6b). Then type 'l' to automatically look for more features
+from the file 'linelists$ctiohenear.dat'. The
+task will then locate up to 50 ('maxfeatures') features that
+you will be required to examine. You will be presented
+with the spectrum of the arc, this time with the x-axis
+in Angstroms (see Fig. 6c). (The 'w' and 'e' commands might
+be useful to blow up the plot, as well as the '+' and '-' keys
+which will make the
+cursor 'jump' to the marked features.) You will probably
+delete (type 'd') some of them and mark (type 'm') others that were not
+located by the task (the 'w' command followed by 'a' will allow
+you to redraw the plot at the original scale).  At this
+level when marking a new feature the program will look for
+it in the coordinate list and present you with a value that
+you may accept (hit return) or redefine (type a new value
+and hit return). If the marked feature is not in the
+coordinate list the task will let you know this with an
+INDEF value. You will be required to define its value. Once
+you are happy with the identified features try a fit by typing 'f'.
+The task will show you a plot with the residuals of the
+features with respect to the fit (see Fig. 6d). You
+may then delete (type 'd') or undelete (type 'u') points by placing the
+cursor close to the point of interest, or you may change the
+function (type ':function') or the order (type ':order') before
+attempting a new fit 'f'. Once you are satisfied with the
+fit type 'q' and you will be returned to the original
+spectrum of the arc. Type 'q' again to quit the task. Answer
+'yes' to the question 'Write feature data to the database (yes)?'.
+
+Now execute 'reidentify' which will reidentify the features you
+marked recently for the remaining columns of your image. This is
+a non-interactive task.
+
+During 'fitcoords' you are required to perform a two-dimensional
+fit of the arc lines thoughout the image. By default you will get
+a plot of the residuals as a function of the y coordinate (Fig. 7a).
+As explained before for the multihole you can switch the x axis of
+the plot to display the residuals as a function of the x coordinate
+and delete deviant points as well as the left and right edges
+that will show up as crosses (see Fig. 7b).
+Now, you can display the
+arc features seen from above as shown in Fig. 7c.
+Again write down the limits yielded by the task
+that will be used in the next section.
+.le
+.bp
+.nf
+                  \fIidentify task for the multihole\fR
+
+       images = "multi1"        Images containing features to be identified
+     (\fIsection\fR = "middle line")  Section to apply to two dimensional images
+    (database = "database")     Database in which to record feature data
+   (\fIcoordlist\fR = "onedstds$ctio/multi1m.dat") User coordinate list
+        (\fInsum\fR = 50)             Number of lines or columns to sum in 2D i
+       (\fImatch\fR = 2.)             Coordinate list matching limit in user un
+ (maxfeatures = 50)             Maximum number of features for automatic identi
+      (zwidth = 100.)           Zoom graph width in user units
+       (ftype = "emission")     Feature type
+      (\fIfwidth\fR = 7.)             Feature width in pixels
+     (\fIcradius\fR = 6.)             Centering radius in pixels
+   (\fIthreshold\fR = 0.)             Feature threshold for centering
+      (minsep = 4.)             Minimum pixel separation
+    (\fIfunction\fR = "chebyshev")    Coordinate function
+       (\fIorder\fR = 4)              Order of coordinate function
+      (sample = "*")            Coordinate sample regions
+    (niterate = 1)              Rejection iterations
+  (low_reject = 3.)             Lower rejection sigma
+ (high_reject = 3.)             Upper rejection sigma
+        (grow = 0.)             Rejection growing radius
+   (autowrite = no)             Automatically write to database
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+        (mode = "ql")           
+
+               \fIreidentify task for the multihole\fR
+
+    reference = "multi1"        Reference image
+       images = "multi1"        Images to be reidentified
+ (interactive = "no")           Interactive fitting?
+     (\fIsection\fR = "middle line")  Section to apply to two dimensional images
+      (newaps = yes)            Reidentify apertures in images not in reference
+    (override = no)             Override previous solutions?
+       (refit = yes)            Refit coordinate function?
+       (trace = yes)            Trace reference image?
+        (\fIstep\fR = 40)             Step for tracing an image
+        (\fInsum\fR = 80)             Number of lines or columns to sum
+       (shift = 0.)             Shift to add to reference features
+       (\fInlost\fR = 5)              Maximum number of features which may be 
+     (\fIcradius\fR = 7.)             Centering radius
+   (\fIthreshold\fR = 0.)             Feature threshold for centering
+ (addfeatures = no)             Add features from a line list?
+   (\fIcoordlist\fR = "onedstds$ctio/multi1m.dat") User coordinate list
+       (match = 2.)             Coordinate list matching limit in user units
+ (maxfeatures = 50)             Maximum number of features for automatic identi
+      (minsep = 4.)             Minimum pixel separation\n
+    (database = "database")     Database
+    (logfiles = "STDOUT,geom.log") List of log files
+    (plotfile = "")             Plot file for residuals
+     (verbose = yes)            Verbose output?
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+       answer = "no"            Fit dispersion function interactively?
+        (mode = "ql")           
+
+               \fIfitcoord task for the multihole\fR
+
+       images = "multi1"        Images whose coordinates are to be fit
+     (fitname = "")             Name for coordinate fit in the database
+ (interactive = yes)            Fit coordinates interactively?
+     (combine = no)             Combine input coordinates for a single fit?
+    (database = "database")     Database
+   (deletions = "deletions.db") Deletion list file (not used if null)
+    (\fIfunction\fR = "chebyshev")    Type of fitting function
+      (\fIxorder\fR = 4)              X order of fitting function
+      (\fIyorder\fR = 6)              Y order of fitting function
+    (logfiles = "STDOUT,geom.log") Log files
+    (plotfile = "plotfile")     Plot log file
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+        (mode = "ql")           
+
+                  \fIidentify task for the comparison\fR
+
+       images = "comp005"       Images containing features to be identified
+     (\fIsection\fR = "mid col")      Section to apply to two dimensional images
+    (database = "database")     Database in which to record feature data
+   (\fIcoordlist\fR = "linelists$ctiohenear.dat") User coordinate list
+        (\fInsum\fR = 10)             Number of lines or columns to sum in 2D i
+       (\fImatch\fR = 2.)             Coordinate list matching limit in user un
+ (maxfeatures = 50)             Maximum number of features for automatic identi
+      (zwidth = 100.)           Zoom graph width in user units
+       (ftype = "emission")     Feature type
+      (\fIfwidth\fR = 5.)             Feature width in pixels
+     (\fIcradius\fR = 2.)             Centering radius in pixels
+   (\fIthreshold\fR = 0.)             Feature threshold for centering
+      (minsep = 4.)             Minimum pixel separation
+    (\fIfunction\fR = "chebyshev")    Coordinate function
+       (\fIorder\fR = 6)              Order of coordinate function
+      (sample = "*")            Coordinate sample regions
+    (niterate = 1)              Rejection iterations
+  (low_reject = 3.)             Lower rejection sigma
+ (high_reject = 3.)             Upper rejection sigma
+        (grow = 0.)             Rejection growing radius
+   (autowrite = no)             Automatically write to database
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+        (mode = "ql")           
+
+
+
+
+
+
+
+               \fIreidentify task for the comparison\fR
+
+    reference = "comp005"       Reference image
+       images = "comp005"       Images to be reidentified
+ (interactive = "no")           Interactive fitting?
+     (section = "mid col")      Section to apply to two dimensional images
+      (newaps = yes)            Reidentify apertures in images not in reference
+    (override = no)             Override previous solutions?
+       (refit = yes)            Refit coordinate function?
+       (trace = yes)            Trace reference image?
+        (\fIstep\fR = 10)             Step for tracing an image
+        (\fInsum\fR = 20)             Number of lines or columns to sum
+       (shift = 0.)             Shift to add to reference features
+       (nlost = 10)             Maximum number of features which may be lost
+     (\fIcradius\fR = 3.)             Centering radius
+   (\fIthreshold\fR = 0.)             Feature threshold for centering
+ (addfeatures = no)             Add features from a line list?
+   (coordlist = "linelists$ctiohenear.dat") User coordinate list
+       (match = 2.)             Coordinate list matching limit in user units
+ (maxfeatures = 50)             Maximum number of features for automatic identi
+      (minsep = 4.)             Minimum pixel separation\n
+    (database = "database")     Database
+    (logfiles = "STDOUT,hear.log") List of log files
+    (plotfile = "")             Plot file for residuals
+     (verbose = yes)            Verbose output?
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+       answer = "no"            Fit dispersion function interactively?
+        (mode = "ql")           
+
+               \fIfitcoord task for the comparison\fR
+
+       images = "comp005"       Images whose coordinates are to be fit
+     (fitname = "")             Name for coordinate fit in the database
+ (interactive = yes)            Fit coordinates interactively?
+     (combine = no)             Combine input coordinates for a single fit?
+    (database = "database")     Database
+   (deletions = "deletions.db") Deletion list file (not used if null)
+    (\fIfunction\fR = "chebyshev")    Type of fitting function
+      (\fIxorder\fR = 6)              X order of fitting function
+      (\fIyorder\fR = 6)              Y order of fitting function
+    (logfiles = "STDOUT,hear.log") Log files
+    (plotfile = "plotfile")     Plot log file
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+        (mode = "ql")           
+.fi
+.bp
+.ls \fI3.6 Distortion correction: Transforming images\fR
+
+Now, you have mappings of the dispersion and of the spatial position as
+functions of (x,y) in the images. You are ready to perform a
+geometrical transformation on the images to remove distortions.
+
+First, you must decide on limits for the new images. For instance,
+starting and ending wavelengths and the number of angstroms/pixel in
+the output images. Edit the parameter file for the task 'transform' and
+specify three of the four parameters (x1,x2,dx,nx) for each axis; leave
+the fourth INDEF. Starting and ending x and y coordinates may be taken
+from the output of the 'fitcoord' task previously run. You will probably
+want to match the approximate dispersion and scale of the raw images when
+setting dx and dy. These values depend upon the grating and readout format
+used. We recommend using spline3 for the interpolation in
+most cases. Spline3 or poly5 best preserve resolution and noise
+characteristics but ring badly at sharp discontinuities. It is a good
+idea to plot across your transformed multi lines and arc lines to check
+for this. Using a linear function is strongly discouraged.
+
+.nf
+      cl> noao
+      no> twods
+      tw> long
+      lo> epar transform      (see the list given below)
+.fi
+
+Before transforming all your images we strongly suggest that you perform a
+trial using your multihole and comparison frames. During the execution
+of this task you will be asked to specify the dispersion axis. Answer
+accordingly, i.e., 1 for rows or 2 for columns.
+
+.nf
+      lo> trans multi1,comp005 test1,test2 multi1,comp005
+.fi
+
+Then use 'display' to examine your transformed images hopefully they
+look straight.
+
+.nf
+      lo> display test1 1
+      lo> display test2 2
+.fi
+
+Figure 8b shows a multihole before and after transformation. Figure 8a
+shows the same but for the comparison lamp.
+
+If the limits set for the transformation are not correct you will get
+sections with useless data in either direction. Guess a new set of
+parameters to use for a second trial.
+
+Do an 'implot' of the transformed multihole and overplot different
+lines to check that the image is straight (see Fig. 9a). Now, do
+an 'implot' of the transformed arc to see whether it is straight
+or not. Overplot different columns as shown in Fig. 9b.
+
+.nf
+      lo> implot test1
+      lo> implot test2
+.fi
+
+Before executing the 'transform' task, get rid of the test images.
+
+.nf
+      lo> imdelete test1,test2
+.fi
+
+Once satisfied with the transformation create an input and output
+list of images, using the 'files' command.
+
+.nf
+      lo> files *.imh > inlist
+.fi
+
+The files command will create a list of all images matching the template
+'*.imh'. You may want to edit the file 'inlist' in order to make minor
+changes.
+
+.nf
+      lo> edit inlist
+.fi
+
+Because of limits on disk space the transformation should be done in
+place.
+
+.nf
+      lo> trans @inlist @inlist multi1,comp005 &
+.fi
+
+In the example above, the task is submitted as a background job. Progress
+may be monitored by the command 'jobs', and by typing the logfile to see
+what has been done. If you run the task as a foreground job (no "&" at
+the end) the terminal is tied up for the duration of the task. Typical
+transformations take 1-2 minutes for each image!.
+
+You also need to transform your summed flats and dark frames,
+
+.nf
+      lo> trans dark,blueff,redff,skyf dark,blueff,redff,skyf
+	  multi1,comp005 &
+.fi
+
+(unless you have added these images to 'inlist').
+.nf
+
+.fi
+.bp
+.nf
+                   \fItransformation task\fR
+
+        input = "@inlist"       Input images
+       output = "@inlist"       Output images
+     fitnames = "multi1,comp005" Names of coordinate fits in the database
+    (database = "database")     Identify database
+  (\fIinterptype\fR = "spline3")      Interpolation type
+          (\fIx1\fR = -170.)          Output starting x coordinate
+          (\fIx2\fR = 170.)           Output ending x coordinate
+          (\fIdx\fR = INDEF)          Output X pixel interval
+          (\fInx\fR = 128.)           Number of output x pixels
+        (xlog = no)             Logrithmic x coordinate?
+          (\fIy1\fR = 3550.)          Output starting y coordinate
+          (\fIy2\fR = 7050.)          Output ending y coordinate
+          (\fIdy\fR = INDEF)          Output Y pixel interval
+          (\fIny\fR = 1520.)          Number of output y pixels
+        (ylog = no)             Logrithmic y coordinate?
+        (\fIflux\fR = yes)            Conserve flux per pixel?
+    (logfiles = "STDOUT,logfile") List of log files
+        (mode = "ql")           
+.fi
+.le   
+.bp
+.ls \fI3.7 Creating, normalizing and correcting the flat-field\fR
+
+You should now smooth the summed dark frame fairly heavily (the dark
+should be featureless). The following table gives the smoothing values
+that we suggest for the flat and the dark depending on the binning used.
+
+.nf
+          ---------------------------------------------------
+          xbin    ybin   dither    recommended smoothing size
+			  size         flat         dark
+          ---------------------------------------------------
+            1       1    16 x 16       7 x 7       7 x 39
+	    2       1     8 x 16       5 x 7       5 x 39
+	    1       2    16 x  8       7 x 5       7 x 21
+	    2       2     8 x  8       5 x 5       5 x 21
+          ---------------------------------------------------
+
+In the following example we assume a 2 by 2 binning. Start
+by smoothing the dark.
+
+      cl> images
+      im> boxcar dark smdark 5 21
+.fi
+    
+Also, smooth your flats, 
+
+.nf
+      im> boxcar blueff smblueff 5 5
+      im> boxcar redff smredff 5 5
+.fi
+
+Note that the boxcar window (5 X 5 in the example) should be smaller
+than the dithering size.
+
+Examine your results by overploting your original dark on the smoothed
+image.
+
+.nf
+      im> implot smdark
+           :c 60              (plot a central column) 
+           :i dark            (open the new image)
+           o                  (overplot)
+           :c 60              (overplot same column number)
+.fi
+  
+Repeat the previous steps for examination of the flats.
+
+Now, create a scaled dark for each flat using the scale factors
+previously determined in section 3.4 and subtract them from your
+flats.
+
+.nf
+      im> imarith smdark * 1.213 bluedark pix=r calc=r
+      im> imarith smdark * 1.377 reddark pix=r calc=r
+      im> imarith smblueff - bluedark blueflat pix=r calc=r
+      im> imarith smredff - reddark redflat pix=r calc=r
+.fi
+    
+You should examine the dark-subtracted flats to make sure they look
+reasonable, especially the far red end of the blueflat and the far blue
+end of the redflat where the signal should vanish. Fig. 10a shows
+the blue end of the red flat before and after dark subtraction.
+Fig 10b shows the same but for the blue flat.
+
+.nf
+      im> implot blueflat
+      im> implot redflat
+.fi
+
+Then sum both flats and look at them,
+  
+.nf
+      im> epar imsum         (see the list given below)
+      im> imsum redflat,blueflat flatsum
+      im> implot flatsum
+.fi
+
+Fig. 10c shows an overplot of the central column of the blue flat, the
+red flat and the sum of both.
+
+.nf
+                           \fIimsum task\fR
+
+       input = "redflat,blueflat" Input images
+      output = "flatsum"     Output image
+      (title = "Sum of blue and red flats") Title for output image
+    (hparams = "")           List of header parameters
+    (\fIpixtype\fR = "real")       Pixel datatype of output image
+   (\fIcalctype\fR = "real")       Calculation type
+     (\fIoption\fR = "sum")        Output option
+ (low_reject = 0.)           Fraction or number of low pixels to reject
+(high_reject = 0.)           Fraction or number of high pixels to reject
+    (verbose = no)           Print log of operation?
+       (mode = "ql")
+
+.fi
+Use imdelete to get rid of all the intermediate images, retaining only
+'flatsum', 'smdark' and 'skyf'.
+
+Before flat fielding your objects you need to remove the spectral
+signature from the quartz lamp. This operation of normalization
+is performed with the task 'response' (loaded with the 'twodspec'
+and 'longslit' packages).
+
+.nf
+      im> twods
+      tw> long
+      lo> epar response      (check the list given below)
+.fi
+
+The image section 'flatsum[m:n,*]' means that the normalizing function
+will be fit to the flat-field only in the range of columns m-n. Choose
+these to avoid including the edge of the slit.
+
+.nf
+      lo> response flatsum[m:n,*] flatsum[m:n,*] response
+.fi
+
+'response' presents you with a plot of the averaged flat-field columns,
+with a function fit through it (see Fig. 11a). Select
+a sample range (a pair of 's' commands)
+to exclude the very ends of the frame where there may be
+spikes or no response (the range will be drawn at the bottom). Then,
+fit the new sample with an 'f'. You may delete the previously selected
+sample with 't' and redefine it or, if the curve does not fit the gross
+shape of the flat-field, try different orders (type ':ord 30', pausing
+after the ":" for the prompt). Usually an order around 30 gives a
+satisfactory fit. Since this is a spline fit on equal intervals, a
+small change in the order (i.e. number of intervals) can have a
+relatively large effect. A useful command is the 'k' key which
+will present you with the ratio between the sample and the fit (see
+Fig. 11b).
+From this plot you can better judge the quality of the fit. You
+should end up with an order such that the ratio of the sample and
+the fit is 'one' on the average, plus minus 2% due to the
+pixel-to-pixel sensitivity variations.
+You may type 'h' to go back to the previous
+plot of the sample and the fit on top of it. When satisfied,
+exit with 'q'. The output of the
+task is an image named 'response' obtained from dividing each column of
+'flatsum' by the fitted function.
+
+We suggest that you examine the output image using 'implot' or
+'display'. It is best to check the columns to be sure it is flat.
+
+.nf
+      lo> implot response
+      lo> display response 1 zs- zr- z1=0.9 z2=1.1
+.fi
+
+Fig. 12a shows a plot of several columns of the normalized flat.
+If you have taken sky-flats, flatten the transformed image ('skyf') using
+the 'response' image just created and examine it for any remaining
+variations along the slit.
+
+.nf
+      lo> imarith skyf / response fsky pix=r calc=r
+      lo> implot fsky
+           :l 250 500        (average several lines together)
+           :l 750 1000
+           q
+.fi
+
+Ideally, if the iillumination of the slit by the white spot was uniform,
+'fsky' should not show any
+variation along the slit. But in fact, when plotting several lines of
+'fsky' together, you will probably get a slope of even 20%, which may
+also change for different group of lines, as shown in Fig. 12b and
+Fig. 12c.
+
+If you see significant variations, you should run the task 'iillumination'
+to fit these variations, and then modify your final flat frame.
+
+.nf
+      lo> epar iillumination  (check the list given below)
+      lo> illum fsky iillumination
+.fi
+
+You will be presented with a plot of the sky spectrum along with 5
+('nbins') bins marked at the bottom of the figure as shown
+in Fig. 13a. You may redefine the
+bins using first 'i' to delete the original ones and then pairs of 's'
+(always starting from the left).  Select the samples so that the
+sky lines do not fall close to the borders of the bins. Also, you
+should not include any saturated lines in the bins. Once you are
+satisfied with your samples type 'q'. You must then fit
+interactively the slit profile for each bin; the task will then present
+you with a line averaged profile for the first bin (see Fig. 13b).
+Then use
+pairs of 's' to exclude from your sample any object or spikes towards the
+edges of the slit (with the use of 't' you may delete the selected
+sample).  Once you are happy with the sample chosen fit the large scale
+variations along the slit (type 'f'). We suggest that
+you use a 'spline3' function of
+order 3 that you may change by typing, for example,
+':function legendre' or ':order 5'.
+When satisfied type 'q' to quit the first bin fit. The task will
+then prompt you to interactively fit the next bin, and so on. The final
+result of performing the task is an iillumination fit along the slit
+obtained from interpolating the 5 original fits using a
+polynomial of third order (parameter 'interp').
+You can now examine the output image.
+
+.nf
+      lo> implot iillumination
+.fi
+
+Finally, obtain your final flat.
+
+.nf
+      lo> imarith response * iillumination flat
+.fi
+
+If you would like more information about the flat field processing of your
+images, type 'help flatfields' in IRAF.
+.nf
+
+                       \fIresponse task\fR
+
+  calibration = "flatsum[m:n,*]" Longslit calibration images
+ normalizatio = "flatsum[m:n,*]" Normalization spectrum images
+     response = "response"   Response function images
+ (interactive = yes)         Fit normalization spectrum interactively?
+   (threshold = INDEF)       Response threshold
+      (sample = "*")         Sample of points to use in fit
+    (naverage = 1)           Number of points in sample averaging
+    (\fIfunction\fR = "spline3")   Fitting function
+       (\fIorder\fR = 30)          Order of fitting function
+  (low_reject = 3.)          Low rejection in sigma of fit
+ (high_reject = 3.)          High rejection in sigma of fit
+    (niterate = 1)           Number of rejection iterations
+        (grow = 0.)          Rejection growing radius
+    (graphics = "stdgraph")  Graphics output device
+      (cursor = "")          Graphics cursor input
+        (mode = "ql")
+
+.fi
+.bp
+.nf
+                     \fIiillumination task\fR
+
+       images = "fsky"       Longslit calibration images
+ iillumination = "iillumination" Iillumination function images
+ (interactive = yes)         Interactive iillumination fitting?
+        (bins = "")          Dispersion bins
+       (\fInbins\fR = 5)           Number of dispersion bins when bins = ""
+      (sample = "*")         Sample of points to use in fit
+    (naverage = 1)           Number of points in sample averaging
+    (\fIfunction\fR = "spline3")   Fitting function
+       (\fIorder\fR = 3)           Order of fitting function
+  (low_reject = 3.)          Low rejection in sigma of fit
+ (high_reject = 3.)          High rejection in sigma of fit
+    (niterate = 1)           Number of rejection iterations
+        (grow = 0.)          Rejection growing radius
+(\fIinterpolator\fR = "poly3")     Interpolation type
+    (graphics = "stdgraph")  Graphics output device
+      (cursor = "")          Graphics cursor input
+        (mode = "ql")
+.fi
+.le
+.bp
+.ls \fI3.8 Applying the flat-field correction\fR
+
+From the previous section you have a smoothed and dark-subtracted
+flat-field frame. Before flat-fielding all your images we suggest that you
+flatten your original sky-flat (skyf) as a trial.
+
+.nf
+      cl> images
+      im> imarith skyf / flat test pix=r calc=r
+.fi
+
+The test image should be uniformly illuminated
+along the slit within 1 or 2%. Let's check this.
+
+.nf
+      im> implot test
+           :l 250 500         (average several lines together
+           :l 500 750          and different samples)
+           :l 750 1000
+	   :l 1000 1250
+           q
+.fi
+
+Figure 14 shows plots of different group of lines of the flat
+fielded sky frame.
+If everything goes well delete your test image.
+
+.nf
+      im> imdelete test
+.fi
+
+In the next step, flatten all your images in place. Do not flatten
+darks, flat fields or any of the calibration frames.
+
+.nf
+      im> files obj*.imh > list
+      im> edit list           (optional to remove files)
+      im> imarith @list / flat @list pix=r calc=r &
+.fi
+
+This operation is also time consuming (one minute per frame). You may
+therefore wish to perform it in the background by adding a '&' to the
+command line. The output to this point is a set of rectified and flat
+fielded images.
+
+We suggest for safety, that you immediately write your transformed images
+to tape, as well as your calibration frames. \fINOTE\fR: if you do not have
+a tape drive that reads at high density, use 1600 in the place of 6250.
+We suggest the following,
+
+.nf
+      im> dataio
+      da> alloc mta
+      da> unlearn wfits
+      da> wfits flat,response,... mta.6250 new+
+      da> wfits @list mta.6250 new-
+      da> dealloc mta
+.fi
+.le
+.bp
+.ls \fI3.9  Extracting the spectra\fR
+
+Go into the package 'apextract' ('noao.twodspec') and edit the parameter file
+for 'apall'
+to look like the lists given below.
+
+.nf
+      cl> noao
+      no> twod
+      tw> apextr
+      ap> epar apall          (  "    "  list given below)
+.fi
+
+In so doing you must specify in the 'dispaxis' parameter the dispersion
+axis of your images (1 for lines and 2 for columns).
+
+An important parameter in 'apall' is 'format'.
+If  the  format  parameter  is set to 'onedspec' the output
+aperture extractions are one dimensional images with names formed
+from the output rootname and a numeric extension given by the
+aperture number; i.e. root.0001 for aperture 1. Note that there
+will be as many output images as there are apertures for each input
+image, all with the same output rootname but with different
+aperture extensions.
+If the format parameter  is 'multispec' the output
+aperture  extractions  are  put  into a two dimensional image with a
+name formed from the output rootname and  the  extension
+'.ms'. Each line in the output image corresponds to one aperture.
+Thus in this format there is one output image for each input
+image. In this example we have chosen to output the extrated spectra
+using the 'onedspec' format. The reader is warned that the rest of
+this manual is meant only for such a format.
+
+Also important is the parameter 'weights'. If set to 'none'
+the  pixels  are  summed  without weights except for partial
+pixels at the ends. Otherwise, if set to 'variance' the extraction is
+weighted by the variance based on the data values and a poisson/ccd model.
+
+Extracting spectra is generally a delicate step and we suggest doing
+this by carefully inspecting each image. It is worth spending some time
+on each image to properly select the object and the background windows,
+to trace the spectrum and extract it. We suggest that you start
+with a bright star (maybe a spectrophotometric standard) to allow a
+proper tracing. For instance,
+
+.nf
+      ap> apall obj110
+.fi
+
+The task will start by asking you the following questions to which
+you must answer with CR,
+
+.nf
+Find aperture for obj110? (yes):
+Number of apertures to be found automatically (1):
+Edit apertures for obj110? (yes):
+
+.fi
+The first section of the task is used to define the aperture you wish
+to use in extracting the spectrum. You will be presented with a
+cross-section of the image (average of 'nsum' lines) along with
+an aperture centered around the star profile (see Fig. 15a).
+If there are not enough lines added together to give a
+good profile, use ':nsum #' to add up # lines. You may also wish to
+review or modify the profile width using ':width' (the width should
+be about twice the FWHM of the profile). Now you may redefine your
+aperture: put the cursor on the profile and type
+'c' (if you want to center the aperture), 'l' (cursor marks the lower
+edge of the aperture) and 'u' (the upper edge). You may also define the
+center, lower and upper values using ':cen #', ':low #' and ':upp #'. All of
+these parameters are shown in the active status line at the bottom of the
+screen. The lower and upper edge values are given in pixels
+with respect to the center of the window.
+
+Once you have defined the extraction aperture, define the background.
+Type 'b' and you will get a new plot showing the same cross-section
+(see Fig. 15b), but
+with sky or background regions marked according to the sample specified
+in 'apall'. If you don't like the regions defined type 't' to
+initialize the sample and then pairs of 's' to define new regions. You
+may wish to modify the function and order, although for most
+applications a linear fit (e.g. chebychev of order 2) is satisfactory.
+Type 'f' to fit the background. When satisfied type 'q'. This returns you
+to the first section. Type 'q' again. You will be asked,
+
+.nf
+Trace apertures for obj110? (yes):
+Fit traced positions for obj110 interactively? (yes):
+wait...
+Fit curve to aperture 1 of obj110 interactively (yes):
+
+.fi
+Answer 'yes' to all of them (hit RETURN).
+
+The next step is to trace the spectrum.  This means fitting
+the center of the profile throughout the image. Ideally the center
+should be constant through the entire image, but usually there is a
+small distortion left (if the position varies widely, there may be a
+problem with the distortion correction) (see example in Fig. 15c).
+Usually, the 'rms' of the center
+is about 0.2 pixels. The fitting function suggested is
+'spline3' of third order which of course you may change in the usual way
+by typing, for example, ':function legendre' and/or ':order 4'
+before reperforming the fit with 'f'.  When you are
+happy with the fit type 'q' to quit this section and continue.
+You must answer 'yes' to the questions,
+
+.nf
+Write apertures for obj110 to database (yes):
+Extract aperture spectra for obj110? (yes):
+Review extracted spectra from obj110? (yes):
+wait...
+Review extracted spectrum for aperture 1 from obj110? (yes):
+.fi
+
+Right now the extracted spectrum will be presented to you (see Fig. 15d).
+The result should be
+examined for evidence of any extraction problems. Quit this
+section with 'q'. Finally, type RETURN to quit the task.
+If answered appriopriately, the task will output a
+one-dimensional image with the extracted spectrum under the name
+obj110.0001 (where the '0001' extension stands for aperture #1)
+and a file in the database under the name 'apobj110',
+which contains information about the extraction,
+the window sizes and the tracing.
+
+You may now enter a good reference in 'apall' (maybe obj110)
+which can be used for your
+next extraction. The reference must be a bright standard
+star whose tracing
+and windows will be read from the database and used as defaults in the
+next extraction. This is very convenient when extracting a faint object
+which might be difficult or imposible to trace properly because of the
+low signal.
+
+.nf
+      ap> epar apall          (fill the 'reference' parameter with
+			       the appropriate object)
+.fi
+
+Once you have entered the right reference in 'apall', proceed with
+the extraction of the rest of your objects.
+
+.nf
+      ap> apall obj106
+          ...
+	  ...
+.fi
+
+We suggest the following scheme which summarizes the main commands
+in 'apall',
+
+- \fIdefine object window for your first object\fR: if the object
+window is not properly centered on your object bring the vertical
+cursor to the position of your object and type 's'. This command
+shifts the center of the window to the position of the cursor. Then
+type 'c' to center the window around your object. You may use the
+'l' and 'u' commands to adjust the limits of your window. Once 
+you are happy with the object window type 'b' to check the background
+windows.
+
+- \fIdefine background windows\fR: you will be presented with the
+default sky windows coming from your reference. You have the option
+of deleting the current windows ('t' key) and defining new windows
+(pairs of 's') using the vertical cursor. Once you have defined
+your windows type 'f' to fit the current sky sample. The default
+for the fit is a chebyshev function of order 2. You may change
+them by typing, for instance, ':function spline3' and/or ':order 3'.
+Once you are happy with the sky fit type 'q' to go back to the
+previous section.
+
+Optionally you may define a new aperture at the position of the
+cursor using the 'n' key which stands for 'new aperture'. Go
+through the previous two sections. \fIWarning\fR: It is necessary
+to redefine the sky for the new aperture, and cannot skip
+this step. You have to repeat the previous loop for all the
+apertures you want to define.
+
+If you are using a reference in 'apall' you can skip the tracing
+procedure which will be taken from the reference. Proceed with
+the extractions by inspecting your spectra and accepting the
+default names (obj106.0001, obj106.0002, ...).
+
+You can also inspect the extracted spectra by using 'splot'
+in the 'onedspec' package.
+
+.nf
+      ap> onedspec
+      on> splot obj106.0001
+.fi
+
+You will be presented with a plot of the extracted spectrum with the
+y-axis in counts and the x-axis in a roughly wavelength calibrated
+scale coming from the transformation of your images (section 3.6).
+This is still not a final wavelength scale.
+
+The next step consists of extracting the wavelength calibration arc
+spectra. Start by editing the 'apall' task according to the
+list given below. Note that in this case the parameters 'interactive',
+'find', 'recenter',
+'edit', 'trace', and 'review' must all be set to 'no'. Also, the parameter
+'background' must be set to 'none'.
+
+If you are not terribly interested in the wavelength calibration you
+can fill the 'reference' parameter with any well traced object and
+perform the extractions of your arcs with the same reference. If
+you are looking for an accurate wavelength calibration do an 'epar'
+for each arc extraction and fill the 'reference' parameter with
+the object of interest.
+
+.nf
+      on> epar apall          (check the list given below)
+.fi
+
+Finally, perform the task 'apall' for each arc. You are required to
+
+.nf
+      on> apall comp105
+.fi
+
+This is a non-interactive step.
+.bp
+.nf
+
+                  \fIapall parameters for objects\fR
+
+        input =                 List of input images
+      (output = "")             List of output spectra
+      (\fIformat\fR = "onedspec")     Extracted spectra format
+  (references = "")             List of aperture reference images
+    (profiles = "")             List of aperture profile images
+
+ (\fIinteractive\fR = yes)            Run task interactively?
+        (\fIfind\fR = yes)            Find apertures?
+    (\fIrecenter\fR = yes)            Recenter apertures?
+      (resize = no)             Resize apertures?
+        (\fIedit\fR = yes)            Edit apertures?
+       (\fItrace\fR = yes)            Trace apertures?
+    (\fIfittrace\fR = yes)            Fit the traced points interactively?
+     (\fIextract\fR = yes)            Extract spectra?
+      (extras = no)             Extract sky, sigma, etc.?
+      (\fIreview\fR = yes)            Review extractions?
+
+        (line = INDEF)          Dispersion line
+        (\fInsum\fR = 20)             Number of dispersion lines to sum
+
+				# DEFAULT APERTURE PARAMETERS
+
+    (\fIdispaxis\fR = 2)              Dispersion axis (1=along lines, 2=cols
+       (lower = -5.)            Lower aperture limit relative to center
+       (upper = 5.)             Upper aperture limit relative to center
+   (apidtable = "")             Aperture ID table (optional)
+
+				# DEFAULT BACKGROUND PARAMETERS
+
+  (\fIb_function\fR = "chebyshev")    Background function
+     (\fIb_order\fR = 2)              Background function order
+    (\fIb_sample\fR = "-30:-15,15:30") Background sample regions
+  (b_naverage = -3)             Background average or median
+  (b_niterate = 1)              Background rejection iterations
+(b_low_reject = 3.)             Background lower rejection sigma
+(b_high_rejec = 3.)             Background upper rejection sigma
+      (b_grow = 0.)             Background rejection growing radius
+
+				# APERTURE CENTERING PARAMETERS
+
+       (width = 5.)             Profile centering width
+      (radius = 10.)            Profile centering radius
+   (threshold = 0.)             Detection threshold for profile centering
+
+				# AUTOMATIC FINDING AND ORDERING PARAMETERS
+
+        nfind = 1               Number of apertures to be found automatic
+      (minsep = 5.)             Minimum separation between spectra
+      (maxsep = 1000.)          Maximum separation between spectra
+       (order = "increasing")   Order of apertures
+
+				# RECENTERING PARAMETERS
+
+   (apertures = "")             Select apertures
+      (npeaks = INDEF)          Select brightest peaks
+       (shift = yes)            Use average shift instead of recentering?
+
+				# RESIZING PARAMETERS
+
+      (llimit = INDEF)          Lower aperture limit relative to center
+      (ulimit = INDEF)          Upper aperture limit relative to center
+      (ylevel = 0.1)            Fraction of peak or intensity for automatic
+        (peak = yes)            Is ylevel a fraction of the peak?
+         (bkg = yes)            Subtract background in automatic width?
+      (r_grow = 0.)             Grow limits by this factor
+   (avglimits = no)             Average limits over all apertures?
+
+				# TRACING PARAMETERS
+
+      (\fIt_nsum\fR = 20)             Number of dispersion lines to sum
+      (\fIt_step\fR = 20)             Tracing step
+     (t_nlost = 3)              Number of consecutive times profile is lost
+  (\fIt_function\fR = "spline3")      Trace fitting function
+     (\fIt_order\fR = 3)              Trace fitting function order
+    (t_sample = "*")            Trace sample regions
+  (t_naverage = 1)              Trace average or median
+  (t_niterate = 1)              Trace rejection iterations
+(t_low_reject = 3.)             Trace lower rejection sigma
+(t_high_rejec = 3.)             Trace upper rejection sigma
+      (t_grow = 0.)             Trace rejection growing radius
+
+				# EXTRACTION PARAMETERS
+
+  (\fIbackground\fR = "fit")          Background to subtract
+      (skybox = 1)              Box car smoothing length for sky
+     (\fIweights\fR = "none")         Extraction weights (none|variance)
+        (pfit = "fit1d")        Profile fitting type (fit1d|fit2d)
+       (clean = no)             Detect and replace bad pixels?
+  (saturation = INDEF)          Saturation level
+   (readnoise = "0.")           Read out noise sigma (photons)
+        (gain = "1.")           Photon gain (photons/data number)
+      (lsigma = 4.)             Lower rejection threshold
+      (usigma = 4.)             Upper rejection threshold
+     (nsubaps = 1)              Number of subapertures per aperture
+        (mode = "ql")           
+
+.fi
+.bp
+.nf
+                  \fIapall parameters for arcs\fR
+
+        input =                 List of input images
+      (output = "")             List of output spectra
+      (\fIformat\fR = "onedspec")     Extracted spectra format
+  (references = "")             List of aperture reference images
+    (profiles = "")             List of aperture profile images
+
+ (\fIinteractive\fR = no)             Run task interactively?
+        (\fIfind\fR = no)             Find apertures?
+    (\fIrecenter\fR = no)             Recenter apertures?
+      (resize = no)             Resize apertures?
+        (\fIedit\fR = no)             Edit apertures?
+       (\fItrace\fR = no)             Trace apertures?
+    (fittrace = no)             Fit the traced points interactively?
+     (\fIextract\fR = yes)            Extract spectra?
+      (extras = no)             Extract sky, sigma, etc.?
+      (\fIreview\fR = no)             Review extractions?
+
+        (line = INDEF)          Dispersion line
+        (nsum = 20)             Number of dispersion lines to sum
+
+				# DEFAULT APERTURE PARAMETERS
+
+    (\fIdispaxis\fR = 2)              Dispersion axis (1=along lines, 2=cols
+       (lower = -5.)            Lower aperture limit relative to center
+       (upper = 5.)             Upper aperture limit relative to center
+   (apidtable = "")             Aperture ID table (optional)
+
+				# DEFAULT BACKGROUND PARAMETERS
+
+  (b_function = "chebyshev")    Background function
+     (b_order = 2)              Background function order
+    (b_sample = "-30:-15,15:30") Background sample regions
+  (b_naverage = -3)             Background average or median
+  (b_niterate = 1)              Background rejection iterations
+(b_low_reject = 3.)             Background lower rejection sigma
+(b_high_rejec = 3.)             Background upper rejection sigma
+      (b_grow = 0.)             Background rejection growing radius
+
+				# APERTURE CENTERING PARAMETERS
+
+       (width = 5.)             Profile centering width
+      (radius = 10.)            Profile centering radius
+   (threshold = 0.)             Detection threshold for profile centering
+
+				# AUTOMATIC FINDING AND ORDERING PARAMETERS
+
+        nfind = 1               Number of apertures to be found automatic
+      (minsep = 5.)             Minimum separation between spectra
+      (maxsep = 1000.)          Maximum separation between spectra
+       (order = "increasing")   Order of apertures
+
+				# RECENTERING PARAMETERS
+
+   (apertures = "")             Select apertures
+      (npeaks = INDEF)          Select brightest peaks
+       (shift = yes)            Use average shift instead of recentering?
+
+				# RESIZING PARAMETERS
+
+      (llimit = INDEF)          Lower aperture limit relative to center
+      (ulimit = INDEF)          Upper aperture limit relative to center
+      (ylevel = 0.1)            Fraction of peak or intensity for automatic
+        (peak = yes)            Is ylevel a fraction of the peak?
+         (bkg = yes)            Subtract background in automatic width?
+      (r_grow = 0.)             Grow limits by this factor
+   (avglimits = no)             Average limits over all apertures?
+
+				# TRACING PARAMETERS
+
+      (t_nsum = 20)             Number of dispersion lines to sum
+      (t_step = 20)             Tracing step
+     (t_nlost = 3)              Number of consecutive times profile is lost
+  (t_function = "spline3")      Trace fitting function
+     (t_order = 3)              Trace fitting function order
+    (t_sample = "*")            Trace sample regions
+  (t_naverage = 1)              Trace average or median
+  (t_niterate = 1)              Trace rejection iterations
+(t_low_reject = 3.)             Trace lower rejection sigma
+(t_high_rejec = 3.)             Trace upper rejection sigma
+      (t_grow = 0.)             Trace rejection growing radius
+
+				# EXTRACTION PARAMETERS
+
+  (\fIbackground\fR = "none")         Background to subtract
+      (skybox = 1)              Box car smoothing length for sky
+     (\fIweights\fR = "none")         Extraction weights (none|variance)
+        (pfit = "fit1d")        Profile fitting type (fit1d|fit2d)
+       (clean = no)             Detect and replace bad pixels?
+  (saturation = INDEF)          Saturation level
+   (readnoise = "0.")           Read out noise sigma (photons)
+        (gain = "1.")           Photon gain (photons/data number)
+      (lsigma = 4.)             Lower rejection threshold
+      (usigma = 4.)             Upper rejection threshold
+     (nsubaps = 1)              Number of subapertures per aperture
+        (mode = "ql")           
+
+.fi
+.le
+.bp
+.ls \fI3.10 Wavelength calibration\fR
+
+Wavelength calibration consists of three steps. The first one is
+done interactively with the task 'identify' which allows you to
+get from an arc a dispersion solution (wavelength
+versus pixel). That solution is the output from 'identify' and is
+stored as a text file in the database. The next step consists
+in assigning arc references to your objects. This step is performed 
+with the task 'refspectra' which simply writes this assignment in
+the header of your objects under the keywords REFSPEC1 and REFSPEC2.
+The third step consists in applying the wavelength solution to the extracted
+spectra which is performed with the task 'dispcor'.
+This task is non-interactive.
+
+\fISTEP 1\fR.
+
+You have to start by identifying emission lines in your arc spectra
+to be used to get a wavelength solution which will be applied later
+to your objects. Do an 'epar' on the 'identify' task (in the 'onedspec'
+package) and set the parameters according to the list given below. The
+first time you run this task is the most time consuming. Once you
+have obtained a solution for one arc, the following identifications
+will be much more straightforward. Now, execute the task for your first
+arc.
+
+.nf
+      cl> onedspec
+      on> epar identify           (check the list given below)
+      on> identify comp105.0001
+
+
+                   \fIidentify parameters\fR
+
+       images = "comp105.0001"  Images containing features to be identified
+     (section = "middle line")  Section to apply to two dimensional images
+    (database = "database")     Database in which to record feature data
+   (\fIcoordlist\fR = "linelists$idhenear.dat") User coordinate list
+        (nsum = 10)             Number of lines or columns to sum in 2D
+       (\fImatch\fR = 2.)             Coordinate list matching limit in user 
+ (maxfeatures = 50)             Maximum number of features for automatic
+      (zwidth = 100.)           Zoom graph width in user units
+       (ftype = "emission")     Feature type
+      (\fIfwidth\fR = 5.)             Feature width in pixels
+     (\fIcradius\fR = 2.)             Centering radius in pixels
+   (\fIthreshold\fR = 50.)            Feature threshold for centering
+      (minsep = 4.)             Minimum pixel separation
+    (\fIfunction\fR = "chebyshev")    Coordinate function
+       (\fIorder\fR = 3)              Order of coordinate function
+      (sample = "*")            Coordinate sample regions
+    (niterate = 1)              Rejection iterations
+  (low_reject = 3.)             Lower rejection sigma
+ (high_reject = 3.)             Upper rejection sigma
+        (grow = 0.)             Rejection growing radius
+   (autowrite = no)             Automatically write to database
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+        (mode = "ql")           
+
+.fi
+Several arc spectra with identified lines can be found in the
+computer room. Select the appropriate figure for your needs.
+
+The task will present you with the extracted arc (see Fig. 16a).
+So far the x-axis is on a rough wavelength scale
+which helps in the identification
+of the lines in your spectrum. Once you have recognized some
+features (this step is not straightforward and make take a while ...),
+select a line by setting the cursor on it, typing 'm' (mark
+feature) and entering the corresponding value in Angstroms. A
+tick mark should appear on top of the feature. Now mark a few
+more features (3 or 4) and enter their values by consulting the
+reference figure.
+
+Try now to perform a fit with the current points. If you type 'f'
+the task will carry out a one-dimensional fit between the values
+you entered in Angstroms and their pixel values. You will be
+presented with a plot of the residuals of the fit as a function
+of wavelength (see Fig. 16b). The rms of the fit in Angstroms is given
+at the top of the plot. So far the residuals are probably quite high
+and you will probably see some systematic trends in the residuals.
+This is not important for the time being because you need to have a
+lot of features before attempting to get a decent solution. Type
+'q' to quit this section and you will see the arc spectrum in
+a real \fIwavelength scale!\fR, which makes things a lot simpler to
+identify features (see Fig. 16c). You must continue marking
+more features. From now on, each time you mark a feature you
+will be offered a value in Angstroms that generally is the right
+one. If so, hit RETURN to accept it. If not, enter the correct value
+by hand. Try to mark several features evenly separated throughout
+the dispersion range. Type 'f' to improve the current fit. If you see
+any trend in the residuals try to increase the order of the function
+by typing, for instance, ':order 3' followed by 'f' to reperform
+the fit. In order to change the type of the function to fit
+type, for instance, ':function legendre'. You may delete points
+with high residuals by moving the cursor near to the point and
+typing 'd' or undelete points (crosses) with 'u'. Once you are
+happy with the type of function along with the order of the fit,
+type 'q' to return to the arc spectrum.
+
+This is the time to let the computer work and automatically
+search more lines from the internal library. The 'locate'
+command checks for all the emission lines in your arc whether
+there is a nearby value to a given feature in the internal
+library or not. Before attempting this it is necessary to define
+an appropriate range in Angstroms to be scanned in the internal
+library around each line found in your arc. This range is set
+with the parameter 'match' which must be set to 2-3 times the
+rms of the current fit.
+
+Once you have the current rms, type ':match #' followed by 'l'
+which stands for 'locate'. This will automatically mark more
+features in your arc. After a few seconds you will probably
+notice several new lines marked in the arc spectrum. Type 'f'
+to try a new fit. You will see a plot of the residuals of the
+fit (see Fig. 16d). Play around with the commands you know
+to improve the fit. Don't be surprised if you need a 6th
+order function. Generally you are doing well with an rms
+of 0.1-0.2 pixels (since the rms is given in Angstroms you have
+to divide that number by the number of Angstroms per pixel in
+your spectra). Once you are happy with it type 'q' to quit this
+section, and finally 'q' again to quit the task. You must
+answer 'yes' to the question,
+
+.nf
+Write feature data to the database (yes)?
+
+.fi
+The solution previously obtained will be stored in the database
+as a text file.
+
+Proceed now with the identification of the other arcs. Since you
+already have a wavelength solution you can use it as a reference
+for the next identifications. Start by running 'identify' on the
+next arc.
+
+.nf
+      on> ident comp107.0001
+
+.fi
+Once you have the arc spectrum presented
+in front of you, read from the database a wavelength solution.
+The format of the command is ':read name ap', where 'name' is the
+name of the reference spectrum, and 'ap' is the aperture number.
+Type, for instance, ':read comp105.0001 1'. You will be presented
+with the current spectrum with the x-axis in Angstroms along with
+the features identified in comp105.0001 plotted on top. Although
+you probably cannot see it, the tick marks are slightly shifted
+with respect to the emission lines. The next step consists of
+recentering the old features on the current ones. Type 'a' (all)
+followed by 'c' (center) to center all the features. After
+thinking a while the task will shift the tick marks accordingly.
+You may then do a fit ('f') to inspect the residuals. At this level
+you may use all the commands described above to get a good fit.
+Quit the task ('q') once you have a good fit with the right rms.
+
+Once you have identified all your spectra the wavelength solutions
+should all be in the database.
+
+\fISTEP 2\fR.
+
+There are many ways of assigning arc references to your objects. We
+suggest two different approaches that satisfy most needs of IRAF
+users.
+
+- If you have only \fIone arc for the whole night\fR do an 'epar' on
+'refspec' according to the list given below and fill the 'reference'
+parameter with the arc you wish
+to use (for instance, comp105.0001) and execute 'refspec'.
+
+.nf
+      on> epar refspec       (check the list given below)
+      on> refspec obj*.000?.imh
+
+
+                     \fIrefspec parameters\fR
+
+        input = "obj*.000?.imh" List of input spectra
+  (\fIreferences\fR = "comp105.0001") List of reference spectra
+   (apertures = "")             Input aperture selection list
+      (refaps = "")             Reference aperture selection list
+   (ignoreaps = yes)            Ignore input and reference apertures?
+      (\fIselect\fR = "average")      Selection method for reference spectra
+        (sort = "none")         Sort key
+       (group = "none")         Group key
+        (time = no)             Is sort key a time?
+    (timewrap = 17.)            Time wrap point for time sorting
+    (override = yes)            Override previous assignments?
+     (confirm = yes)            Confirm reference spectrum assignments?
+      (assign = yes)            Assign the reference spectra to the input
+    (logfiles = "STDOUT,logfile") List of logfiles
+     (verbose = no)             Verbose log output?
+       answer = "yes"           Accept assignment?
+        (mode = "ql")           
+
+You should get the following question for each object,
+
+[obj106.0001] refspec1='comp105.0001' Accept assingment?(no|yes|YES)(yes):
+
+.fi
+to which you have to answer 'yes' in order to
+accept the assignment.
+
+- If you have \fIone or two different arc(s) per object\fR prepare
+a table with your specific assignments in the following format,
+
+.nf
+     on> edit ref.table
+
+	 obj020.0001 comp019.0001
+	 obj022.0001 comp021.0001,comp023.0001
+	 obj022.0002 comp021.0002,comp023.0002
+	 obj023.0001 comp019.0001
+	 ...
+
+.fi
+In the previous example obj020.0001 will be wavelength calibrated
+using only the arc 'comp019.0001'. 'obj022.0001' and 'obj022.0002'
+will be calibrated using simultaneously two arcs bracketing your
+object, both with the same weight. Note that each spectrum from
+'obj022' has its own set of extracted arcs. 'obj023.0001' will
+be calibrated with the same arc used for 'obj020.0001'.
+
+Now, do an 'epar' for 'refspec' and fill the 'reference' parameter with
+'ref.table' (the name of the assignment table you created), fill
+the 'select' parameter with 'average' and
+execute the task.
+
+.nf
+      on> epar refspec
+      on> refspec obj*.000?.imh
+
+.fi
+\fISTEP 3\fR.
+
+Before running 'dispcor' you need a list with your raw spectra and
+a list with the names of the output spectra. Use the 'files' command
+to create the input list. We suggest the following,
+
+.nf
+      on> files obj*.000?.imh > inlist
+      on> edit inlist                   (optional)
+
+.fi
+Once you have the input list with the appropriate files make a copy
+of it into a new list called 'dclist' and edit this new file to
+change the output names of your wavelength calibrated spectra.
+
+.nf
+      on> copy inlist dclist
+      on> edit dclist     (if you have followed the convention of
+			   this manual the following vi command
+			   might be useful for a global replacement
+			   :1,$s/obj/dc/)
+.fi
+
+Once you have created the output list which must have \fIthe same
+number of lines as the output list\fR, you are ready to run
+'dispcor'. Do an 'epar' first on 'dispcor' according to the list
+given below.
+
+.nf
+      on> epar dispcor         (check the list given below)
+
+		   \fIdispcor parameters\fR
+
+
+        input = "@objlist"      List of input spectra
+       output = "@dclist"       List of output spectra
+   (\fIlinearize\fR = yes)            Linearize (interpolate) spectra?
+    (database = "database")     Dispersion solution database
+       (table = "")             Wavelength table for apertures
+          (\fIw1\fR = 3500.)          Starting wavelength
+          (\fIw2\fR = INDEF)          Ending wavelength
+          (\fIdw\fR = 2.4)            Wavelength interval per pixel
+          (\fInw\fR = 1520)           Number of output pixels
+         (\fIlog\fR = no)             Logarithmic wavelength scale?
+        (\fIflux\fR = yes)            Conserve flux?
+    (samedisp = no)             Same dispersion in all apertures?
+      (global = no)             Apply global defaults?
+   (ignoreaps = yes)            Ignore apertures?
+     (confirm = no)             Confirm dispersion coordinates?
+    (listonly = no)             List the dispersion coordinates only?
+     (verbose = yes)            Print linear dispersion assignments?
+     (logfile = "")             Log file
+        (mode = "ql")           
+
+.fi
+Note that the parameter 'linearize' is set to yes. This means that
+the spectra will be interpolated to a linear wavelength scale and
+the dispersion coordinate system in the header is set
+appropriately. If no, the
+nonlinear dispersion function(s) from the
+database are assigned to the input image header and  the spectral
+data are not interpolated.
+
+You must decide upon the starting wavelength, the
+number of Angstroms per pixel and the length of the output
+spectra in order to have all of them in the same format.
+Execute then the task.
+
+.nf
+      on> dispcor @inlist @dclist
+.fi
+
+The output of 'dispcor' is a set of wavelength calibrated images called
+in this example dc020.0001, dc022.0001, dc022.0002, dc023.0001 ...
+It is a good idea to plot them with the use of the 'splot' task.
+
+.nf
+      on> splot dc020.0001
+
+Check that the x-scale is in Angstroms.
+
+.fi
+.le
+.bp
+.ls \fI3.11 Neutral Density filter corrections\fR
+
+If you used different neutral density filters during your run and wish
+to flux-calibrate your data you must correct for the transmission of
+these filters. Filter transmission curves are kept in the
+'onedstds$ctio/' directory as tables.
+
+You may apply a two-dimensional correction to the full image before
+extraction or prepare suitable one-dimensional curves for correction
+after extraction. Of course, the effect of any filter which was used
+for the entire night will be removed by the flux-calibration, since it
+may be treated as part of the overall system sensitivity.
+
+In the 'onedspec' package edit the parameters for the task 'ndprep', taking
+w0, dw, nw from the wavelength calibrated spectra, using nspace=0
+and dispaxis=2, and then run the task.
+
+.nf
+      cl> noao
+      no> onedspec
+      on> images
+      im> epar ndprep         (check the figure)
+      im> ndprep nd1m.100mag.dat nd1
+      im> ndprep  ...
+.fi
+
+for each ND filter you need. Then, for each image which needs a
+correction use imarith to divide by the ND image, in place:
+
+.nf
+      im> imarith dc020.0001 / nd1 dc020.0001 pix=r calc=r
+      im>  ...
+.fi
+.nf
+
+                     \fIndprep parameters\fR
+
+ filter_curve = "nd1m.100mag.dat" Input ND filter curve
+       output = "nd1"           Output calibration image
+          (\fIw0\fR = 3500.)          Starting wavelength (Angstroms)
+          (\fIdw\fR = 2.4)            Wavelength increment (Angstroms)
+          (\fInw\fR = 1520)           Number of wavelength points
+      (nspace = 0)              Number of spatial points (0 for 1D)
+   (\fIlogarithm\fR = no)             Use logarithmic wavelengths?
+        (flux = yes)            Conserve flux when log rebinning?
+    (dispaxis = 2)              Dispersion axis
+   (\fIdirectory\fR = "onedstds$ctio/") ND filter directory
+        (mode = "ql")           
+.fi
+.le
+.bp
+.ls \fI3.12 Deriving a sensitivity function\fR
+
+The sensitivity function is determined in two steps: first, the task
+'standard', calculates the individual sensitivity measurements from the
+extracted flux standard spectra; second, 'sensfunc', collectively
+fits the individual measurements. Notice that the function is derived
+from the extracted spectra before applying any extinction correction
+(this is because the correction is applied in the 'sensfunc' task).
+
+Both 'standard' and 'sensfunc' are found in the 'onedspec' package. Load
+this package and edit the parameter files of 'standard' and
+'sensfunc' according to the lists given below.
+
+.nf
+      cl> noao
+      no> onedspec
+      on> epar stand           (check the list given below)
+      on> epar sensfunc        (check the list given below)
+
+
+                    \fIstandard parameters\fR
+
+        input = "dc110.0001"    Input image file root name
+       output = "std1"          Output flux file (used by SENSFUNC)
+    (samestar = yes)            Same star in all apertures?
+ (beam_switch = no)             Beam switch spectra?
+   (apertures = "")             Aperture selection list
+   (bandwidth = INDEF)          Bandpass widths
+     (bandsep = INDEF)          Bandpass separation
+     (\fIfnuzero\fR = 3.6640000000000E-20) Absolute flux zero point
+  (\fIextinction\fR = "onedstds$ctioextinct.dat") Extinction file
+      (\fIcaldir\fR = "onedstds$ctionewcal/") Directory containing calibration
+ (\fIobservatory\fR = "ctio")         Observatory for data
+    (interact = yes)            Graphic interaction to define new bandpasses
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+    star_name = "eg274"         Star name in calibration list
+       answer = "yes"           (no|yes|NO|YES|NO!|YES!)
+        (mode = "ql")           
+
+		       \fIsensfunction parameters\fR
+
+    standards = "std1"          Input standard star data file (from STANDARD
+  sensitivity = "sens1"         Output root sensitivity function imagename
+   (apertures = "")             Aperture selection list
+   (ignoreaps = no)             Ignore apertures and make one sensitivity
+     (logfile = "senslog")      Output log for statistics information
+  (\fIextinction\fR = "onedstds$ctioextinct.dat") Extinction file
+(newextinctio = "extinct.dat")  Output revised extinction file
+ (\fIobservatory\fR = "ctio")         Observatory of data
+    (function = "spline3")      Fitting function
+       (order = 6)              Order of fit
+ (interactive = yes)            Determine sensitivity function interact
+      (graphs = "sr")           Graphs per frame
+       (marks = "plus cross box") Data mark types
+      (cursor = "")             Graphics cursor input
+      (device = "stdgraph")     Graphics output device
+       answer = "yes"           (no|yes|NO|YES)
+        (mode = "ql")           
+
+.fi
+The task 'standard' will examine the extracted spectrum of a standard
+star, bin the counts within the calibrated bandpasses and compare
+them to the tabulated magnitudes for that star. The choices for the star
+directory, 'caldir' are given in appendix A of this manual. The ratio of flux
+per unit wavelength to counts gives a system sensitivity in each bandpass.
+The sensitivities are stored in the file specified by the parameter 'output',
+which should probably be different for each night (here we give the example
+of 'std1'). Run 'standard' for each star of night 1:
+
+.nf
+      on> stand dc110.0001 std1 eg274
+      on> ...
+.fi
+
+Be sure to specify the correct star name for each spectrum.
+'Standard' will ask you the following,
+
+.nf
+[dc110.0001][1]: Edit bandpasses? (yes):
+
+to which you must answer 'yes'.
+.fi
+
+You will then be presented with the spectrum
+of the standard star on top of which have been drawn boxes
+at the positions of the flux points taken from the internal library
+(see Fig. 17). You have the option of deleting the nearest point
+to the cursor
+by typing 'd', or adding a new flux point at the position of
+the cursor. You need to specify with the vertical cursor both the
+lower and upper limits of the box by typing 'a' twice. The flux point
+for this new bandpass will be linearly interpolated from the two
+nearest points found in the library. Type 'q' to quit the task.
+
+Now, run 'sensfunc', which combines the sensitivities calculated above
+from the different stars and produces a fitted sensitivity function.
+
+.nf
+      on> sensfunc std1 sens1
+.fi
+
+'std1' is the output from 'standard' and 'sens1' is the root name
+for the output of 'sensfunc'. Answer 'yes' when asked to perform
+an interactive fit.
+
+You will be presented with the two graphs which were specified
+in the parameter 'graphs' (see Fig. 18a). These represent the
+\fIs\fRensitivity vs wavelength,
+'s', and the \fIr\fResidual sensitivity vs wavelength, 'r'.
+Up to four graphs
+may be displayed at a time. The other possibilities are:
+
+.nf
+      a - Residual sensitivity vs. \fIa\fRirmass
+      c - \fIc\fRomposite residuals and error bars vs. wavelength
+      e - \fIe\fRxtinction (and revised extinction) vs. wavelength
+      i - Flux calibrated \fIi\fRmage vs. wavelength
+.fi
+
+The graphs may be changed at any time during the fitting using ':graphs
+[types]', and specifying the types desired. Now looking at the
+sensitivity vs. wavelength, simply delete 'd' any data points which are
+clearly deviant. After typing 'd', you will be prompted for the type of
+data to be deleted, a point 'p', star 's', or wavelength 'w' nearest
+the cursor. If you delete the wrong point, type 'u' and respond
+accordingly to undelete the point. Information about the point nearest
+the cursor may be obtained by typing 'i'. The weight of the point nearest
+the cursor may be changed by typing 'w'. Typing 'r' will update the graphs
+if any changes are made. If all the points for a given star are off,
+conditions probably were not photometric, resulting in a light-loss.
+These are "grey" (color-independent) factors and may be easily corrected
+by typing 's', which applies a shift factor to all the stars to bring
+them to the level of the "best" conditions. This is a toggle so typing
+'s' again will "unshift" the data. You may also enter fake data points
+'a' with the cursor positioned at the false point, then type 'g' to refit.
+Unfortunately you have no way of telling where these fake points should
+go. You must be aware of problems with extrapolation beyond the last data
+points (and also interpolation between the last few points) since the
+functions here are not well constrained. If you change the function type
+':func [type]' or order ':order #', type 'f' to overplot the new fit or
+'g' to fit and redraw the graph. You may look at the composite points
+being fitted by typing 'c', this is a toggle. If you have changed the
+data too much, or don't like the changes you've made, you may return to
+the original data by typing 'o'.
+
+In order to see if you guessed right,
+you may apply the extinction correction and the sensitivity curve to the 
+extracted spectra of the standard stars,
+and compare them with the tabulated flux values.
+You can select the standard by typing ':image dc110.0001' followed
+by ':g i' (see Fig. 18b). To go back to the sensitivity curve,
+type ':g sr'. Repeat this
+until the sensitivity function is adequate for your needs. To quit type
+'q' and the sensitivity curve will be saved as sens1.0001.
+.le
+.bp
+.ls \fI3.13 Applying the sensitivity function\fR
+
+Once you have the sensitivity curve, you may extinction-correct and
+flux-calibrate all the appropriate data.
+
+If you are planning to extinction-correct your data, the proper airmass
+information must be present in the image headers. This means either the
+airmass or the sidereal time and object coordinates which along
+with observatory latitude can be used to work out the airmass. To check
+you may use the task 'hselect' which will output a list of the airmass values,
+or any other header parameters you wish to check. 
+
+.nf
+      cl> images
+      im> hselect dc*imh $I,airmass,exptime,title yes
+.fi
+
+The "$I" gives the filename while the title and airmass are taken
+directly from the header. Make note of the incorrect airmass values
+and edit the header. If this information is not present, you must enter
+it. Use,
+
+.nf
+      im> hedit dc110.0001 airmass 1.06 add+
+      im> hedit dc106.0001 airmass 1.21 add+
+      im>  ...
+.fi
+
+If your exposures are long or if you observed at a large airmass,
+the effective airmass may differ significantly from the one recorded
+in the header, which corresponds to the value at the beginning
+of your exposure. You may replace the airmass of the header
+with the effective value by using the 'setairmass' task in the
+'astutil' package.
+
+.nf
+      im> astutil
+      as> setairmass dc*imh observatory=ctio
+
+.fi
+The task will present you with the current airmass taken
+from the header and the new value calculated using the exposure
+time of your exposure, the sidereal time, the hour angle and the
+declination of your frame.
+
+Prepare an input list of all the wavelength calibrated spectra 
+which are to be extinction and flux corrected and also make an
+output list with the names of the output spectra. Do an 'epar'
+on the task 'calibrate' and execute it accordingly.
+
+.nf
+      as> onedspec
+      on> delete dclist
+      on> files dc*imh > dclist
+      on> edit dclist         (optional)
+      on> copy dclist fclist
+      on> edit fclist         (you may use the following
+			       vi command to apply a global
+			       replacement: 1,$s/dc/fc/)
+      on> epar calibrate      (check the list given below)
+      on> calibrate @dclist @fclist
+
+		      \fIcalibrate parameters\fR
+
+
+        input = "@dclist"       Input spectra to calibrate
+       output = "@fclist"       Output calibrated spectra
+     (\fIextinct\fR = yes)            Apply extinction correction?
+        (\fIflux\fR = yes)            Apply flux calibration?
+  (\fIextinction\fR = "onedstds$ctioextinct.dat") Extinction file
+ (\fIobservatory\fR = "ctio")         Observatory of observation
+   (ignoreaps = yes)            Ignore aperture numbers in flux calibration?
+ (\fIsensitivity\fR = "sens1.0001")   Image root name for sensitivity spectra
+         (fnu = no)             Create spectra having units of FNU?
+        (mode = "ql")           
+.fi
+
+To this point, you have a set of one-dimensional images which are
+completely calibrated in wavelength and flux.
+
+The final spectra may be examined and analyzed using the task 'splot'
+(see examples in Fig. 19).
+Type 'help splot' for more information about this task.
+
+.nf
+      on> splot fc110.0001
+      on> ...
+
+Type 'q' to quit from 'splot'.
+.fi
+
+
+\fIWriting FITS Tapes\fR
+
+Mount your output tape. Don't forget the write ring and select the
+desired tape density. Load 'dataio' and allocate the drive. Then use
+'wfits' to write the images. You may wish to select scaling or
+no-scaling, force the number of bits/pixel, etc.
+
+.nf
+      cl> dataio
+      da> alloc mta
+      da> wfits *.imh mta.6250 new+
+.fi
+
+new+ specifies a new tape (to write
+from the beginning) and new- goes to the logical end-of-tape before
+writing.
+
+After writing all desired images, deallocate the drive and dismount
+your tape.
+
+.nf
+      da> dealloc mta
+.fi
+.le
+.endhelp

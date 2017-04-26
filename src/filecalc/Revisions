@@ -1,0 +1,28 @@
+fceval.gx
+	Adding a missing 'nhist' dummy arg to fc_vmode$t call (9/29/03, MJF)
+
+fcfiles.x
+	Added a missing argument to the fc_finit() call (9/29/03, MJF)
+
+fcproc.x
+	Changed call to fmt_fprintf() to fmt_printf() since the output
+	was to the standard output, and called the latter as a function
+	and not as a procedure as it was done before (PG 08/May/92).
+
+fcfiles.x
+fcgetline.x
+fcproc.x
+fcreadexp.x
+filecalc.h
+t_filecalc.x
+	Added the "lines" parameter to select line ranges in the input
+	files. It was necessary to add the parameter in the calling
+	sequence of fc_proc() and fc_fgetlines(). It was also necessary
+	to split fc_getline() in two flavors; one with line ranges
+	(fc_rgetline) and another without line ranges (fc_getline), and
+	to create a new common function dealing with comments and blank
+	lines (fc_trimline). This splitting was necessary because the
+	fc_getline() function was used to read lines from input files,
+	and to read lines from the file containing an expression. A bug
+	in the calling sequenec of fc_getline() in fc_readexp() was
+	detected and fixed (PG 25/Jun/92).

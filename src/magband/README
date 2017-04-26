@@ -1,0 +1,14 @@
+MAGBAND			26-Jan-89	(Pedro Gigoux)
+
+This directory contains the code of the magband and magavg tasks. The first
+one computes the magnitudes of one-dimensional spectra for a set of bandpasses,
+and the second one averages the output of the first one to get statistics.
+The files contained here are:
+
+magavg.com		magavg common
+
+mkpkg			mkpkg file
+
+t_magavg.x		magavg procedures
+
+t_magband.x		magband procedures

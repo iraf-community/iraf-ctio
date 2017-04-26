@@ -1,0 +1,21 @@
+        link - Help page for linking between computers at CTIO
+     sunmail - Help page for the UNIX/SUN mailer
+     console - Help page for using the SUN console windows
+   pcomputer - Help page for users of CTIO pc terminals
+      editor - Help page for use of the VI editor
+      histed - Help page for the history and ehistory commands
+	mail - Help page for sending mail to the States
+       exuse - Help page for using the Exabyte Drives
+     satlink - Help page for use of the Satellite Link to the US
+
+    contents - Contents of the Reduction Manuals
+   quickhelp - Quick Introduction to the IRAF system
+   irafintro - Manual Introduction and IRAF Tutorials
+    2dfrutti - Reduction Manual for 2DFrutti Data
+       csccd - Reduction Manual for CSCCD Data
+      ccdman - Reduction Manual for CCD Direct Imaging
+     echspec - Reduction Manual for Echelle Data
+     photman - Photometry Manual
+       irman - Infrared Reduction Manual (in progress)
+      stphot - Photometry Manual for PHOTRED (in progress)
+    appendix - Appendices to the Reduction Manuals

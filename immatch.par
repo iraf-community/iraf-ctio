@@ -1,0 +1,12 @@
+# immatch parameter file
+images,s,a,"",,,Input images
+reference,s,a,"",,,Reference images
+output,s,a,"",,,Output file
+section,s,h,"[*,*]",,,Image section
+xmax,r,h,INDEF,0,,Maximum shift in column direction
+ymax,r,h,INDEF,0,,Maximum shift in line direction
+width,r,h,5.0,0.0,,Centering width
+interactive,b,h,yes,,,Run interactively ?
+imshift,b,h,yes,,,Generate script that runs IMSHIFT ?
+graphics,s,h,"stdgraph",,,Graphics output device
+cursor,*gcur,h,"",,,Graphics cursor input

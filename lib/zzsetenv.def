@@ -1,0 +1,8 @@
+# Global environment definitions for the CTIO package.
+
+set	ctiobin		= "ctio$bin(arch)/"
+#set	ctiobin		= "ctio$bin/"
+set	pkgbin		= "ctiobin$"
+set	pkglibs		= "ctio$lib/"
+
+keep

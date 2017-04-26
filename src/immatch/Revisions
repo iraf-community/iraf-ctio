@@ -1,0 +1,37 @@
+immgraph.x
+	The 'x' and 'y' keys were swapped in order be consistent with
+	lines and columns, respectively. The help page was changed
+	acordingly (PG 31/Jan/90).
+
+immatch.key
+immgraph.x
+	The key help file was moved to the lib$scr/ directory, and the
+	pathname definition was changed acordingly (PG 09/Apr/90).
+
+
+t_immatch.x
+	Removed call to xt_mkimsec, because it crashed if the image
+	section was a null string (PG 17/Apr/91).
+	
+immatch.par
+t_immatch.x
+	Added parameter "imshift" to decide whether the output is a CL
+	script that runs the IMSHIFT task automaticaly, or if it's just
+	a list of image names and shifts (PG 19/Apr/91).
+
+immgraph.x
+t_immatch.x
+	Added names of the input and reference images to the graph title,
+	in order to know which image is being processed when the input
+	is an image list (PG 19/Apr/91).
+
+immatch.par
+t_immatch.x
+	Added "xmax" and "ymax" parameters to set the maximum shift in the
+	colunm and line direction, respectively. In this way it will be
+	possible to get rid of spurious peaks (PG 17/May/93).
+
+immatch.par
+	Increased the default value of the "width" parameter from three to
+	five pixels, since it works better with that value. The help page
+	was updated acordingly (PG 27/May/93).

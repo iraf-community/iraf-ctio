@@ -1,0 +1,7 @@
+# wairmass parameter file
+input,s,a,"",,,Input images
+airmass,b,h,no,,,Update airmass value ?
+zd,b,h,no,,,Update zenith distance value ?
+#precess,b,h,no,,,Precess by epoch?
+verify,b,h,yes,,,Verify updates ?
+latitude,r,h,).observatory.latitude,,,Observatory latitude

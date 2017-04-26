@@ -1,0 +1,19 @@
+# bitstat mkpkg file (Fri Mar 30 11:47:34 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+generic:
+	$ifolder (bitstat.x, bitstat.gx)
+	    $generic -k -o bitstat.x bitstat.gx
+	$endif
+	;
+
+libpkg.a:
+	$ifeq (USE_GENERIC, yes) $call generic $endif
+
+	bitstat.x	<mach.h>
+	t_bitstat.x	<error.h> <imhdr.h> <mach.h>
+	;

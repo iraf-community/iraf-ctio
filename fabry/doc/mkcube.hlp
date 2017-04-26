@@ -1,0 +1,50 @@
+.help mkcube July87 fabry
+.ih
+NAME
+mkcube -- combine a group of 2D images into an image cube
+.ih
+USAGE
+mkcube images cube_image et_gap
+.ih
+PARAMETERS
+.ls images
+the names of the 2D images to be combined into the cube. These
+should already have been corrected for positional errors.
+.le
+.ls cube_image
+the name of the cube to be created
+.le
+.ls et_gap
+the etalon gap values to be added to the image header of the cube.
+If the 2D headers do not contain the gap settings as keyword FPZ,
+the user must enter the gap values as a string of comma separated
+values, in either user value (like 500), or instrument values (like 0.5).
+If the "et_gap" string is NULL (like ""), the 2D image headers will
+be searched.
+.le
+.ls verbose = yes
+if set to yes, the progress of the operation will be printed.
+.le
+.ih
+DESCRIPTION
+The 2 dimensional images specified are assumed to be spatially
+congruent and identical in size. They are added to bands of the
+cube in the order given, and the gap settings must be entered
+in the identical order if entered by hand. It is probably best to 
+enter the data in increasing order of wavelength (increasing gap), so that
+the wavelengths are monotonic.
+
+If the input images are not of pixel type SHORT, they will
+be converted to SHORTs to save space in the cube.
+.ih
+EXAMPLES
+Construct a cube from the 3 images data1, data2, data3 having gaps
+of 0.220, 0.225, 0.230
+
+	cl> mkcube data1,data2,data3 cube 0.220,0.225,0.230
+
+.ih
+TIME REQUIREMENTS
+.ih
+SEE ALSO
+.endhelp

@@ -1,0 +1,7 @@
+# mjoin parameter file
+input,s,a,"",,,Input files
+join,s,a,"",,,Files with data to join
+output,s,h,"STDOUT",,,Output file name
+match,b,h,yes,,,Match lines by first string in them ?
+discard,b,h,yes,,,Discard matching string in joined data ?
+warnings,b,h,no,,,Print warning messages ?

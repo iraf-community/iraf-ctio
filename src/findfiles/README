@@ -1,0 +1,9 @@
+FINDFILES		06-Apr-89		(Pedro Gigoux)
+
+This directory contains the code for the file name matching program.
+This code finds all files, in the current directory and subdirectoris,
+that match a given string in their file names. The files are:
+
+mkpkg			mkpkg file
+
+t_findfiles.x		main task procedure

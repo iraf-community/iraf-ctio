@@ -1,0 +1,73 @@
+.help gki2cad May90 ctio
+.ih
+NAME
+gki2cad -- Convert GKI metacode files into autoCAD DXF files
+.ih
+USAGE
+gki2cad gkifiles cadfile
+.ih
+PARAMETERS
+.ls gkifiles
+List of GKI metacode files. If the task is being used in a pipe, then
+the input will be taken from the standard input.
+.le
+.ls cadfile
+Output file name. This is a text file containing autoCAD DXF instructinons.
+.le
+.ls text = yes
+Output text along with plot instructions ?. If this parameter is set to
+\fByes\fR, all GKI instructions related with text are written to the output
+file. Otherwise they are skipped.
+.le
+.ls verbose = no
+Verbose output file with comments ?. If this parameter is set to
+\fByes\fR, all GKI instructions, no matter they are implemented or not,
+are written as a comments to the output file.
+.le
+.ih
+DESCRIPTION
+This task reads a list of GKI metacode file and generates a single
+file with the equivalent DXF instructions.
+.sp
+Only a subset of the GKI instructions is implemented since some of them
+have no DXF equivalent, or because it's better to just use defaults and 
+leave the work to autoCAD.
+The implemented GKI instructions are GKI_POLYLINE, GKI_POLYMARKER,
+GKI_TEXT, and GKI_TXSET, although the latter is only implemented to
+set the text size.
+GKI instructions that are not implemented, but that could be
+implemented are GKI_FILLAREA, GKI_PUTCELLARRAY, GKI_PLSET, GKI_PMSET,
+GKI_TXSET (full set), and GKI_FASET.
+Finally, GKI instructions that don't have any equivalent (or at least
+not obvious) are: GKI_OPENWS, GKI_CLOSEWS, GKI_REACTIVATEWS, GKI_DEACTIVATEWS,
+GKI_MFTITLE, GKI_CLEAR, GKI_CANCEL, GKI_FLUSH, GKI_SETCURSOR,
+GKI_GETCURSOR, GKI_GETCELLARRAY, GKI_ESCAPE, GKI_SETWCS, GKI_GETWCS.
+If the \fBverbose\fR parameter is set to \fByes\fR, all GKI instructions are
+written to the output file as comments.
+.sp
+Since autoCAD can handle multiple layers, text and graphics are written
+to separate layers to allow an easier editing with autoCAD.
+If the \fBtext\fR parameter is set to \fBno\fR, no text is generated
+and only a single layer is used.
+.ih
+EXAMPLES
+1.- Generate a DXF file, including text, and the GKI instructions
+as comments:
+.nf
+
+ct> gki2cad gki1 cad1 text=yes verbose=yes
+
+.fi
+2.- Generate a DXF file without text and comments:
+.nf
+
+ct> gki2cad gki1 cad1 text=no verbose=no
+.fi
+.ih
+TIME REQUIREMENTS
+It takes about ten seconds to convert a 72K bytes GKI file, on a
+SUN3/60.
+.ih
+SEE ALSO
+gkidir, gkidecode
+.endhelp

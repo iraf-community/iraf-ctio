@@ -1,0 +1,8 @@
+IMCREATE		26-Oct-90	Pedro Gigoux
+
+This directory contains the code for the image creation task. This
+task creates empty images of arbitrary size. The files are:
+
+mkpkg			mkpkg file
+
+t_imcreate.x		main task procedure

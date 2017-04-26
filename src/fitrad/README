@@ -1,0 +1,16 @@
+FITRAD			18-Apr-89	(Pedro Gigoux)
+
+This directory contains the code for the circular image subraster fitting
+task. The files contained here are:
+
+fitrad.h			Task definitions
+
+ftravg.gx			Averaging procedures (generic)
+
+ftrfit.gx			Fitting procedures (generic)
+
+ftrout.gx			Output procedures (generic)
+
+ftrsort.gx			Data sorting procedures (generic)
+
+t_fitrad.x			Task procedures

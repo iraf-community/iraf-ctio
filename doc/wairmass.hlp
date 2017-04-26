@@ -1,0 +1,81 @@
+.help wairmass Sep88 ctio
+.ih
+NAME
+wairmass -- Compute weighted airmass
+.ih
+USAGE
+wairmas input
+.ih
+PARAMETERS
+.ls input
+The name of the images to process. Any image template, image lists, 
+including @ lists, may be used.
+may be used.
+.le
+.ls update = no
+Update the airmass in the header ?. If set to \fByes\fR the computed
+value of the airmass will replace the old one in the header. Otherwise
+it just will print the computed values, leaving the image untouched.
+.le
+.ls verify = yes
+Verify the update operation ?. If set to \fByes\fR the user is quieried
+before each update operation.
+.le
+.ls latitude = ).observatory.latitude
+Observatory latitude in degrees.
+.le
+.ih
+DESCRIPTION
+A weighted airmass value is computed for all images in the list and
+printed on the standard output.
+If \fBupdate=yes\fR the old value of the airmass in the header is replaced
+with the new computed value, or added if there is no value already.
+If \fBverify=yes\fR the user is quieried to whether perform the update
+operation or not.
+The user may answer \fByes\fR, \fBno\fR, \fBYES\fR, and \fBNO\fR.
+The lowercase answers apply to the current image whereas the uppercase
+answers apply to all remaining images.
+The weighted value is computed by dividing the exposure time in intervals
+of five minutes and evaluating the airmass for each interval. The weigted
+value is determined by averaging all the partial values.
+If the dark time is different from the exposure time, the image is skipped
+with a warning message. The same applies for images with incomplete data
+for evaluating the airmass.
+.ih
+EXAMPLES
+First list the airmass values in all the image headers and the computed
+airmass values, but do not update the image headers:
+
+.nf
+lo> wairmass *.imh update-
+obj014.0001.imh: 1.40200 -> 1.40326
+obj015.0001.imh: 1.40600 -> 1.40656
+obj016.0001.imh: 1.40700 -> 1.40820
+obj024.0001.imh: 1.20900 -> 1.21161
+obj025.0001.imh: 1.21000 -> 1.21277
+obj026.0001.imh: 1.21000 -> 1.21320
+obj027.0001.imh: 1.21400 -> 1.21649
+obj028.0001.imh: 1.21400 -> 1.21698
+obj029.0001.imh: 1.21500 -> 1.21747
+.fi
+
+Now update the airmass values in the image headrs with the computed 
+values. Verify the update operation only for the first three images
+and then proceed automaticaly:
+
+.nf
+lo> wairmass *.imh update+ verify+
+obj014.0001.imh: 1.40200 -> 1.40326, update ? (yes):
+obj015.0001.imh: 1.40600-> 1.40656, update ? (yes):
+obj016.0001.imh: 1.40700 -> 1.40820, update ? (yes): YES  <- NO MORE !!
+obj024.0001.imh: 1.20900 -> 1.21161, updated
+obj025.0001.imh: 1.21000 -> 1.21277, updated
+obj026.0001.imh: 1.21000 -> 1.21320, updated
+obj027.0001.imh: 1.21400 -> 1.21649, updated
+obj028.0001.imh: 1.21400 -> 1.21698, updated
+obj029.0001.imh: 1.21500 -> 1.21747, updated
+.fi
+.ih
+SEE ALSO
+imred.observatory
+.endhelp

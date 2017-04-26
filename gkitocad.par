@@ -1,0 +1,5 @@
+# gkitocad parameter file
+gkifiles,s,a,"",,,GKI input files
+cadfile,s,a,"",,,CAD output file
+text,b,h,yes,,,Output text ?
+verbose,b,h,no,,,Verbose output ?

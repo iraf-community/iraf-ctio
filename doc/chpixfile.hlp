@@ -1,0 +1,127 @@
+.help chpixfile Jan92 ctio
+.ih
+NAME
+chpixfile -- Change pixel file name in image headers
+.ih
+USAGE
+chpixfile images value
+.ih
+PARAMETERS
+.ls images
+List of input images to process.
+.le
+.ls value
+New value for the pixel file name. In general, this is the host name (node)
+followed by the pixel image directory (imdir), and delimited by a "!".
+The ony exception is the "HDR$" string that does not have a node specification.
+The following are the four possible syntaxis for the value:
+.ls HDR$path
+The new pixel file name will be HDR$path/name.pix, where "name.pix" is the
+old pixel file name and "path" is an optional path name relative to the
+directory where the header is stored. No node is specified in this case.
+This syntax is used when the pixel files are stored in the same directory
+as the image headers.
+.le
+.ls node!*
+Change only the host name (node). The pixel image directory (imdir)
+is not changed.
+.le
+.ls *!imdir
+Change only the the pixel image directory (imdir). The host name (node)
+is not changed.
+.le
+.ls node!imdir
+Change both the host name (node) and pixel image directory names (imdir).
+.le
+.sp
+Either the node name or the imdir can be a null string. In this case they
+will be removed from the pixel file name specification.
+A null node is usefull if one wants to bypass the IRAF networking and use
+the OS networking facilities directly.
+.le
+.ls show = yes
+Print a record of each image header update ?. This switch is automaticaly
+set to \fByes\fR is the \fBverify\fR switch is set.
+.le
+.ls verify = yes
+Interactively verify updates to the image header ?. This switch is
+automaticaly set to \fBno\fR is the \fBupdate\fR switch is not set.
+When set to \fByes\fR the user will be prompted for the action to take
+over the image being processed. The user has four possible
+answers to the prompt:
+.ls
+.ls "no"
+Do not update the header of the current image, and continue with the next
+image in the input list.
+.le
+.ls "yes"
+Update the header of the current image, and continue with the next image
+in the input list.
+.le
+.ls "YES"
+Update the header of the current image, and continue updating the header
+of all the remaining images in the input list, without prompting for
+confirmation again.
+.le
+.ls "NO"
+Do not update the header of the current image, and teminate the task.
+.le
+.le
+.le
+.ls update = yes
+Enable updating of the image header ?. If updating is disabled then the
+task will compute the new values of the pixel file names, but the
+image header won't be updated.
+.le
+.ih
+DESCRIPTION
+This is a task that modifies the pixel file name stored in the header of
+each image in the input list.
+The behavior of the program is controlled by the three boolean parameters
+\fBshow\fR, \fBverify\fR, and \fBupdate\fR.
+.sp
+The \fBvalue\fR parameter is used to specify the new value of the pixel
+file name. It is possible to specify a change only in the node name,
+only in the pixel image directory name (imdir), or in both. It is also
+possible to use the "HDR$" string to specify pixel files in the same
+directory as the image headers, and even to remove the node name from
+the pixel file name.
+.ih
+EXAMPLES
+1.- Change the image pixel directory to HDR$.
+
+.nf
+ct> chpixfile *.imh HDR$ show=yes verify=yes update=yes
+image1.imh: ctiol2!/ul21/iraf/pedro/image1.pix -> HDR$image1.pix
+update image1 (yes):
+image1.imh updated
+image2.imh: ctiol2!/ul21/iraf/pedro/image2.pix -> HDR$image2.pix
+update image2 (yes): no
+image2.imh not updated
+.fi
+
+2. Change the node name and the image directory name for a list of images,
+without prompting for confirmation.
+
+.nf
+ct> chpixfile ctios2!/us32/pedro *.imh show=yes verify=no update=yes
+image1.imh: HDR$image1.pix -> ctios2!/us32/pedro/image1.pix
+image1.imh updated
+image2.imh: HDR$image2.pix -> ctios2!/us32/pedro/image2.pix
+image2.imh updated
+.fi
+
+3. Run the task to see what would change if only a change in the node
+name is specified, but without updating the image header.
+
+.nf
+ct> chpixfile *.imh ctiol2!* show=yes verify=no update=no
+image1.imh: ctios2!/us32/pedro/image1.pix -> ctiol2!/us32/pedro/image1.pix
+image1.imh not updated
+image2.imh: ctios2!/us32/pedro/image2.pix -> ctiol2!/us32/pedro/image2.pix
+image2.imh not updated
+.fi
+.ih
+SEE ALSO
+images.hedit
+.endhelp

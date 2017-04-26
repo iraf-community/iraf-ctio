@@ -1,0 +1,18 @@
+DFITS		13-Jan-88	(Pedro Gigoux)
+
+This directory contains the code for the FITS headers display program
+(dfits). The important files contained here are:
+
+t_dfits.x	main program (modified copy of dataio$fits/t_rfits.x)
+fits_disp.x	(modified copy of dataio$fits/fits_rfits.x)
+fits_dheader.x	(modified copy of dataio$fits/fits_rheader.x)
+fits_rpixels.x	(copy of dataio$fits/fits_rpixels.x)
+print_string.x	print formatted string procedure
+extract2.x	extract two substrings procedure
+
+dfits.h		definitions include file
+dfits.com	common declarations include file
+
+format		small example of format file to use with dfits
+
+mkpkg		mkpkg file

@@ -1,0 +1,7 @@
+# compairmaes parameter file
+ha,r,a,INDEF,,,Hour angle (hours)
+dec,r,a,INDEF,,,Declination (degrees)
+ra,r,a,INDEF,,,Right ascension (hours)
+st,r,a,INDEF,,,Sidereal time (hours)
+exptime,r,h,0.0,,,Exposure time (seconds)
+latitude,r,h,).observatory.latitude,,,Observatory latitude (degrees)

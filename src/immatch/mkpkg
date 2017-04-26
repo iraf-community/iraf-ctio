@@ -1,0 +1,12 @@
+# immatch mkpkg file (Fri Mar 30 12:05:08 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	immcosbell.x	<math.h>
+	immgraph.x	<pkg/gtools.h>
+	t_immatch.x	<error.h> <mach.h> <math/curfit.h>
+	;

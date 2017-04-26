@@ -1,0 +1,31 @@
+# Help directory for manuals written at CTIO.
+
+$defdir		= "ctio$manuals/"
+$index		= "ctio$manuals/"
+
+title           hlp = title.hlp
+contents        hlp = contents.hlp
+irafintro       hlp = irafintro.hlp
+2dfrutti        hlp = 2dfrutti.hlp
+csccd           hlp = csccd.hlp
+echspec         hlp = echspec.hlp
+ccdman          hlp = ccdman.hlp
+photman         hlp = photman.hlp
+irman           hlp = irman.hlp
+stphot		hlp = stphot.hlp
+appendix        hlp = appendix.hlp
+editor          hlp = editor.hlp
+link		hlp = link.hlp
+console		hlp = console.hlp
+mail		hlp = mail.hlp
+pcomputer	hlp = pcomputer.hlp
+quickhelp       hlp = quickhelp.hlp
+sunmail		hlp = sunmail.hlp
+test            hlp = test.hlp
+histed		hlp = histed.hlp
+exuse		hlp = exuse.hlp
+satlink		hlp = satlink.hlp
+
+index		men = index$index.men,
+		hlp = ..,
+		pkg = index$index.hd

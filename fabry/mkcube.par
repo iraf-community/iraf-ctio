@@ -1,0 +1,6 @@
+# Parameter file for MKCUBE
+
+images,s,a,,,,Input 2d images
+cube_image,s,a,,,,Output cube image name
+et_gap,s,a,"",,,List of etalon z values
+verbose,b,h,yes,,,Print progress

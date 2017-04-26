@@ -1,0 +1,13 @@
+fits_rpixels.x
+	Updated from dataio$fits/fits_rpixels.x since that file changed
+	in the 2.8 release (PG 17/jan/90).
+
+t_dfits.x
+	Added call to mtfile() to determine if the FITS file was a tape
+	drive name. In this way the node name is being used now, thus
+	allowing the task to use networking (PG 17/jan/90).
+
+dfits.par
+format -> format.dat
+	Renamed default format file and changed reference to it in the
+	parameter file acordingly (PG 07/jan/91).

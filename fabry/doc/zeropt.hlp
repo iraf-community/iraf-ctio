@@ -1,0 +1,62 @@
+.help zeropt July87 fabry
+.ih
+NAME
+zeropt -- determine the zero point in wavelength for each band in the cube
+.ih
+USAGE
+zeropt cube_image dispersion neon_pars
+.ih
+PARAMETERS
+.ls cube_image
+the name of the image cube to be updated
+.le
+.ls dispersion
+the text file containing the dispersion solution, usually from
+FITRING, but may be any text file containing 1 line with the
+constants A, B, and C
+.le
+.ls neon_pars
+the text file containing the parameters for the neon or other standard
+lamp taken nearby in time to the actual data, and to be used to
+determine the zero points.
+.le
+.ls bands =
+the band numbers, given either in a range format (1-3,4,5).
+.le
+.ih
+DESCRIPTION
+Because the instrument may drift in wavelength while the B and C
+dispersion constants remain the same, it is advisable to obtain
+a calibration frame prior to each series of observations, or during
+a series as well. The parameters of the calibrations may be
+derived using RINGPARS and placed in the "neon_pars" file.
+
+ZEROPT then takes those parameters, plus the prior solution
+contained in the "dispersion" file, to derive the constant A
+appropriate to the current series. The optical center
+is also determined. Both the wavelength and optical center
+are added to the image header of the cube using keywords
+LAMBDA01 through LAMBDAnn, and XC01, YC01 through XCnn, YCnn.
+The constants A, B, and C are also added to the cube header
+using keywords COEF1, COEF2, and COEF3.
+
+Note that although the dispersion file produced by FITRING
+contains more information than used by ZEROPT. Only the first
+line of the file is used.
+.ih
+EXAMPLES
+Update the cube header "cube" using the dispersion file "disp"
+for the three ring parameters in file "rings" appropriate to
+bands 1-3, 4-6, and 7-9.
+
+	cl> zeropt cube disp rings
+
+The user will be asked to enter the range of bands appropriate
+to each calibration image contained in "rings".
+.ih
+TIME REQUIREMENTS
+Fast
+.ih
+SEE ALSO
+RINGPARS, FITRING
+.endhelp

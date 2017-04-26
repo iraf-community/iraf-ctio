@@ -1,0 +1,7 @@
+# FITRING parameter file
+
+ringfile,s,a,,,,File containing ring parameters
+output,s,a,,,,File to contain fit results
+insdel,s,h,,"d|i|q",,Delete-insert-quit
+del_line,i,h,,1,,Line nr to delete from fit
+ins_line,i,h,,1,,Line nr to insert back into fit

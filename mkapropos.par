@@ -1,0 +1,4 @@
+# mkapropos parameter file
+helpdir,s,a,"lib$root.hd",,,Root help directory to be compiled
+aproposdb,s,a,"local$src/apropos/db/iraf.db",,,Output apropos database name
+verbose,b,h,no,,,verbose output ?

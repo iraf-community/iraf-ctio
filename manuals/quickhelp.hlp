@@ -1,0 +1,139 @@
+.help quickhelp Jan89 Version-1.0
+.ls \fIA Quick View of IRAF\fR
+
+The Image Reduction and Analysis Facility (IRAF) is a UNIX oriented software
+package being developed at NOAO in Tucson. It has many features required to
+reduce and analyse data. This document is an introduction to IRAF for those
+who would like an understanding of the system and how it works. More
+information about IRAF can be obtained using the help pages, manuals or by
+request directly from Tucson.
+
+When using IRAF, a login.cl file is used to set up the system environment
+variables, to define such things as the terminal type, printer, your home and
+image directories, and many others. Within IRAF you can examine these by
+simply typing 'show'. This will list the many defined variables necessary to
+use the software. These values can be changed, for example to send output to
+a different printer, using 'set environment variable=new value'. 
+
+IRAF is structured in a tree fashion such that "tasks" (programs) are arranged
+by topic into "packages". The packages are divided into two classes, system
+packages and scientific packages. It is a tree in the sense that packages
+have subpackages, which have subpackages and so on... If you wish to run a
+task in a certain subpackage, the packages in the path must be 'loaded'. This
+is done by typing the name of the package and subpackages until the task is
+shown. For example, to use the task "combine", first type 'imred',
+and 'ccdred' to load these packages. Now I can run the task 'combine'. If you
+forget where you are in IRAF, the prompt will give the first two letters of
+the package you most recently loaded. To unload a package, type 'bye'. In the
+example, it would be necessary to type "bye" two times to unload the two
+packages that were loaded. It is not necessary to unload the loaded
+packages in order to quit IRAF.
+
+Running a task involves many parameters which can be set for the particular
+operation necessary. These parameters are displayed using "lpar" and can be
+edited using "epar". These are abreviations for "lparam" and "eparam". Many
+of the package and task names can be abreviated using enough letters to 
+uniquely distinguish it from others which are similar. If you edit the task
+parameters, the keypad arrows will move the cursor up and down, type in the
+change on the parameter line and hit 'return'. Typing 'ctrl-z' will quit the
+edit mode and accept any changes you have made. If you wish to quit the menu
+without changing the parameters, use 'ctrl-c' to exit. In the parameter list,
+there are two types of parameters, the ones with brackets (hidden parameters)
+and those without brackets (positional parameters). The positional parameters
+are required to run a task and will be queried for if not specified. The
+hidden parameters have default values that will be used if not changed by an
+'epar', a direct assignment, or input on the command line (examples follow).
+If you want to keep the defaults and some of the parameters have been changed,
+then to reset all the defaults, type 'unlearn taskname'. It is possible to run
+some tasks in the background which frees up the terminal to accept input. To
+do this just add a "&" at the end of the command line. There can be up to 4
+jobs running in the background. To look at the jobs being run in background
+just type 'jobs'. Examples of the parameter assignment:
+
+.nf
+      cc> combine.weight=yes                      (direct assignment)
+      cc> combine image1,image2 outimage weigh=yes (running the task)
+.fi
+
+All image files are stored in two seperate files, the image header and
+pixel files. The image directory environment variable "imdir" is the storage
+area for the large pixel arrays. The image header files are stored in the
+directory where you are when the files are moved onto the computer via
+tape or other source. Because of their special status in IRAF, all
+commands involving images are specialized. Deleting, renaming or copying
+image files must be done using "imdelete", "imrename", or "imcopy",
+respectively. If for example you tried to delete an image header file in
+the current directory, using 'delete image.imh', you would leave a pixel
+file for that image in your image directory. An added feature now is that
+an error message will be output if this is attempted. There are many other
+image specific commands and tasks which reside in the "images" package.
+There are other formats for data also which will not be discussed, but more
+information about these can be obtained using the help utility within
+IRAF. 
+
+For simplicity, it is useful to use templates for the image names when
+working with many of them. The possiblities are:
+
+.nf
+\fI      CHAR      MEANING                             EXAMPLE\fR
+      *       - Match 0 or more characters       -  c*.imh
+      [...]   - Any character in range           -  [a-c].imh
+      [^...]  - Any character not in range       -  [^d-z].imh
+      ?       - Any single character             -  comp???.imh
+      @       - Read filenames from a file list  -  @arclist
+.fi
+
+So any of these may be used in place of explicitly typing out the whole
+filename being operated upon. For example, if you have a large number of
+images called "obj003.imh, obj004.imh, obj005.imh,..." then using a template
+to get a simple header for each file is easy:
+
+.nf
+      im> imhead obj*.imh
+      im> imhead obj???.imh
+      im> imhead o*.imh
+.fi
+
+Using these templates with the image names is quite simple. If however you
+also have files called "obj003.0001.imh,..." then the first and last commands
+will include those as well. These templates are valid UNIX constructions and
+can be used for files as well as images.
+
+Commands which are typed while in IRAF are remembered and can be called
+again using "ehistory". Typing 'e' or 'ehist' will give the last command
+which was used. If you want a previous command, page up through the list
+using the up arrow on the keypad. You can then edit this line using the
+left arrow and the backspace key. The cursor deletes to the left. Just type
+'return' to run the modified command. If you know the last time you used a
+command and no modifications are necessary, then use "^". For example,
+10 commands ago you typed the command "imhead obj*.imh" and haven't used
+"imhead" since, type ' ^imhead'. The last use of "imhead" will be found and
+executed. If you now want a listing of your comparison arcs instead of
+objects, type ' ^obj^comp'. It will change the last command used and replace
+"obj" with "comp". This is particularly nice if you are using numbers and
+need to change a previous number.
+
+Knowing what you now know about IRAF, it is important to note that IRAF
+does not have an editor. Therefore the VI editor is "imported" into the
+system. If you need to use an editor, a help page has been made for VI.
+This can be accessed using "help editor" while in IRAF.
+
+Some help can be found in most circumstances if you get stuck. There are
+the general "help" and "apropos" commands. The "apropos" command is used
+with some topic. The many short help lines will be searched for the
+topic for which you have asked. Then you may use "help" to learn more about
+one of the tasks or packages refered to in the "apropos". The "help"
+command gives more detailed information about a given task or package.
+There have been some help pages written at CTIO which will be listed
+when you type 'help manuals'. This gives a list of help pages written
+specifically for sending mail, using the SUN console, etc... Since help
+works even if the task or package is not loaded, it is a good way to
+find out where a task resides in IRAF. If you need information of another
+sort, ask Mario Haumy or Lisa Wells for assistance.
+
+More information about IRAF can be found in the CTIO Reductions Manual.
+In it you will find a tutorial of IRAF structure and some of the important
+tasks. Help on programming can be obtained from Pedro Gigoux or directly
+from the computer group in Tucson.
+.ls
+.endhelp

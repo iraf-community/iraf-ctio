@@ -1,0 +1,4 @@
+# ICNTR parameter file
+images,s,a,,,,List of images
+positions,s,a,,,,Files with star positions
+output,s,a,,,,Output file name

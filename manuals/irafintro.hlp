@@ -1,0 +1,1222 @@
+.help irafintro Sep92 Version-3.0
+
+.ce
+\fII. An Introduction to IRAF\fR
+
+.(c
+       1. Introduction
+
+       2. Login and logout
+
+       3. A Quick View of IRAF
+
+       4. Tutorial # 1. IRAF structure
+
+       5. Tutorial # 2. Reading and writing data to tape
+
+       6. Tutorial # 3. Handling images
+
+       7. Tutorial # 4. Implot task
+    
+       8. Tutorial # 5. Displaying Images: imexamine
+    
+       9. Common Problems: Their Cause and Cure
+.)c
+
+
+
+
+
+
+
+
+                                                 Mario Hamuy
+
+						 Lisa Wells
+
+                                              September 30, 1992
+
+.bp
+.ls \fI1. Introduction\fR
+
+.nf
+\fIAbout this manual\fR
+.fi
+This manual is intended for first-time users of IRAF. Its
+purpose is to provide an overview of the system as well as a few
+general tools that will allow you to get an understanding of
+IRAF structure. Specifically, it presents instructions for
+reading and writing data on magnetic tapes, displaying images
+and using the plotting package.
+
+If you need help reducing data using IRAF, either on the
+mountain or in La Serena, you can get a visitor account and
+direct support from Mauricio Navarrete or Nelson Saavedra (ex 422),
+or Mario Hamuy
+in La Serena (ext 210). Before your departure it is expected
+that you leave the directory clean of files.
+.le
+
+.ls \fIWhat is IRAF?\fR
+The Image Reduction and Analysis Facility (IRAF), designed by
+NOAO, provides many tools for general image processing and
+graphics applications, as well as a large selection of packages
+for the reduction and analysis of optical astronomical data. The
+IRAF system, although still under development, contains most of
+the operations needed for basic image processing and the
+reduction of simple or long-slit spectra.
+.le
+
+.ls \fIWhere to run IRAF?\fR
+At present, IRAF is running on Tololo at the SUN workstations
+located at the 4m, 1.5m, 1.0m,
+and 0.9m telescope consoles. The SUNs are
+interconnected by an ethernet network permitting them to share
+peripherals. Several additional terminals, most of them pc's,
+are spread all over the mountain, and are connected to the SUNs.
+This is explained in detail in Appendix I.
+The display facility is available only at the main SUN workstations,
+at the consoles. All the SUNs have tape drives and a laser printer.
+When you are downtown
+you may run IRAF on any of the SUN computers available. Workstations,
+tape drives and a laser printer are located at the computer room.
+
+At present the Tololo SUNs are linked to the La Serena SUN, so
+that it is possible to transfer files, messages and mail from USA
+to the mountain and back. For more information about using
+the CTIO computers, see appendix I of this manual.
+.le
+.bp
+.ls \fI2. Login and logout\fR
+
+Start by typing your username (v0,...,v20 followed by Return) and
+your password, and waiting a while. The welcome message will appear on
+your terminal along with the root menu of IRAF and the cl> prompt,
+indicating that the system is ready to accept commands.
+.nf
+
+                            Welcome to IRAF
+
+	   ctio.       images.     noao.       proto.      system.
+	   dataio.     language.   obsolete.   softools.   utilities.
+	   dbms.       lists.      plot.       stsdas.
+	   ...other add-on packages
+
+      cl>
+.fi
+
+'cl' is an abbreviation of command language (CL), the interface
+between the user and the system. When the CL starts up, it looks
+for a file called login.cl in the user's current directory. The
+login file consists mostly of environment declarations defining
+directories, devices, and so on that you don't have to deal
+with.
+
+If you are working at the main SUN workstation several windows
+are automatically displayed, the imtool (display
+window), and gterm (IRAF interactive) windows. We recommend at
+this level enlarging the gterm window by typing the 'R3' key.
+If you would like more information about using the console windows
+load the ctio package and type 'help console'.
+
+To exit from IRAF at any time just type,
+
+.nf
+      cl> logout
+.fi
+
+If you are working at any of the main SUN terminals an extra
+step is required. In the grey background, hold down the right
+button of the mouse. You will get a small window with several options,
+from which you must select the 'EXIT SUNTOOLS' option by moving
+down the mouse. Release the right button and press the left button
+to leave suntools. This extra step will bring you back to the
+"Username" prompt.
+.fi
+.le
+.bp
+.ls \fI3. A Quick View of IRAF\fR
+
+The Image Reduction and Analysis Facility (IRAF) is a UNIX oriented software
+package being developed at NOAO in Tucson. It has many features required to
+reduce and analyze data. This document is an introduction to IRAF for those
+who would like an understanding of the system and how it works. More
+information about IRAF can be obtained using the help pages, manuals or by
+request directly from Tucson.
+
+When using IRAF, a login.cl file is used to set up the system environment
+variables, to define such things as the terminal type, printer, your home and
+image directories, and many others. Within IRAF you can examine these by
+simply typing 'show'. This will list the many defined variables necessary to
+use the software. These values can be changed, for example to send output to
+a different printer, using 'set environment variable=new value'. 
+
+IRAF is structured in a tree fashion such that "tasks" (programs) are arranged
+by topic into "packages". The packages are divided into two classes, system
+packages and scientific packages. It is a tree in the sense that packages
+have subpackages, which have subpackages and so on... If you wish to run a
+task in a certain subpackage, the packages in the path must be 'loaded'. This
+is done by typing the name of the package and subpackages until the task is
+shown. For example, to use the task "combine", first type 'imred',
+and 'ccdred' to load these packages. Now I can run the task 'combine'. If you
+forget where you are in IRAF, the prompt will give the first two letters of
+the package you most recently loaded. To unload a package, type 'bye'. In the
+example, it would be necessary to type "bye" two times to unload the two
+packages that were loaded. It is not necessary to unload the loaded
+packages in order to quit IRAF.
+
+Running a task involves many parameters which can be set for the particular
+operation necessary. These parameters are displayed using "lpar" and can be
+edited using "epar". These are abbreviations for "lparam" and "eparam". Many
+of the package and task names can be abbreviated using enough letters to 
+uniquely distinguish it from others which are similar. If you edit the task
+parameters, the keypad arrows will move the cursor up and down, type in the
+change on the parameter line and hit 'return'. Typing 'ctrl-z' will quit the
+edit mode and accept any changes you have made. If you wish to quit the menu
+without changing the parameters, use 'ctrl-c' to exit. In the parameter list,
+there are two types of parameters, the ones with brackets (hidden parameters)
+and those without brackets (positional parameters). The positional parameters
+are required to run a task and will be queried for if not specified. The
+hidden parameters have default values that will be used if not changed by an
+'epar', a direct assignment, or input on the command line (examples follow).
+If you want to keep the defaults and some of the parameters have been changed,
+then to reset all the defaults, type 'unlearn taskname'. It is possible to run
+some tasks in the background which frees up the terminal to accept input. To
+do this just add a "&" at the end of the command line. There can be up to 4
+jobs running in the background. To look at the jobs being run in background
+just type 'jobs'. Examples of the parameter assignment:
+
+.nf
+      cc> combine.weight=yes                      (direct assignment)
+      cc> combine image1,image2 outimage weigh=yes (running the task)
+.fi
+
+All image files are stored in two separate files, the image header and
+pixel files. The image directory environment variable "imdir" is the storage
+area for the large pixel arrays. The image header files are stored in the
+directory where you are when the files are moved onto the computer via
+tape or other source. Because of their special status in IRAF, all
+commands involving images are specialized. Deleting, renaming or copying
+image files must be done using "imdelete", "imrename", or "imcopy",
+respectively. If for example you tried to delete an image header file in
+the current directory, using 'delete image.imh', you would leave a pixel
+file for that image in your image directory. An added feature now is that
+an error message will be output if this is attempted. There are many other
+image specific commands and tasks which reside in the "images" package.
+There are other formats for data also which will not be discussed, but more
+information about these can be obtained using the help utility within
+IRAF. 
+
+For simplicity, it is useful to use templates for the image names when
+working with many of them. The possibilities are:
+
+.nf
+\fI      CHAR      MEANING                             EXAMPLE\fR
+      *       - Match 0 or more characters       -  c*.imh
+      [...]   - Any character in range           -  [a-c].imh
+      [^...]  - Any character not in range       -  [^d-z].imh
+      ?       - Any single character             -  comp???.imh
+      @       - Read filenames from a file list  -  @arclist
+.fi
+
+So any of these may be used in place of explicitly typing out the whole
+filename being operated upon. For example, if you have a large number of
+images called "obj003.imh, obj004.imh, obj005.imh,..." then using a template
+to get a simple header for each file is easy:
+
+.nf
+      im> imhead obj*.imh
+      im> imhead obj???.imh
+      im> imhead o*.imh
+.fi
+
+Using these templates with the image names is quite simple. If however you
+also have files called "obj003.0001.imh,..." then the first and last commands
+will include those as well. These templates are valid UNIX constructions and
+can be used for files as well as images.
+
+Commands which are typed while in IRAF are remembered and can be called
+again using "ehistory". Typing 'e' or 'ehist' will give the last command
+which was used. If you want a previous command, page up through the list
+using the up arrow on the keypad. You can then edit this line using the
+left arrow and the backspace key. The cursor deletes to the left. Just type
+'return' to run the modified command. If you know the last time you used a
+command and no modifications are necessary, then use "^". For example,
+10 commands ago you typed the command "imhead obj*.imh" and haven't used
+"imhead" since, type ' ^imhead'. The last use of "imhead" will be found and
+executed. If you now want a listing of your comparison arcs instead of
+objects, type ' ^obj^comp'. It will change the last command used and replace
+"obj" with "comp". This is particularly nice if you are using numbers and
+need to change a previous number.
+
+Knowing what you now know about IRAF, it is important to note that IRAF
+does not have an editor. Therefore the VI editor is "imported" into the
+system. If you need to use an editor, a help page has been made for VI.
+This can be accessed using "help editor" while in IRAF.
+
+Some help can be found in most circumstances if you get stuck. There are
+the general "help" and "apropos" commands. The "apropos" command is used
+with some topic. The many short help lines will be searched for the
+topic for which you have asked. Then you may use "help" to learn more about
+one of the tasks or packages referred to in the "apropos". The "help"
+command gives more detailed information about a given task or package.
+There have been some help pages written at CTIO which will be listed
+when you type 'help manuals'. This gives a list of help pages written
+specifically for sending mail, using the SUN console, etc... Since help
+works even if the task or package is not loaded, it is a good way to
+find out where a task resides in IRAF.
+
+More information about IRAF can be found in the CTIO Reductions Manual.
+In it you will find a tutorial of IRAF structure and some of the important
+tasks. Help on programming can be obtained from Pedro Gigoux or directly
+from the computer group in Tucson.
+.le
+.bp
+.ls \fI4. Tutorial #1  -- IRAF structure\fR
+
+Everything shown in the root menu of IRAF is a package name. A package is a
+set of tasks that are logically related. A package may contain other
+packages (subpackages) and so on. You must load a package before any of the
+tasks therein can be run; you can load any package by simply typing its name.
+If the desired package is a subpackage of a package, the main package must be
+loaded first. To unload the current package type 'bye'. This restores the CL
+to the state it was in before the package was loaded. It is not necessary to
+unload the current package in order to load a new one, so that you may have
+many packages loaded at any time.
+
+The CL accepts input in both upper and lower case, distinguishing between
+them, i.e. a Y is different from a y. All packages and tasks names are
+specified in lower case and may be abbreviated. Any abbreviation may be
+given which contains enough characters to identify a name unambiguously; if
+the abbreviation is not unique, an error message will appear.
+
+For example, suppose we want to run the 'precess' task which is
+used to precess astronomical coordinates. The 'precess'
+task is in the 'astutil' package which is in the 'noao' package. We
+load the 'noao' package and then the 'astutil' package by typing:
+
+.nf
+      cl> noao
+      no> astutil
+      as>
+.fi
+
+The set of new tasknames now available to you will be displayed
+automatically. Note that the prompt will change from cl> to no> to as> to
+let you know you have entered another package. The simplest way of running
+precess is to type only its name:
+
+.nf
+      as> precess
+.fi
+
+The CL will then prompt you for the parameters it requires to run the task;
+in this case the CL needs the name of an input file containing a list of
+coordinates to be precessed.  Since you don't have coordinates in a file,
+give the filename as STDIN, which will allow you to enter the coordinates
+interactively from the terminal. The task will then prompt you for the years
+over which the precession will be computed. Answer appropriately. Any number
+of coordinates (input lines from the special file STDIN) may be entered.
+Coordinates are entered in pairs (RA and DEC, delimited by spaces) in either
+decimal or sexagesimal notation (e.g., 12.5 or 12:30:00) followed by
+'return'. Once you wish to stop the task, press 'ctrl z'.
+
+A list of all loaded packages and the tasks in each package may be obtained
+by typing two question marks '??'. This will list the tasks organized by
+package, starting with the current package. Type one question mark '?' to
+list only the task names in the current package; '?packagename' to list the
+tasks in package "packagename"; or 'package' to list only the current
+packages loaded.
+
+The help command will give additional information about the tasks in the
+current package. For detailed information about a particular package or task,
+type 'help' followed by the name of the package or task for which help
+documentation is desired. For example,
+
+.nf
+      as> clear               (will clear the screen)
+      as> help precess
+.fi
+    
+will print detailed information about the precess task (after each page of
+text, the help program will prompt with a list of keystrokes and pause until
+you type one of them). Since it is not required to load a package in order to
+get information about a task therein, the help command turns out to be
+particularly useful to find out where a given task is located; in most cases
+(not always available) the first line of the help command tells you the
+package path. In the previous example the package path is noao.astutil. There
+is also an 'apropos' command which will give very brief information. Try this
+also;
+
+.nf
+      as> apropos precess
+.fi
+
+You will get a listing of all the commands which refer to this topic.
+Try the bye command to unload the packages astutil and noao.
+After typing bye twice you should get the cl> prompt.
+.le
+.bp
+.ls \fI5. Tutorial #2\fR  -- \fIReading and writing data to tape\fR
+
+The next exercise presented here consists of reading a tape containing images
+in FITS format. The task that allows you to do this is called rfits, but we
+don't know the package path. For this purpose use the help command by typing,
+
+.nf
+      cl> help rfits
+.fi
+
+which tells you that the package path for this task is dataio. Load the
+dataio package and allocate the appropriate tape drive (and mount your tape):
+
+.nf
+      cl> dataio
+      da> alloc mta
+.fi
+
+The execution of the tasks is controlled by various parameters and the user
+may define their own values as required. The parameters for a task may be
+listed with the command 'lparam taskname' (abbreviated lpar). For example,
+to list the parameters for the task rfits, type:
+
+.nf
+      da> unlearn rfits   (to set the default parameters to the task)
+      da> lpar rfits
+.fi
+
+This will display the following,
+
+.nf
+        fits_file = "mta"  FITS data source
+        file_list =        File list
+        iraf_file = ""     IRAF filename
+      (make_image = yes)   Create an IRAF image?
+     (long_header = no)    Print FITS header cards?
+    (short_header = yes)   Print short header?
+        (datatype = "")    IRAF data type
+           (blank = 0.)    Blank value
+           (scale = yes)   Scale the data?
+     (oldirafname = no)    Use old IRAF name in place of IRAF_file?
+          (offset = 0)     Tape file offset
+            (mode = "ql")
+.fi
+
+There are two types of parameters (ignore the mode parameter), those with
+parentheses around the "param = value" fields and those without. The
+parameters not enclosed in parentheses are called positional parameters;
+they are required parameters and will be queried for if not given on the
+command line. IRAF preserves the last value used and presents it as the
+default upon next use. Positional arguments are the first arguments on the
+command line (following the command itself), and they are associated with
+parameters by their position on the command line. The parameters enclosed in
+parentheses are called hidden parameters. The CL does not query for hidden
+parameters for the task, but automatically uses the default values. The
+default value of a hidden parameter may be changed for your next use only, by
+an explicit assignment on the command line, if you wish a temporary change,
+or by the use of the 'eparam' task. The epar command will edit the parameters
+for the invoked task and allow you to set new default values. Try this by
+typing:
+
+.nf
+      da> epar rfits
+.fi
+
+This command lists the parameter file and leaves you on the first line. To
+move down the list hit 'return' or '^j'; to move up use '^k'. On most
+terminals the arrow keypads will work using the up and down arrows. For
+updating any of the parameters type the new value followed by 'return' and
+you will notice the change. Play around a while and exit the routine by
+typing 'ctrl z'. To quit the task without producing changes type 'ctrl c'.
+Finally, to reset the original parameter values type
+
+.nf
+      da> unlearn rfits
+.fi
+
+Read the data using the task rfits. You must specify the tape-drive name, the
+list of files you wish to read in and the "root" file name. If you
+transferred your data using getpix then you may wish to preserve the naming
+convention given as filenames, in this case just set the parameter,
+oldirafname to yes. (We suggest you use a separate directory for each night.)
+Otherwise choose the root file name, it's usually a good idea to include a
+digit in the name to indicate the tape number (e.g., "tape1." for your first
+tape; files will be called tape1.0001, tape1.0002, ...). Also an offset may be
+added ,e.g. offset=89, meaning the first files will be called tape1.0090,
+tape1.0091, ...
+
+.nf
+      da> rfits mta.1600 1-999 tape1.
+.fi
+
+or
+
+.nf
+      da> rfits mta.6250 1-999 tape1. off=89
+.fi
+
+In the previous examples the file list "1-999" must more than cover the number
+of files on tape. Also note that you can specify the density (1600 or 6250)
+under which the data have been written. The task will display a short header
+for each image read from tape and stop when encountering an EOT. Then rewind
+the tape and deallocate the drive,
+
+.nf
+      da> rew mta
+      da> dealloc mta
+.fi
+
+and remove your tape from the drive. By typing
+
+.nf
+      da> dir
+.fi
+
+you will be able to see the previously read images already written onto the
+disk. The listing will include the aforementioned login.cl file and uparm, a
+subdirectory containing the parameter files for IRAF tasks.
+
+There are many other options for the rfits task that you may want to find out
+about by using the help command. Also there are several other tasks in this
+package that allow you to read other kinds of data.
+
+Let's suppose you want to write some images to tape. Start by mounting a new
+tape (with the write ring) and allocating the tape drive.
+
+.nf
+      da> alloc mta
+.fi
+
+Use wfits to write your data in FITS format. This task offers several options
+like scaling the data or setting the number of bits/pixel (16bits=short
+integers, 32bits=reals, 64bits=double precision floating point numbers). We
+suggest you use the following,
+
+.nf
+      da> wfits *.imh mta.6250 new+
+.fi
+
+to write all your image files (having the imh extension), to a new tape;
+
+.nf
+      da> wfits xfm*.imh,flat*.imh mta.1600 new-
+.fi
+
+to append all your images having the common root names xfm and flat into a
+tape that already contains data. The new- parameter goes to the logical
+end-of-tape before writing. Don't forget to dismount your tape and deallocate
+your drive.
+
+.nf
+      da> dealloc mta
+.fi
+
+.ls \fIA note about templates:\fR
+
+Although filenames cannot be abbreviated, pattern matching templates can be
+used to refer to many files. You need only type a short string that serves as
+a template, and all files whose names match the template are selected, as
+shown in the previous examples. This is a general rule in IRAF.
+
+The character "?" in a file name stands for a single character, "*" represents
+any character string, [a-z] is any character in a through z and ^[a-m] is any
+character other than a through m. For example, "dat.*" represents any file
+name beginning with "dat.", while "?dat" represents any four character file
+name ending with "dat". File names and templates may also be strung together
+using commas to separate them, indicating a group of files which match the
+various names and/or templates. Still another way is to list the names in a
+file and to direct a task to take input from that file by placing a "@" in
+front of the file name. You will encounter several examples later in these
+manuals.
+.le
+.le
+.bp
+.ls \fI6. Tutorial #3\fR  -- \fIHandling images\fR
+
+Start by clearing the screen and loading the images package.
+
+.nf
+      cl> clear
+      cl> images
+.fi
+
+Notice that the prompt now changes to "im>". Type
+
+.nf
+      im> ?
+.fi
+
+to see what commands are available in the package, and then
+
+.nf
+      im> help
+.fi
+
+to find out what all the tasks in the images package are about. If
+you don't have an image in your directory execute the following
+
+.nf
+      im> imcopy dev$pix image.short
+.fi
+
+This will copy a test image into your directory and call it
+"image.short.imh". If you type 
+
+.nf
+      im> dir
+.fi
+
+you'll see that the image header file "image.short.imh" is now in your
+directory. This is just the header file while the image values are stored in
+the pixel file located in your image directory. To get some information about
+this image, type
+
+.nf
+      im> imheader image.short
+.fi
+
+You should get a short listing: the image name, its size, the pixel type and
+an object name or comment. Obviously, there must be more information in the
+image header, so type
+
+.nf
+      im> lpar imhead
+.fi
+
+to try to discover how to get at it. You will notice a hidden
+parameter called longheader which is set to "no". To change this
+parameter add 'long=yes' or simply 'l+' on the command line,
+
+.nf
+      im> imheader image.short l+
+.fi
+
+and you get a long listing of the header. By the way, when you type
+
+.nf
+      im> lpar imhead
+.fi
+
+you will see that the parameter "longheader" has not been updated. The only
+way to change its default value is by editing the parameter file using 'epar
+imhead'.
+
+It would be useful to generate two more copies of this image but with
+different pixel types, one with 32-bit floating point pixels (called reals)
+and one with 64-bit double precision floating point pixels (called double).
+Execute the following,
+
+.nf
+      im> imarith image.short / 1 image.real pixtype=r
+      im> imarith image.short / 1 image.dbl pixtype=d
+      im> imheader image.*
+.fi
+
+Your terminal should now display the following, generated from
+the "imheader" task above,
+
+.nf
+           image.dbl[512,512][double]: m51  B  600s
+           image.real[512,512][real]: m51  B  600s
+           image.short[512,512][short]: m51  B  600s
+.fi
+
+Now let's test the use of image sections. Type
+
+.nf
+      im> imcopy image.real[200:300,200:300] image.sect
+      im> imhead image.sect
+.fi
+
+The result of the "imheader" task should show
+
+.nf
+           image.sect[101,101][real]: m51  B  600s
+.fi
+
+Now, back to the system.
+
+.nf
+      im> hist
+.fi
+
+gives a listing of the most recent commands. To demonstrate a
+little shorthand convention, enter
+
+.nf
+      im> ^
+.fi
+
+and you will see that it echoes "hist" (the last command) and executes it. To
+select a command further up in the list, for example, the "lpar imhead", type
+
+.nf
+      im> ^lpar
+.fi
+
+The cl will look back along the history list, find the first
+command that starts with "lpar" and execute it.
+
+If you are working at the main SUN workstation you will be able to display
+images by first loading the tv package and then invoking the display command
+as follows,
+    
+.nf
+      im> tv
+      tv> display image.short 1
+.fi
+
+And you will see your image being displayed on the screen. There are 4 image
+channels available using the imtool window. The value 1 in the command line
+corresponds to the positional parameter that specifies the display frame to
+be loaded with the input image (if not specified on the command line the cl
+will prompt you to enter this parameter). The transfer function can be
+specified as linear, logarithmic or none by the parameter ztrans in 'display'.
+This is the function that translates the image pixel intensities into
+displayed pixel intensities. The transfer function is controlled by the left
+button of the mouse. Holding this button and moving the cursor changes the
+slope and intercept of the transfer function.
+
+You must bring back the cursor to the text window in order to continue
+working with IRAF.
+
+Let's now make a contour plot of the image.sect and image.real images,
+
+.nf
+      tv> contour image.sect
+      tv> contour image.real
+.fi
+
+and now, a 3-dimensional drawing of both images by typing,
+
+.nf
+      tv> surface image.sect
+      tv> surface image.real
+.fi
+
+You have four "image" images, as can be seen by
+
+.nf
+      tv> files image*
+.fi
+
+(You could have done the same with "dir image*", but this way you get a
+one-per-line list). The task "files" simply finds all files that match the
+template "image*". Try all of the following:
+
+.nf
+      tv> files image*.imh
+      tv> files image???.imh
+      tv> files image????
+      tv> files image????.imh
+      tv> files im*ge.*
+      tv> files ima*
+.fi
+
+The "*", of course, stands for any character string; the "?" represents any
+single character. Write a file containing the four file names by redirecting
+the output of the files command to a file named "list"
+
+.nf
+      tv> files image*.imh > list
+      tv> type list
+.fi
+
+You may now delete all of the images created during this tutorial by the
+use of the imdelete task and an @file:
+
+.nf
+      tv> imdelete @list
+.fi
+
+And make sure that your images are no longer in the disk by using the "dir"
+command. Do not get confused with the "delete" command which is intended to
+delete common files and not images.
+
+You may also want to delete your list file
+
+.nf
+      tv> delete list
+      tv> type list           (File does not exist)
+.fi
+
+Finally, to logout type
+
+.nf
+      im> logout
+.fi
+
+Note that it is not required to unload the loaded packages in order to quit
+IRAF.
+.le
+.bp
+.ls \fI7. Tutorial #4\fR  -- \fIImplot task\fR
+
+Once you get the cl prompt type the following command (try to type it correctly
+but, if you don't, it doesn't matter because this command should fail!),
+
+.nf
+      cl> copy iraf/lib/scr/cursor.key testfile
+.fi
+
+In fact, for reasons which will not be discussed here, the first "/" should
+actually be a "$". You could type the whole line over, but there is a
+somewhat better way by using the command 'ehistory', which may be also
+abbreviated simply 'e',
+
+.nf
+      cl> e
+.fi
+
+You will be presented with your last line. Use 'ctrl h', if the arrow keypad
+doesn't work, to space back to that first "/" and delete it (note: it deletes
+to the left of the cursor) and type '$'. If you go too far, you can move to
+the right by 'ctrl l'. While you are at it fix other typing errors. The line
+should now look like
+    
+.nf
+      cl> copy iraf$lib/scr/cursor.key testfile
+.fi
+
+Hit a <CR> and the command should execute correctly.
+
+The task ehist is used for editing the entries in the "history" list and
+re-executing them. It is extremely useful at times, but is also a little
+awkward until you get used to it. The important thing to remember is that it
+is always in insert/delete mode, and the following control keys move you
+around:
+
+.nf
+      CRTL H -- left
+      CRTL L -- right
+      CTRL K -- up
+      CRTL J -- down
+.fi
+
+Type,
+
+.nf
+      cl> hist
+      cl> e
+.fi
+
+You'll get "hist" (the last command) echoed. Now type 'ctrl k' a few times
+and you will move back up the "history" list; 'ctrl j' moves you down the
+list. In order to exit ehist without changing anything, you may abort 'ctrl c'
+or type 'ctrl j' until you get to the beginning of the list. Try using ehist
+if you make any typing mistakes in the rest of this tutorial.
+
+To type the file copied above, do
+
+.nf
+      cl> type testfile
+.fi
+
+(For the time being ignore the actual contents of the file). This file does
+not fit on a single screen, so you must be quick to use the 'scroll' key,
+'ctrl s' or 'ctrl q' if you want to examine the first part of it. Another way
+to do this is to page the file:
+
+.nf
+      cl> page testfile
+.fi
+
+At the bottom of the first screen-full, the output is paused. There are no
+instructions here, and (as a general IRAF rule) if you don't know what to do,
+type "?". You will now see that hitting the space bar will give you another
+page (or screen-full) of the file -- do this. Notice that at the end you have
+to type "q" to get out of the "page" mode.
+
+Finally, to print the file, use lprint:
+
+.nf
+      cl> lpr testfile
+.fi
+
+The hard copy may be obtained from the laser printer located closest to the
+terminal you are using. Now, load the noao package and check your directory:
+
+.nf
+      cl> noao
+      no> dir
+.fi
+
+Start by copying the test image "testim.imh" into your directory
+
+.nf
+      no> imcopy dev$pix testim
+.fi
+
+The package noao loads the images and plot packages as well. In the latter
+package is a basic plotting routine called implot, which will serve to
+demonstrate some plotting basics. Type,
+
+.nf
+      no> implot testim
+.fi
+
+The screen will clear and you will get a plot across the middle "line" (row)
+or the line number specified in the parameter line. Note the following about
+the plot:
+
+.nf
+      + the image name and the line number is printed at the top
+      + the bottom axis shows the column numbers;  left  axis  is  the
+       intensity  scale but the right axis is labeled with lines, that
+       is, the bottom and right axes  represent  a  schematic  of  the
+       image. There is a tickmark on the right axis to show which line
+       is plotted.
+      + the graphics cursor is enabled and ready for input.
+.fi
+  
+Move the cursor up a bit (keeping it within the plot), note its position along
+the right axis, and type 'l' (for line). You will get a new plot at the line
+selected by the cursor. Now do the same again, but type 'o' (overplot) before
+you type 'l' -- this causes the task to overplot the second line. If you want
+to overplot something, you must always type 'o' beforehand. Now, select a
+column with the cursor and type 'c'. You get a plot of the selected column,
+and the bottom axis now shows lines and the right axis columns.
+    
+Suppose you want to see column 10 specifically. Type ':' , at the bottom of
+the screen a ":" will be echoed, and enter
+
+.nf
+      :c 10
+.fi
+
+followed by 'return'; to see lines 20 through 25 averaged together, type
+
+.nf
+      :l 20 25
+.fi
+
+In other words, there are two types of cursor commands: single keystroke
+commands and, for those that need multiple characters for input, the ":"
+commands.
+
+To expand a plot, position the crosshairs at the lower left corner of the
+desired window and type 'e', you get the message "again:" at the bottom of
+the screen, so position the crosshairs at the upper right corner and type 'e'
+again; the new expanded plot is drawn. To return to the original you must type
+
+.nf
+      :l 20 25
+.fi
+
+again. To change the intensity scale to, say, (0,400), 
+
+.nf
+      :y 0 400
+.fi
+
+To overplot the same lines in a new file (which you can't do now if you only
+have one test image), you type the necessary 'o' to overplot, and then
+
+.nf
+      :i newfile
+      :l 20 25
+.fi
+
+to open the new file and then plot the lines.
+
+As a general IRAF rule, if a task is waiting for input and you don't know how
+to do what you want to do, type '?' (do it now). In this case it will produce
+a listing of all the single keystroke commands followed by the ":" commands.
+Then, at the bottom of the list it will pause, asking if you want more, hit
+the space bar. You will notice that the next group of commands are all capital
+letters, and the ":" commands that follow all start with a period, ie ':.'
+(You'll recognize this list as the file you printed out above, and you'll
+also recognize the page function. You must type 'q' to escape from it.)
+
+This second group of commands work on the plot buffer -- they don't generate
+new plots from the data, but rather operate on the graphics vectors already
+plotted. Type a '0' (zero) to go back to the plot, then put the cursor near a
+corner of the plot and type 'Z'. This zooms the plot (centered at the
+crosshairs), but you'll notice that everything -- tickmarks, axes, etc. --
+get zoomed, because this is working on the old plot and just making every
+vector twice as large. Type '0' (zero) to return to the original. Now type
+'X'. This has an effect like "Z", but expands only in the x-direction. Now
+try '4' and '6', these shift the plot left and right (roam); you can always
+type '0' to return to the original. At some point type 'C' to get the
+coordinates of the crosshairs. This is a toggle so if a value is currently
+shown hit 'C' twice in order to read the current coordinates.
+
+Now make a hardcopy of the plot by typing,
+
+.nf
+      :.snap
+.fi
+
+There is a pause while the plot buffer is read; the plot will appear
+eventually. Sometimes plots are stored up until you exit the task, so if you
+want a plot immediately, it's a good idea to follow the ":.snap" with a
+
+.nf
+      :.gflush
+.fi
+
+This is enough for now. Type 'q' to quit the task. If you are finished
+using the test image names testim, delete it using the task "imdelete".
+
+(As a further demonstration of the plot buffer, you may execute a command
+"=gcur" which will activate the cursor; typing '0' (zero) will redraw your
+plot, which is still in the plot buffer.  Of course you may not execute any
+of the implot commands, but all of the plot buffer commands (capital letters,
+numbers and ":.") are executable. Enter 'q' or 'ctrl z' to exit.)
+
+One further note about graphics tasks, in most tasks other than implot, a
+wide variety of windowing options are available, but all are preceded by a
+"w" (which will produce the window: prompt at the bottom of the screen);
+type 'w', '?' for the choices. The plot buffer commands are independent of
+the task, and therefore are always available. For more details about using the
+computers at CTIO, see appendix I in this manual.
+.le
+.bp
+.ls \fI8. Tutorial #5\fR  --  \fIDisplaying Images\fR
+
+Start by copying the test image "testim.imh" into your directory
+
+.nf
+      cl> imcopy dev$pix test
+.fi
+
+The package "tv" contains the task display as well as other tasks that are
+interactive with the imtool window. We will not get into the task display
+itself, however we will look at the task imexamine in the images package. If
+you are interested only in displaying an image, see the appendix G and J,
+section 3.4. Load the images package and edit the parameters of the
+task imexamine:
+
+.nf
+      cl> images
+      im> epar imexamine
+.fi
+
+Set the input parameter to the name of the image, 'test' and type
+'return'. Leave the frame parameter at '1' and continue on to image using
+'return', or the down arrow on the keypad. Set the logfile parameter to
+'logfile' and the keeplog parameter to 'yes'. The other parameters may be left
+to their default values. To keep these values, type '^z'. There are
+several other parameter files which are associated with this task
+but they are accessible while the task is running in interactive mode.
+
+.nf
+      im> imexamine test 1
+.fi
+
+The image will be displayed and a circular cursor will appear in the imtool
+window. Type a '?' first to see the list of options. To get back the cursor
+type `q`. Try typing a 'g'. This will move the cursor to the graphics window.
+If the graphics window associated with the gterm window is not displayed, it
+will appear on the screen. Type an 'i' to get back to the imtool window. Move
+the cursor to the center of
+the galaxy and type 'c', for a column plot. Likewise, 'l' does a line plot.
+Now try an 'e'. This does a contour plot of a box region around the cursor
+position. The number of contours and box size can be redefined using ':epar
+e', type this. Now try changing the ncolumns and nlines parameters and
+increase the number of contours, ncontours. Type a '^z' to exit. Immediately
+the contour plot is redrawn using the new parameters. Now try typing:
+
+.nf
+      :e s
+.fi
+
+Now you will be editing the parameters for the surface plotting. Set the
+parameters, ncolumn and nlines to the value '50' and type '^z`. Now move
+the cursor to a nice HII region of the galaxy away from bright stars and
+type 's'. Type 'g' to get the graphics cursor. Now try the following
+commands, move the cursor to the center of the graph:
+
+.nf
+      Z
+      Z
+      6
+      6
+      4
+      4
+      4
+      4
+      8
+      6
+      6
+      2
+      9
+      1
+      0
+      :.snap (retrieve the plot from the laser printer)
+      :.write plot
+      D - move the cursor
+      D
+.fi
+
+Moving the cursor to the peak of the HII region type 'T' and at the prompt
+type 'HII Region' and a carriage return. This will add a label to the graph
+at the position of the cursor when you first typed the "T". The expansion 
+keys, 'X', 'Y', and 'Z' can be experimented with if you wish. Now go back
+to the image cursor by typing 'i'. Now try vector plotting using 'v'. You
+must define both endpoints, so move the cursor to one corner and type 'v'
+and cut across the center of the galaxy and type 'v' again. A plot of the
+defined line will come up on the graphics window. Now move the cursor to
+the center of the galaxy, type 'o' followed by 'c'. This will overplot the
+column defined by the cursor. Again go to the graphics cursor using 'g'.
+Try typing 'C'. This will give the position of the cursor on the plot.
+Put the cursor in the center of the peak of the column plot and type 'o'
+followed by 'l'. This will then overplot the line crossing the center of
+the galaxy. Go back to the image, 'i'.
+
+The next set of commands write information into the logfile we have opened.
+First, lets say we need to know the statistics on a region. Move the cursor
+to your favorite spot and type 'm'. The size of the box is determined by
+the parameters "ncstat" and "nlstat". Type ':nlstat' to see its 
+current value. Do the same for "ncstat". To change these values, simply
+follow the ":" command with a number. Now to see a grid region of pixel
+values, type 'z'. The pixel values are shown on the top and side of the
+table of values. Now lets try doing some radial profile plotting. Move the
+cursor to a star and type 'r'. This will give the plot and a fit with
+some calculated values. Now type ':e r'. These values control the radial
+profile plotting and the aperture photometry, the "a" key. Try setting the
+parameter "radius" to a smaller value to get a better fit to the data.
+Enlarge the plotting radius also if you like, "rplot". Now quit by typing
+'^z'. A new radial plot is performed with the new values. Now try 'a'.
+This will give a number of values calculated using the algorithms described
+in more detail in the help page. Now you can play around with other
+commands. When you are finished using the test image named "test", delete
+it using the task "imdelete".
+.le
+.bp
+.ls \fI9. Common Problems: Their Cause and Cure\fR
+
+The following are some of the more common problems and some fixes:
+
+\fIScreen Frozen\fR: You probably hit "^s", pausing output to the screen.
+Try typing "^q" to continue.
+
+\fIJob Hangs Up\fR: Try typing "^q" to continue. If this doesn't work, type
+"^c", and then "flpr"(in IRAF), to flush the process register. Try the job
+again, if problems persist, try checking the parameters. Never use "^c" to
+kill a magnetic tape job.
+
+\fIJob Crashes\fR: Probably a bug in the program or a parameter is set to
+a strange value. Try typing "flpr", check the parameters, and try again. If
+it still doesn't work, unlearn the task(resets the parameters), or unload
+the package and load it is again. If all this fails, send a message to
+irafhelp.
+
+\fILeft the CL\fR: You suddenly find yourself outside of IRAF with the UNIX
+prompt, "v#%". You probably typed "^x" or "^c" to many times, stopping your
+'cl' job, to get back in, type "%%" or "fg".
+
+\fITape Problems\fR: Various causes. To recover, check the tape to see if
+it was written to the end of the tape or ran off the end(in this case, make
+a note of the last file written and change tapes and begin with this file
+on a new tape), try rewinding the tape, deallocating the drive, checking
+the density setting, or logging out and back in again.
+
+\fIExabyte Problems\fR: Various causes of which the most likely is that
+the tape is bad. Try writing several times and if it stops at the same
+place, get a new tape. Retry messages don't mean anything unless accompanied
+by an error message or the tape stops writing before all files are written
+to the tape. There might be a problem with the drives reliability also,
+check with a staff member before using a drive.
+
+\fIImage Reading Fails\fR: Have you filled up the disk?
+
+\fITape Writing Fails\fR: Have you run into the end of tape marker? Check the
+tape and if you are at the end, make note of the last file written. Change
+tape and continue. Do you have a write ring on the tape? If it appears that
+it didn't write anything at all you may not have a write ring on the back of
+the tape.
+
+\fITerminal Behaves Strangely\fR: You may have had the caps lock on when
+you logged onto the UNIX machine. Try typing "lo (return)" several times
+in a row to log off the machine and then make sure the caps lock is off
+when logging in again. In the window environment you may have the terminal
+type set wrong. If you are using the gterm window in IRAF, type "stty gterm",
+if you are at a pc, type "stty pc640".
+
+\fITask 'getpix' Dies\fR: This has many causes, reading out the ccd or trying
+to use a plotting routine while "getpix" is running can do it. The only
+solution is to delete the last file that it says it copied and begin
+"getpix" again from the image that you deleted.
+
+\fICan't Display an Image\fR: The image may not exist. Check the image header
+to see where the pixel file is living, "imhead image l+ | page". If it says,
+'[NO PIXEL FILE]', then read the image back in off your backup tape. The
+IRAF environment variable 'node' is possibly not set to the correct computer.
+Check this using "show node". Set it to your computers name using "set node=
+computername".
+
+\fICCDRED Parameter Problems\fR: If you chage the parameters of a task in the
+ccdred package and running the program doen't seem to be working, check your
+login.cl and loginuser.cl files to see if this package is being loaded at
+login time. If it is, delete it from the file so that it in NOT loaded. Now
+log out of IRAF and login again and the tasks in ccdred will not accept
+changes made in the parameters.
+
+
+The following list of error messages are frequently encountered. Unfortunately,
+IRAF is not very helpful with its error messages, so sometimes you have to
+be creative in getting the correct interpretation of the message. Here are
+some hints:
+
+"\fIerror in DATASEC parameter\fR"  You probably tried to use the LSI11
+operations to trim some of your images but not all of them. Take one of the
+untrimmed images, trim it using the same values from the LSI and check the
+header for the trimsec and datasec parameters. Then 'hedit' the LSI trimmed
+values of trimsec and datasec to the values in the IRAF trimmed image, and
+don't mix LSI and IRAF operations EVER AGAIN.
+
+"\fICannot open image...\fR"  The image does not exist, are you in the correct
+directory?
+
+"\fItask `taskname' not found\fR"  The command you typed is not an IRAF
+defined task, is it UNIX? If you are certain it is a task, perhaps you do
+not have the proper package loaded.
+
+"\fIwrite to IPC with no reader\fR"  This can be a caused by a partial crash
+of a task. Type 'flpr' several time in a row to clear the process register.
+
+"\fIERROR: Cannot open connected subprocess (procname)\fR"  The CL is unable
+to find the excutable for the package/task. This can be caused by a redefined
+IRAF environment variables used to get the pathname to the executable
+(e.g. noao, ctio, etc), or by an installation error. Try typing "show 
+packagename". If the returned path name looks strange or there is a root
+directory, say 'noao$' then try "show noao". If this looks okay, tell the
+iraf programmer to install the package properly.
+
+"\fIERROR: Abnormal termination of child process 'procname'\fR"  The process
+was terminated, and the CL didn't know about it. Retype the command that
+gave this error. If this fails, try typing "flpr" several times and run the
+task again.
+
+"\fIPANIC in `procname` : errmsg\fR"  This is caused by a "can't happen"
+error condition (something that isn't supposed to happen, is happening).
+Type 'flpr' one or more times in a row to clear the process cache. Try
+running it again.
+
+"\fISegmentation violation\fR"  An error in the program execution normally
+caused by a program bug. Try typing 'flpr' one or more times, and if it
+doesn't work try alternatives ways of executing the task, like changing the
+parameters. Please send a bug report.
+
+"\fIPanic during process shutdown...\fR"
+"\fIerror recursion....\fR"
+"\fIcl dies\fR"  This means that the "cl" crashed and you must start up
+iraf again. The cause of this varies.
+
+"\fIKernel server has died\fR"  This happens when an error message is sent
+by one machine but doesn't get translated across to the machine you are
+woring on, like the tape drive has run to the end of the tape, when writing
+across a link.
+
+"\fIERROR: cannot rewind device 'devicename'\fR"  There is no tape on the
+tape drive or you have run off the end of the tape. Do you have the device
+allocated? Is the tape drive online? Have you typed the correct name (don't
+forget the machine name if you are working across the net)? Deallocate and
+allocate the tape drive and try again. It is possible that someone used a
+"^c" to kill a tape read or write job and this has messed up the link from
+the device to the computer itself. In this case, call someone to reboot the
+computer.
+
+.le
+.endhelp

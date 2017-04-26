@@ -1,0 +1,116 @@
+.help coords May88 ctio
+.ih
+NAME
+coords -- Compute celestial coordinates
+.ih
+USAGE
+coords input
+.ih
+PARAMETERS
+.ls input
+Input file names. It could be a single file or a list of files
+including @ lists.
+.le
+.ls output = STDOUT
+Output file name. The output of the program will be appended to this file,
+so if there are more than one input file the output file will contain
+the solutions for all of them. The default output file is the standard output.
+.le
+.ih
+DESCRIPTION
+This task will process all the input files and will append its output to
+the output file. If an input file cannot be opened or if it has the same
+name of the output file, it will skip it and issue a warning message.
+.br
+For each input file, the task will read the list of \fBx\fR and \fBy\fR
+pixel positions and the corresponding \fBcelestial coordinates\fR, for all the
+stars that have both values. This list must be at the begining of the file,
+one star per line.
+Then it will read the remaining stars that have only
+\fBx\fR and \fBy\fR pixel positions, again one star per line.
+For those stars that have both pixel positions and
+celestial coordinates, it computes the transformation from (x,y) to (ra,dec)
+using the usual spherical geometry equations. 
+For the others it solves the celestial
+coordinates using the transformation already computed.
+A minimum of three stars with both pixel and celestial coordinates is
+required in order to calculate a transformation.
+Comment lines begining with a "#" may be placed anywhere
+in the input file, but they won't be copied to the output file.
+.br
+The output of the program includes the solution and residuals for the stars
+with pixels positions and celestial coordinates, and 
+the computed values for the stars with pixel positions only.
+The residuals in rignt ascension and declination are both expressed in
+seconds of arc.
+The RMS of the residuals and the frame scale are computed as well.
+.ih
+EXAMPLES
+1. Run the task getting input from a pipe and appending the output to
+a file:
+.sp
+.nf
+lo> type input_file | coords STDIN output=output_file
+.fi
+.sp
+2. Run the tasks for all the input files of the form input* and send
+the output to the standard output:
+.sp
+.nf
+lo> coords input*
+.fi
+.sp
+3. Get the input file names from a list file and append the output to
+a file:
+.sp
+.nf
+lo> coords @list_file output=output_file
+.fi
+.sp
+4. Sample input file:
+.sp
+.nf
+# Stars with decimal and sexagesimal notation first
+-12.7918  -13.7864   18.00334167   -30:04:45.4
+-14.4487   -6.5900   18:00:10.54   -30.05719444
+
+# Now with sexagesimal notation only
+ 10.1190   -1.7828   18:00:31.50   -30:02:29.2
+ 13.1976   -2.3716   18:00:34.12   -30:02:35.5
+ -5.3395    6.5922   18:00:18.21   -30:00:58.5
+
+# The unknown stars come now
+-11.2172  -15.8298  
+ -9.4546  -16.2641  
+ -9.6349  -15.7878  
+ -8.2438  -15.5524  
+ -7.7569  -18.0253  
+.fi
+.sp
+7. Sample output file for the previous input file:
+.sp
+.nf
+            Input coordinates               Output coordinates        Diff.
+    x      y        ra          dec           ra          dec       ra     dec
+ -12.8  -13.8  18:00:12.03 -30:04:45.40  18:00:12.03 -30:04:45.43  0.050  0.031
+ -14.4   -6.6  18:00:10.54 -30:03:25.90  18:00:10.55 -30:03:25.85 -0.074 -0.048
+  10.1   -1.8  18:00:31.50 -30:02:29.20  18:00:31.49 -30:02:29.30  0.104  0.100
+  13.2   -2.4  18:00:34.12 -30:02:35.50  18:00:34.13 -30:02:35.41 -0.102 -0.094
+  -5.3    6.6  18:00:18.21 -30:00:58.50  18:00:18.21 -30:00:58.51  0.022  0.011
+
+RMS in arcsec:  ra =  0.077,  dec =  0.067,  total =  0.102
+
+Frame scale is 11.08 arcsec/pixel
+
+       Solution for coordinates
+    x      x        ra          dec
+ -11.2  -15.8  18:00:13.39 -30:05:07.88
+  -9.5  -16.3  18:00:14.90 -30:05:12.47
+  -9.6  -15.8  18:00:14.74 -30:05:07.21
+  -8.2  -15.6  18:00:15.93 -30:05:04.42
+  -7.8  -18.0  18:00:16.37 -30:05:31.78
+.fi
+.ih
+SEE ALSO
+geotran
+.endhelp

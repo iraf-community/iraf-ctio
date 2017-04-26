@@ -1,0 +1,10 @@
+# imspace mkpkg file (Thu Apr 27 09:58:36 CST 1992)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_imspace.x	<error.h> <fset.h> <mach.h>
+	;

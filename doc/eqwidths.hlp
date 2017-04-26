@@ -1,0 +1,102 @@
+.help eqwidths Jan90 ctio
+.ih
+NAME
+eqwidths -- Equivalent widths
+.ih
+USAGE
+eqwidths spectra bands output
+.ih
+PARAMETERS
+.ls spectra
+List of input spectra. It can be any file template.
+The input spectra should be dispersion corrected, and optionally flux
+calibrated.
+.le
+.ls bands
+List of wavelength bandpasses. This is a six column text file with the
+red, line, and blue bandpass specification. Each bandpass is specified by
+the center wavelength and a width. The red and blue bandpasses are used to
+compute the continuum level at the line by using a linear interpolation.
+.le
+.ls output
+Output text file.
+.le
+.ls radial = ""
+List of radial velocities for input spectra in Kilometers per second.
+There is a one to one correspondence between the input spectra and the
+radial velocities specified in this file, but it is not required that
+the number of radial velocities be the same as the number of input spectra.
+If the radial velocity list is shorter than the input list then no correction
+is assumed for the remaining spectra in the input list.
+.le
+.ls interpolation = "linear"
+Pixel interpolation mode. This parameter specifies which method is
+used to interpolate fractional pixel values.
+Possible values are \fBnearest\fR, \fBlinear\fR, \fBpoly3\fR, \fBpoly5\fR,
+and \fBspline3\fR, for nearest neighbor, linear interpolation, third order
+polynomial, fifth order polynomial, and cubic spline, respectively.
+.le
+.ls start = "W0"
+Starting wavelength keyword name. The named keyword is used to get the
+starting wavelength from the image headers.
+.le
+.ls delta = "WPC"
+Wavelength increment keyword name. The named keyword is used to get the
+wavelength per pixel from the image headers.
+.le
+.ls dispersion = "DC-FLAG"
+Wavelength correction flag keyword name. The named keyword is used to know
+if the image has been dispersion corrected or not.
+.le
+.ls flux = "CA-FLAG"
+Flux calibration flag keyword name. The named keyword is used to know
+if the image has been flux calibrated or not.
+.le
+.ih
+DESCRIPTION
+For each spectrum in the input list the task computes the equivalent widths
+for a list of bandpasses. Optionally a list of radial velocties may be
+supplied for each one of the spectrum in the input list.
+.br
+For each line bandpass the task computes the flux for the corresponding red
+and blue bandpasses, and using these values it computes the continuum level
+for the line bandpass by using a linear interpolation. This value is then
+substracted from the line, and then the flux for the line is computed.
+The line flux is multiplied by the wavelength per pixel value if the spectrum
+is flux calibrated. Finally, the equivalent width is determined from the line
+flux, and the interpolation coefficients for the continuum, by using the
+following formulae:
+.nf
+
+	equivalent width = line flux / (a * line wavelength + b),
+
+where
+	continuum = a * wavelength + b
+
+.fi
+The "a" and "b" are coefficients are determined from a linear interpolation
+by using the red and blue bandpass fluxes.
+The equivalent withs will be always positive for absorption lines and
+negative for emission lines, assuming that the fluxes in the red and
+blue bandpasses are positive (i.e. positive continuum level).
+.sp
+If the list of radial velocities is specified then each wavelength in the
+list of bandpasses (laboratory system) is corrected acording with the
+following formulae:
+.nf
+
+	lambda observed = lambda laboratory * (1 + z)
+
+where
+	1 + z = sqrt ((c + v) / (c - v))
+
+.fi
+The output of the task is a six column table, with the following data: the
+bandpass wavelength, bandpass width, bandpass wavelength after radial velocity
+correction, continuum level at the line bandpass, line flux, and equivalent
+width. The image name is printed at the begining of the bandpass list along
+with a title line.
+.ih
+SEE ALSO
+onedspec.splot
+.endhelp
