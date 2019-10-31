@@ -1,6 +1,6 @@
 include	<chars.h>
 include	<error.h>
-include	<xtools$xtanswer.h>
+include	<pkg/xtanswer.h>
 
 # Strings used to flag the use of the the same node and image directory
 # specified in the image header.
