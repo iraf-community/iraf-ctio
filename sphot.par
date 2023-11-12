@@ -1,0 +1,15 @@
+# sphot parameter file
+images,s,a,"",,,Image file names
+cursor,*imcur,h,"",,,Image cursor
+starlist,s,h,"",,,Star position file
+rstar,r,h,10.0,1.0,20.0,Radius of stellar aperture
+r1,r,h,10.5,2.0,20.0,Inner sky radius
+r2,r,h,18.0,3.0,40.0,Outer sky radius
+rdel,r,h,5.0,1.0,,Maximum shift from initial position
+niter,i,h,5,1,,Number of iterations for centroid
+cside,i,h,3,1,10,Half width of centering box
+sky,s,h,"mode","mean|median|mode|sigclip",,Sky determination
+ksig,r,h,3.0,,,Sigma rejection parameter for sky determination 
+zpoint,r,h,23.5,,,Magnitude zero point
+gain,r,h,10.5,,,Gain (electrons/ADU)
+verbose,b,h,no,,,Long output format

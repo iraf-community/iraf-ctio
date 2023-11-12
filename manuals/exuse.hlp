@@ -1,0 +1,114 @@
+.help exuse Nov91 manuals
+
+.ls \fIUsing the Exabyte Devices\fR
+
+The machines that have exabyte drives are s0, s1, s2, t1, and 4m. In general,
+these devices have been very unreliable. In IRAF the device
+name is mtx. Problems with computer hardware and the exabyte driver prohibits
+the use of the IRAF fits read and write tasks on some computers. The possible
+combinations are as follows:
+
+.nf
+      \fIMachine	CTIO-name	rfits	wfits\fR
+      sun4/60	s0,t1		works	fails
+      sun4/370	s1,s2,4m	works	works
+
+      sun4/280			fails	works
+      sun4/470			fails	works
+      sun4/490			fails	works
+.fi
+
+Although this problem may be fixed by the IRAF group, people have been known
+to overwrite their first nights data with the second nights, thus lossing the
+first full nights data. BE SURE YOU MAKE BACKUP TAPES OF YOUR DATA SO YOU
+DO NOT LOSE ANYTHING! If you use the 4m SUN to write fits files, be warned
+that you should confirm the images are written on the
+tape. Also, you need not move to the end of the tape before continuing to
+write fits images on the tape. This is done by setting the newtape parameter
+to "no".  You should not have to keep track of the number of files you have
+written to tape. If your machine at home is in the wrong category such that you
+cannot read the tapes then you should use "tar". \fINOTE: The newer the exabyte
+drive, the more reliable is seems to be. Tapes written on older devices are
+not compatable with the newer drives, and vice versa.\fR We are presently
+in the process of updating all of our older drives with newer ones. New drives
+are connected at ctios2, and ctio4m.
+
+The UNIX tar command is the best method for writing to exabyte tapes, since
+it is more universally used. The UNIX device name
+on all these machines is '/dev/rst1'. Putting an "n" in front of the device
+name means that it will not rewind the tape after performing an operation, so
+if you are writing more than one file to exabyte, use '/dev/nrst1'. There are
+two methods for writing to tapes. The suggested procedure for writing an
+exabyte tape is to first wfits all iraf images into one directory. Once all
+the images to be backed up are in the same place, then use tar:
+
+.nf
+      !tar cvf /dev/rst1 .
+.fi
+
+\fBNOTE: If you specify the full path name including the disk name, you will
+have trouble reading the files back off at your home institution. Go directly
+into the directory being backed up and the path name will not prefix all your
+files saved to tape.\fR To read the tape, simply change the "c" to an
+"x" for extract. Then rfits must be run on the IRAF images to restore
+them to separate header and pixel files.  To list the contents of the tape,
+change the "c" to a "t". It is a good idea to write magtapes to
+backup your images before writing to exabyte tape in case files are corrupted
+by writing to exabyte.
+
+If you don't have enough room on disk to fit all your images on at one time,
+it would be better to write each nights data separately. This has been
+simplified by a special task written here at CTIO. These tasks are available
+only here at CTIO, on the machine w1 downtown and 4m on the mountain. To use
+this command you must first define the tasks in IRAF and allocate the exabyte
+tape drive:
+
+.nf
+      set source="/uw10/steve/source/xsource/"    (DOWNTOWN)
+		      or
+      set source="/u4m0/steve/source/"            (TOLOLO)
+      task wrk=source$work/wrk.cl
+      wrk
+      alloc mtx
+.fi
+
+Typing "wrk" will result in the prompt for the machine name on which you
+are using the exabyte, you must be remotely logged onto the machine which
+has the exabyte you are using. Now the package is loaded with the tasks
+"archive" and "restore". The task "archive" is for writing multiple tar files
+onto the end of a tape. Write each nights data separately making sure you
+specify "no" for the newtape option and the end of the tape will be found
+before writing begins on the second file. This can also be done by writing
+the header and pixel files separately, however, this will cause problems later
+since the header file has a path name for the pixel files. The header
+parameter 'pixfile' would have to be edited using the task "hedit" when the
+files are read onto your system at home so that this pointer specifies the
+correct directory path. To do this write the main visitor directory with all
+the header files using the task "archive" and then move to the pixel
+directory using "cd imdir" and use "archive" again. To read a specific file,
+just use the task "restore" to restore a directory or entire file. You can
+use the UNIX tar command to read the file also. To read the second file on
+a tape using UNIX, we must advance the tape beyond the end of file marker of
+the first file. The tape can be advanced beyond the end of file marker using:
+
+.nf
+      mt -f /dev/nrst1 fsf
+.fi
+
+To rewind the tape, replace the "fsf" in the command with "rewind".
+Another way to read beyond the first file is to use "/dev/nrst1" as the
+device name (add an "n" in front of the original name), and to read the
+first file use:
+
+.nf
+      tar xvf /dev/nrst1
+.fi
+
+Then type it again, this will skip over the end of file marker of the
+first file. You may get an error or warning message. Now typing it again the
+next file will be read. So you type the command three times in a row. You
+must type the command 5 times in a row to read the 3rd file. The first 4
+commands, a "t" can be substituted for the "x" to simply list the first two
+files. Tapes are available on the mountain and downtown from Mario Hamuy or
+Lisa Wells and will be charged to your account when you leave.
+.endhelp

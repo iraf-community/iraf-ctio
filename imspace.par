@@ -1,0 +1,3 @@
+# imsize parameter file
+images,s,a,"",,,Images to process
+verbose,b,h,yes,,,Print size for each image ?

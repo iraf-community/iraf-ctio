@@ -1,0 +1,200 @@
+.help sunmail Aug88 Version-1.0
+.ls \fIUSING THE UNIX MAILER\fR
+
+\fIMAIL AND ITS OPTIONS\fR
+
+There are many commands that could be useful when using the UNIX mailer.
+This is to give a list of the commands available but does not include all
+the possibilities. If you would like more information, type "!man mail".
+When sending a file and you would like to specify a subject, use the 
+following:
+
+.nf
+       mail -s "type subject here" address < filename
+.fi
+
+This will send the file "filename" to "address" with the specified subject.
+\fIIf you send a message larger than 20,000 bytes, it will be rebounded. To send
+a large file see Jim Hughes. Also, if the message is a binary file, it
+may be necessary to encode it before sending it, otherwise, bits will be lost
+along the way.\fR If you receive mail, just typing "mail" will enter the mailer
+and give a listing of the message headers addressed to you currently in the
+system mailbox. If there are no messages waiting for you you will get the
+message back, "No mail for v4". If you wish to suppress the message headers
+from being printed, use the option "-N". If you are in the middle of
+something else and just wish to see who has sent you mail, use the "-H"
+option. This will simply give the header summary only for the messages which
+are waiting for you. If you have logged on and missed the message telling
+you about mail, use the "-e" option to check for the presence of mail.
+Finally, if you wish to reread a message from your mbox file or another
+file, use the "-f filename" option. If the filename is not given, the
+default for this is the standard mbox file created when quitting mail (see
+below). The command mode is entered when a "&" prompt appears. Then you may
+use any of the interactive commands, or type 'help' for a list (see the
+third section).
+
+.nf
+       -N		Suppress the header summary upon entering mail
+       -H		List the header only of the unread mail
+       -e		Check to see if there is mail
+       -f filename	Read the messages in the file specified
+.fi
+
+\fITILDE COMMANDS WHILE WRITING A LETTER\fR
+
+When sending a message to someone, an example is shown below, you will
+then be prompted for the subject, just type it in and hit "return". Now
+just type your message into the buffer that has been created for your message.
+When you are finished, just type a "." on a blank line and type "return"
+to quit and send the letter. The mailer will echo 'EOF' to specify the end
+of the file. The "^d" (control-d) can also be used to end the input and
+send the message, and there is a tilde command that works the same (see below).
+
+.nf
+       v2> mail marsden@cfa.bitnet
+       Subject: A NEW SUPERNOVA!!!
+
+       We have found a new supernova in an anonymous galaxy located
+       at RA 05 23 45, Dec -69 46.3 (1950), at a visual magnitude of
+       9.31. You can't miss it!
+
+                                                 Dr Magellan
+       .
+       EOF
+
+.fi
+
+In composition mode, you may use any of the many tilde commands. They must be
+used by typing the command on a blank line, and hitting return. They will not
+be echoed in your message. Any of the following commands may be used.
+
+.nf
+       ~?		Prints a summary of the tilde commands
+       ~b users		Adds the users specified to the 'Bcc:' (Blind
+			carbon copy) list separated by commas
+       ~c users		Adds the users specified to the 'Cc:' (Carbon
+			copy) list separated by commas
+       ~d		Read the dead.letter file into the buffer
+       ~e		Edit the message buffer using 'ed' editor
+       ~f [messagelist]	Forward the message specified, will be prompted
+			for the 'To:' list
+       ~h		Show the 'To:', 'Subject:', Cc:', 'Bcc:' lists and
+			add to or change them using backspace and
+			typing the new value 
+       ~m [messagelist]	Read the message specified into the buffer
+       ~p		Print the message being composed in the buffer as
+			it is now
+       ~q,~Q,^c		Quit, and save the message in the home directory
+			under the name dead.letter
+       ~r filename	Read the file into the message buffer
+       ~s subject	Set the 'Subject:' to subject, or use this to 
+			change the original
+       ~t users		Add users to the 'To:' list
+       ~v		Edit the message using the 'vi' editor, using ":wq"
+			to exit the editor will bring you back to the 
+			current mode
+       ~w filename	Write the message into the file specified
+       ~x		Quit, do not save the file
+       ~.		End of input, send message
+       ~! command	Run a shell (UNIX) command
+       ~| command	Pipe the message through the command
+       ~: command	Execute a regular mail command, type '~:help' for
+			a list of the commands
+.fi
+
+The "users" is a list of one or many addresses. The "messagelist" is explained
+in the last section of this help page, but in brief, specifies the message
+number to be used. The "filename" is the file to be used or created. "Subject"
+is the new subject to be associated with this mail message. The UNIX or mailer
+commands are used in place of "command". In all cases, the mailer will return
+to the message input mode unless you use an exit command.
+
+\fIUSING THE MAIL COMMANDS\fR
+
+When entering the mailer, the prompt becomes an "&" signifying the command
+mode. At this prompt you may type any number of commands. To read a mail
+message, just type the number of the message you wish to read. If you read
+a message and want to reply, just type 'r'. You may specify the message
+number if you are not reading the file to which you want to reply. You can
+print the specified message by using the 'p' command.
+
+.nf
+       help or ?	Prints a summary of the commands
+       <return>		Print the next message
+       cd directory	Change directory to one specified
+       copy messagelist filename
+			Copy messages to file but don't mark as saved
+       delete messagelist
+			Delete the messages specified
+       edit messagelist	Edit the message buffer using "ed" editor
+       exit		Leave the mailer, don't move messages to 'mbox'
+       file filename	Quit the current mail file and read in the named
+			file, will give number of files within filename
+       from messagelist	Print the header 'from:' the message specified
+       headers		Print out headers of the messages being accessed
+       list		Lists all commands available without description
+       mail user-list	Mail a message to the specified user, will go
+			to 'composition' mode
+       next		Go to and print the next message in the list
+       print messagelist
+			Print the message specified
+       preserve messagelist
+			Put the messages specified back in the system
+			mailbox
+       quit		Quit, and save the messages in the home directory
+			under the name mbox
+       reply messagelist
+			Reply to sender of message only
+       Reply messagelist
+			Reply to sender and all recipients of message
+       save messagelist filename
+			Append the message to the file specified
+       size messagelist	Print the size in characters of files specified
+       type messagelist	Type messages specified, same as print
+       top messagelist	Show the top lines of the message specified
+       undelete messagelist
+      			Undelete the message(s) specified
+       visual messagelist
+			Edit the message using the "vi" editor, using ':wq'
+			to exit the editor will bring you back to the 
+			current mode
+       write messagelist filename
+			Append the message to the file specified
+       xit		Quit, do not change the system mailbox
+       z [-]		Display next [previous] page of headers
+       ! 		Shell (UNIX) escape
+       =		Print the current message number
+.fi
+
+The 'user-list' is the valid address(es) for the sending of the mail message
+using commas to separate multiple addresses. The 'file' specified a file to
+be created in your directory. The 'messagelist' given in these commands can
+be specified with any of the following;
+
+.nf
+       .	The current message
+       n        Message number n
+       ^	The first undeleted message
+       $	The last message
+       +	The next undeleted message
+       -	The previous undeleted message
+       *	All messages
+       n-m	An inclusive range of message numbers
+       user	All messages from user
+       /string	All messages with 'string' in the subject line (case
+		ignored)
+       :c	All messages of type 'c', where 'c' is one of:
+			d	deleted messages
+			n	new messages
+			o	old messages
+			r	read messages
+			u	unread messages
+.fi
+
+One known bug, reply does not always generate the correct return address, so
+you may need to specifically input the correct address. An E-mail Directory
+is available to check for the correct address. See Mario Hamuy, Lisa Wells
+or Jim Hughes for more information.
+
+.le
+.endhelp

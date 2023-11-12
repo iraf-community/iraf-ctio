@@ -1,0 +1,104 @@
+.help irproc Feb89 ctio
+.ih
+NAME
+irproc -- Sky substract, transpose, and mosaic IR imager frames
+.ih
+USAGE
+irproc input output nxsub nysub
+.ih
+PARAMETERS
+.ls input
+The list of input images to be mosaiced. The images are assumed
+to be ordered either by row, column, or in a raster pattern. If
+the image list is not in order then the iraf \fBfiles\fR task plus
+the \fBeditor\fR must be used to construct an image list. The images
+in the input list are assumed to all be the same size.
+.le
+.ls output
+The name of the output image.
+.le
+.ls exclude = ""
+The name of the file containing the frame numbers to be excluded from
+the determination of the sky spectrum. This is a text file with one frame
+number per line.
+.le
+.ls nxsub
+The number of subrasters along a row of the output image.
+.le
+.ls nysub
+The number of subrasters along a column of the output image.
+.le
+.ls section = "[*,*]"
+The section of the input images to be mosaiced into the output
+image. Section can be used to flip and/or trim the individual
+subrasters before adding them to the mosaic. For example if we
+want to flip each subraster around the y axis before adding it
+to the mosaic, then section = "[*,-*]".
+.le
+.ls corner = "ll"
+The starting position in the output image. The four options
+are "ll" for lower left corner, "lr" for lower right corner,
+"ul" for upper left corner and "ur" for upper right corner.
+.le
+.ls direction = "row"
+Add subrasters to the output image in row or column order. The
+options are "row" for row order and "column" for column order.
+.le
+.ls median = yes
+Compute the median of each input subraster ?.
+.le
+.ls substract = yes
+Subtract the median value from each input subraster before
+placing the subraster in the output image ?.
+.le
+.ls transpose = no
+Transpose each subraster before mosaicing them ?.
+.le
+.ls delete = yes
+Delete combined sky, sky sustracted, and transposed images ?.
+.le
+.ls logfile = ")ccdred.logfile"
+The name of the log file.
+.le
+.ih
+DESCRIPTION
+This task takes the list of input subrasters of identical dimensions,
+and combines them using \fBccdred.combine\fR, to get a single sky spectrum.
+It is possible to exclude some of the input subrasters with the \fBexclude\fR
+parameter. This paameter specifies the name of a file containing a list
+of frame numbers (not image names) to skip during the combination of
+the frames. 
+.sp
+The sky spectrum is then substracted from all the input subrasters (even to
+those excluded in the combination), using \fBimages.imarith\fR. The name
+of the output subrasters is built by appending a ".sub" to the original
+name.
+.sp
+Once the images are sky substracted, they are transposed to
+get the right orientation.
+This is done with \fBimages.imtranspose\fR.
+The name of the output subraters is constructed by appending a ".trn" to
+the original unsubstracted name.
+This step is performed only if \fBtranspose=yes\fR.
+.sp
+The final step is to mosaic all the subrasters into a final image.
+This is done with \fBproto.irmosaic\fR. 
+.sp
+All the temporary subrasters generated (sky, substracted, and transposed)
+can be deleted automatically if \fBdelete=yes\fR, before the task completes.
+Otherwise they will be left in the same directory of the input spectra.
+.ih
+EXAMPLES
+1. Mosaic a list of 64 infrared images onto an 8 by 8 grid.
+
+pr> irproc @imlist mosaic 8 8
+.ih
+TIME REQUIREMENTS
+Takes a while.
+.ih
+BUGS
+All the bugs belonging to the called tasks, plus others not known yet.
+.ih
+SEE ALSO
+images.imarith, images.imtrans, imred.combine, proto.irmosaic
+.endhelp

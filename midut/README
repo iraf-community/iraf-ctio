@@ -1,0 +1,6 @@
+MIDUT			23-May-89	(Steve Heathcote)
+
+This directory contains the code to set the UT for midpoint of the exposure.
+The files contained here are:
+
+midut.cl		CL script file

@@ -1,0 +1,202 @@
+.help sphot Nov87 ctio
+.ih
+NAME
+sphot -- star photometry
+.ih
+USAGE
+sphot images
+.ih
+PARAMETERS
+.ls images
+List of input images. Any image template including @ lists can be used.
+.le
+.ls cursor = ""
+Cursor input file.
+If the null string is specified the object coordinates will be read
+interactively from the the standard image cursor.
+If a file name is given, object coordinates will be read from this file,
+as if it were an interactive cursor read.
+This parameter is used only if the \fBstarlist\fR parameter is null.
+.le
+.ls starlist = ""
+Star coordinate file list.
+This is a list of text files containing the initial coordinates of the
+objects to be measured.
+The file format is the same used by the image cursor read, i.e., 
+each line contains the x and y coordinates of the object, followed by
+the world coordinate system (not used by the program), a character keystroke,
+and an optional character string.
+All the fields are optional except by the object coordinates.
+.le
+.ls rstar = 10.0
+Radius of stellar aperture.
+.le
+.ls r1 = 10.5
+Inner sky radius.
+.le
+.ls r2 = 18.0
+Outer sky radius.
+.le
+.ls rdel = 5.0
+Maximum shift from initial position.
+.le
+.ls niter = 5
+Number of iterations for centroid.
+.le
+.ls cside = 3
+Half width of centering box.
+.le
+.ls isky = mean
+Sky determination algorithm. This parameter can take four values:
+.nf
+	mean	- Use mean value
+	median	- Use median value
+	mode	- Use mode value
+	sigclip	- Use sigma clipping value
+.fi
+.le
+.ls ksig = 3.0
+Sigma rejection parameter for sky determination.
+.le
+.ls zpoint = 23.5
+Magnitude zero point.
+.le
+.ls gain = 10.5
+Gain in electrons/ADU.
+.le
+.ls verbose = no
+If this option is set, a long output format is used. 
+.le
+.ih
+DESCRIPTION
+For each image in the input list, the task reads object coordinates,
+and runs the photometry code for them.
+There are two possible sources for object coordinates: the image cursor,
+or a list of text files containing object coordinates.
+.br
+Image cursor coordinates can be entered either interactively, or 
+non-interactively.
+If interactive, cursor coordinates are read from the standard image cursor
+every time a key is pressed in the keyboard. If a \fBq\fR is pressed,
+the program will continue with the next image in the input list.
+If non-interactive, a text file containing image cursor coordinates will
+be read instead. This file can be generated with \fBlist.rimcursor\fR, for
+example.
+.br
+If a list of text files is specified, object coordinates will be read
+from each file in the list, and applied to each image in the input list.
+The list will be rewounded every time a new image is processed.
+If the character keystroke (fourth column) is a \fBq\fR, all the remaining
+lines in the current file are discarded (including the line containing the
+\fBq\fR), and input will be taken from the next file in the list.
+.br
+The output always includes data from the image, such as file name, title,
+exposure time, airmass and filter.
+The photometry output is different depending on the value of the
+\fBverbose\fR switch.
+If \fBverbose=no\fR, then a multicolumn output is generated, one line per 
+star position. The columns contain the following data: star number, computed
+star position, nmagnitude, sigma magnitude, sky value, sigma sky and the 
+number of sky pixels. 
+If \fBverbose=yes\fR then the values of all the parameters are written before
+the photometry output. The photometry output include all the data of the
+non verbose output plus all the sky values (mean, mode, median, sigma clip)
+and all the errors in magnitude (n, sky, noise), in a multiline format.
+.ih
+EXAMPLES
+1. - Run the tasks non-interactively, taking input from a file generated
+with rimcursor:
+
+.nf
+cl> lists
+li> rimcursor > data1
+li> type data1
+70. 460. 101 \040 
+59. 226. 101 \040 
+225. 130. 101 \040 
+132. 108. 101 \040 
+380. 66. 101 \040 
+466. 61. 101 \040 
+348. 187. 101 \040 
+444. 409. 101 \040 
+404. 275. 101 \040 
+208. 507. 101 \040 	<- this star is too close to the image edge
+348. 233. 101 \040 
+111. 141. 101 \040 
+
+li> ctio
+ct> sphot dev$pix cursor=data1 starlist="" verbose-
+Image = dev$pix    Title = m51  B  600s
+Exposure time = 600.00    Airmass =  1.080    Filter = 2
+star#      x         y       mag   sigmag      sky    sigsky  nsky
+   1     69.35    460.69   20.475   0.015    72.216    7.145   676
+   2     59.25    226.03   19.887   0.035    66.856   30.736   668
+   3    224.30    131.17   19.408   0.011   102.424   13.993   670
+   4    131.25    108.96   19.758   0.036    86.665   35.060   668
+   5    379.12     66.81   18.981   0.009    67.134   16.980   670
+   6    465.49     62.09   19.658   0.016    73.759   17.288   672
+   7    347.59    188.76   17.281   0.003   139.950   25.663   675
+   8    441.94    409.63   19.355   0.004    44.096    4.361   666
+   9    404.50    274.29   18.877   0.013    92.124   29.345   676
+xysetup error 1: 208.,507. star too close to edge
+  11    347.51    231.61   20.562   0.040   146.319   18.670   681
+  12    110.28    142.05   20.476   0.038    90.841   19.258   668
+.fi
+
+
+2.- Run the task interactively:
+
+.nf
+lo> sphot dev$pix cursor="" starlist="" verbose-
+[Enter coordinates with image cursor]
+Image = dev$pix    Title = m51  B  600s
+Exposure time = 600.00    Airmass =  1.080    Filter = 2
+star#      x         y       mag   sigmag      sky    sigsky  nsky
+   1     48.33    344.85   20.366   0.019    84.159   10.501   668
+   2    224.30    131.17   19.408   0.011   102.424   13.993   670
+   3    291.04    103.89   20.301   0.031   106.036   18.156   671
+   4    339.07    325.94   20.441   0.076   141.418   39.674   670
+[press 'q']
+lo>
+.fi
+
+3.- Run the task non-interactively, using a list of input files:
+
+.nf
+lo> type data2
+70. 460. 101 \040 
+59. 226. 101 \040 
+225. 130. 101 \040 
+132. 108. 101 \040 
+380. 66. 101 \040 
+466. 61. 101 \040 
+348. 187. 101 \040 
+
+lo> type data3
+444. 409. 101 \040 
+404. 275. 101 \040 
+208. 507. 101 \040 	<- this star is too close to the image edge
+348. 233. 101 \040 
+111. 141. 101 \040 
+
+lo> sphot dev$pix starlist=data2,data3 verbose-
+Image = dev$pix    Title = m51  B  600s
+Exposure time = 600.00    Airmass =  1.080    Filter = 2
+star#      x         y       mag   sigmag      sky    sigsky  nsky
+   1     69.35    460.69   20.475   0.015    72.216    7.145   676
+   2     59.25    226.03   19.887   0.035    66.856   30.736   668
+   3    224.30    131.17   19.408   0.011   102.424   13.993   670
+   4    131.25    108.96   19.758   0.036    86.665   35.060   668
+   5    379.12     66.81   18.981   0.009    67.134   16.980   670
+   6    465.49     62.09   19.658   0.016    73.759   17.288   672
+   7    347.59    188.76   17.281   0.003   139.950   25.663   675
+   8    441.94    409.63   19.355   0.004    44.096    4.361   666
+   9    404.50    274.29   18.877   0.013    92.124   29.345   676
+xysetup error 1: 208.,507. star too close to edge
+  11    347.51    231.61   20.562   0.040   146.319   18.670   681
+  12    110.28    142.05   20.476   0.038    90.841   19.258   668
+.fi
+.ih
+SEE ALSO
+lists.rimcursor
+.endhelp

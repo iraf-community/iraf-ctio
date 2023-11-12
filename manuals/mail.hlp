@@ -1,0 +1,137 @@
+.help mail Aug88 Version-1.0
+.ls \fISENDING MAIL FROM CTIO\fR
+
+\fIELECTRONIC MAIL ON THE SUNS\fR
+
+It is now possible to send electronic mail directly from UNIX or iraf on the
+SUNS. The mailer on the SUNS also has some nice features like the ability to 
+edit the mailfile, reading in text from a file, and changing or adding
+addresses. These will not be discussed here but if you would like more
+information type "!man mail". To send a message, use;
+
+.nf
+      mail [address]
+.fi
+
+You will then be prompted for the subject. The many tilde options for editing
+a file are given in the help file. If you are in the task, type ~? for the
+list of possible commands. When you are finished typing the message, use
+a '.' in the first column and type return. An equivalent command is (~.)
+without the brackets, if you can remember it. The message is then queued to
+be sent out. If you must send a file, then use the following format:
+
+.nf
+      mail -s "type subject here" [address] < [filename]
+.fi
+
+The subject is added since you are not prompted for it using this form. There
+is a simple way to create a file with your message using the "cat" command.
+This will take input directly from the terminal. To use this type:
+
+.nf
+      cat <<EOF > [filename]
+.fi
+
+Now type your message and when you are finished, enter EOF on a blank line
+and you will get the UNIX prompt again. If you do a 'cat [filename]', you
+will see that the EOF line was not echoed in the file. Now you are ready
+to mail the file. The format for the address is the standard BITNET, ARPA,
+or UUCP address, ie;
+
+.nf
+      AIPS@UNMB.BITNET
+      ALLEN@SOLPL.AS.ARIZONA.EDU
+      hao!ico!ism780c!sean@uunet.uu.net.UUCP
+.fi
+
+The ending for the UUCP address can be simplified by using '@noao' instead of
+'@uunet.uu.net.UUCP'. The typical SPAN addresses must be handled much
+differently. They are reversed from their usual DECnet/VMS form. For example;
+
+.nf
+      PSI%NSSDCA::KEPLER::SSD0::SMITH 
+	       becomes
+      SMITH%SSD0%KEPLER@NSSDCA.SPAN
+.fi
+
+Other forms of this might work. If you need help with an address, see Jim Hughes
+or Lisa Wells. 
+
+
+\fIELECTRONIC MAIL ON THE VAXES\fR
+
+If you insist on using the VAX then you give up a lot of nice features of the 
+SUN mailer. \fIWe would prefer that you learn and use the SUN mailer.\fR We have
+had many problems with the VMS mailer including links over SPAN as long as 43.9
+hours, and that costs money!!! The real problem here is that the VMS mailer
+leaves the user connected to the net from the moment that 'send' has been typed.
+Since SPAN is very expensive, we ask that you help us cut costs by editing the
+message you wish to send and then use the mail utility to send that file. There
+are several editors which you may use, edit, and vi for example so use one that
+is comfortable for you. We usually suggest using the vi editor if you are
+remotely logged onto the Vax from the mountain. If you are not comfortable with
+vi or you do not want to learn yet another editor, use the "CREATE filename"
+command which works just like mail. This is a VMS command. You can type your
+message and use ctrl-z to exit. Now send your message by typing:
+
+.nf
+      mail [filename]
+.fi
+
+You will then be prompted for the address. It is a good idea to route mail
+through the ST mailer on ctiov2 rather than directly out from ctiov1 across
+SPAN. This look like;
+
+.nf
+      To: CTIOV2::" your BITNET or ARPA address "
+.fi
+
+The advantage of this is that, the mailer will automatically retry, and use
+alternate routing. So if one SPAN node is down as it frequently is, it will
+try them all until it gets through. (Direct SPAN addresses may not work as 
+well and must be formatted differently. If you wish to use this please see 
+Jim Hughes.)  You will not be prompted for the subject so if you wish to 
+include it you must add it to the mail command, ie;
+
+.nf
+      mail <filename> /subj="type in subject here"
+.fi
+
+Some key words should be avoided. Do not use "To:", "From:, or "Subject:" in the
+edited mail file. In traveling through the many nodes, the file is searched for
+keywords and using them can hangup the message you are sending. Some examples
+of an address that can be used in the mailing address are:
+
+.nf
+      "AIPS@UNMB.BITNET"
+      "ALLEN@SOLPL.AS.ARIZONA.EDU"
+      "JOHNSON@YALASTRO.BITNET"
+      "hao!ico!ism780c!sean@uunet.uu.net.UUCP"
+.fi
+
+The general address form for sending mail directly from ctiov1 is;
+
+.nf
+      To: CTIOV2::" your BITNET or ARPA address "
+.fi
+
+Or, if you absolutely must go out directly,
+
+.nf
+      PSI%NSSDCA::DRACO::"your BITNET or ARPA address"
+.fi
+
+Direct SPAN mail may be sent this way also.
+
+.nf
+      PSI%NSSDCA::MACHINE::MACHINE ... ::MACHINE::USER  ie;
+      PSI%NSSDCA::KEPLER::SSD0::SMITH 
+.fi
+
+There are copies of the international computer mailing addresses directory
+available if you do not know the correct address for your party. If you have 
+trouble getting through, ask Jim Hughes, or Lisa Wells for alternate routes.
+One Note is that SSL can be used in the place of machine NSSDCA, so if you 
+can't get through to NSSDCA, try this one.
+.le
+.endhelp

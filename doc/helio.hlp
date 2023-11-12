@@ -1,0 +1,51 @@
+.help helio Aug89 develop
+.ih
+NAME
+heio -- Compute heliocentric Julian date
+.ih
+USAGE
+helio args
+.ih
+PARAMETERS
+.ls images
+The list of input images to process.
+.le
+.ls latitude = INDEF
+Latitude of the observatory, in degrees.
+.le
+.ls longitude = INDEF
+Longitude of the observatory, in degrees.
+.le
+.ih
+DESCRIPTION
+For each image in the input list, this task computes the heliocentric
+Julian date and the heliocentric radio velocity correction, and it
+adds them to the image header along with the Julian date. It also adds
+the sidereal time, hour angle, zenith distance and airmass to
+the image headers if they are not already there or if they have
+inconsistent values.
+.sp
+The following keyword names are used to store information in the image
+header:
+.nf
+
+	AIRMASS		Air mass
+	HA 		Hour angle
+	HJD		Heliocentric Julian date
+	HCORR		Heliocentric radio velocity correction
+	JD		Julian date
+	ST		Sidereal time
+	ZD		Zenith distance
+.fi
+.ih
+EXAMPLES
+Compute the heliocentric Julian date and the heliocentric radio velocity
+correction for a list of images taken at CTIO:
+.nf
+
+ct> helio image1,image2,image3 latitude=-30.165278 longitude=70.815
+.fi
+.ih
+SEE ALSO
+noao.asttimes
+.endhelp

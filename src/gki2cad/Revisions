@@ -1,0 +1,7 @@
+t_gkitocad.x
+	Modified sprintf for GKI_TEXT (PG 27/Jun/90).
+
+t_gkitocad.x -> t_gki2cad.x
+mkpkg
+	Renamed the task from gkitocad to gki2cad, in order to be
+	consistent with all the other conversion tasks (PG 05/Jul/93).

@@ -1,0 +1,140 @@
+.help fft1d Jan90 ctio
+.ih
+NAME
+fft1d -- One dimensional Fast Fourier Transform
+.ih
+USAGE
+fft1d input output
+.ih
+PARAMETERS
+.ls input
+Input image or file list. Any file template or image template can be used.
+Images should be one dimensional.
+.le
+.ls output
+Output image or file list. Any file template or image template can be used.
+If the output list is shorter than the input list, the task will abort with
+an error message after processing the last file or image in the input list.
+.le
+.ls type = "complex"
+Transformation type. The possible types are \fBreal\fR for a real
+transformation, and \fBcomplex\fR for a complex transformation.
+.le
+.ls format = "plain"
+Output format. The possible formats are \fBplain\fR for the untouched output,
+\fBmodulus\fR for the transformation modulus, and \fBpower\fR for the square
+of the transformation (power spectrum).
+.le
+.ls inverse = no
+Take inverse transformation ?
+.le
+.ls flip = no
+Flip negative and positive parts of the transformation ?
+Normaly, the FFT algorithm leaves the negative part of the transformation
+at the right side of the positive part. With this parameter it's possible
+to flip both parts, leaving them in a natural order.
+.le
+.ls interval = INDEF
+Interval between data points. This parameter specifies the spacing between
+data points in the input file. If this parameter has a defined value the
+task will output the transformed spacing along with the transformation
+values. This parameter is used only with text files.
+.le
+.ls valkey = "CRVAL1"
+Starting value keyword. This is the name of the image header keyword used
+to get the physical coordinate value of the first pixel in the input image.
+.le
+.ls intkey = "CDELT1"
+Interval keyword. This is the name of the image header keyword used to get
+the pixel coordinate spacing between pixels in the input image.
+.le
+.ls angular = no
+Show angular frequencies ? If this parameter is set to \fByes\fR, then the
+output frequencies are multiplied by two times PI. This parameter has effect
+only if the \fBinterval\fR parameter has a defined value.
+.le
+.ih
+DESCRIPTION
+For each image or file in the input list, the task takes the direct or
+inverse Fast Fourier Transform of it, and places the output in the
+corresponding file or image specified in the output list.
+Input files can be text files with one (real part) or two columns (real
+and imaginary parts), or one-dimensional images (real or complex).
+.sp
+This task is a front end to some of the FFT routines provided in the IRAF
+VOPS (Vector Operations). The input and output data types used by the
+routines depend on the value of the \fBreal\fR and \fBinverse\fR parameters,
+acording to the following table:
+.nf
+
+      real  | inverse | input   | output  | routine
+     -------+---------+---------+---------+---------
+      no    |  no     | complex | complex | afftrx
+      no    |  yes    | complex | complex | aiftrx
+      yes   |  no     | real    | complex | afftxx
+      yes   |  yes    | complex | real    | aiftxx
+
+.fi
+If complex data is supplied and a real transformation is specified, then
+the imaginary part is not used. Note that a real inverse transformation 
+will give complex numbers with it's imaginary part set to zero instead of
+actual real numbers.
+.sp
+The number of lines in the output file is equal to the first power of two
+greater or equal to the number of lines in the input file. Also, the number
+of pixels in the output image is equal to the first power of two
+greater or equal to the number of lines in the input image.
+Therefore, there is no way to get exactly the original data when taking
+the inverse transformatiom of a transformation. This problem can be solved
+easily by just dropping the tail of the inverse transformation.
+.sp
+For text files the spacing between data points is specified with the
+\fBinterval\fR parameter.
+If \fBinterval\fR has a defined value, then the output file will have an
+extra column (the first one) with the frequency values.
+Otherwise only the transformation values will be written.
+Note that the first column will be written even when taking the inverse
+transformation, but the task won't work if it's present in the input
+(see the limitations below).
+.sp
+For images the spacing between input pixels is taken from the the
+input image header, using the keyword specified in the \fBintkey\fR
+parameter. The physical coordinate of the first pixel is also required,
+and must be specified in the \fBvalkey\fR parameter.
+When taking a direct transformation the physical coordinate of the first
+pixel is always set to the new starting value, and it's original value
+is stored in the auxiliary header keyword \fBFFT1DVAL\fR. When the
+inverse transformation is applied the physical coordinate of the first
+pixel is set back to this value.
+.sp
+When the spacing is specified the frequencies in the output file or image
+make sense only up to the Nyquist frequency, unless the \fBflip\fR parameter
+is set to \fByes\fR.
+This is because the FFT algorithm puts the negative part of the transformation
+before the positive part of it.
+If the output file or image has N points then the Nyquist frequency is
+located at (N / 2 + 1) if \fBflip\fR is set to \fBno\fR, and at N if
+\fBflip\fR is set to \fByes\fR.
+.sp
+The default settings of the parameters are such that it is possible to take
+the inverse transformation of the output of the task, and get the original
+data, except for some rounding errors and the power of two limitation.
+This is \fBNOT\fR true under the following conditions:
+.ls (1)
+For files or images if the \fBtype\fR parameter is set to \fBreal\fR.
+.le
+.ls (2)
+For files or images if the \fBformat\fR parameter is NOT set to \fBplain\fR.
+.le
+.ls (3)
+For files or images if the \fBflip\fR parameter is set to \fByes\fR.
+.le
+.ls (4)
+For files if the \fBinterval\fR parameter is defined, unless the first
+column of the transformation is removed.
+.le
+.ih
+BUGS
+For some unknown reason this task does not work in pipes, although it is
+intended to work in them.
+.endhelp

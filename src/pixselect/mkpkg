@@ -1,0 +1,19 @@
+# pixselect mkpkg file (Thu Jul 11 15:33:52 CST 1991)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+
+generic:
+	$ifolder (pixselect.x,  pixselect.gx)
+	    $generic -k -o pixselect.x pixselect.gx
+	$endif
+	;
+
+libpkg.a:
+	$ifeq (USE_GENERIC, yes) $call generic $endif
+	pixselect.x		<imhdr.h>
+	t_pixselect.x		<error.h>
+	;

@@ -1,0 +1,42 @@
+.help normalize July87 fabry
+.ih
+NAME
+normalize -- add normalization factors to the cube image header
+.ih
+USAGE
+normalize cube_image factors
+.ih
+PARAMETERS
+.ls cube_image
+the name of the image cube to have the normalization parameters
+added to the header
+.le
+.ls factors
+a string of floating point normalization factors, separated by commas,
+numbering as many as ther are image bands,
+or a constant to be applied to all image bands
+.le
+.ls verbose = yes
+if set to yes, a printout of the header updating is given
+.le
+.ih
+DESCRIPTION
+NORMALIZE is a header parameter generator. It is assumed that all
+normalization for atmospheric extinction, instrument sensitivity,
+and any other multiplicative constants appropriate to each image
+band are known by other means. This program takes those relative
+factors and loads them into the image header of the cube.
+The keywords used are NORM01 through NORMnn where nn is the maximum
+number of bands in the image.
+.ih
+EXAMPLES
+Add normalization to the cube name "cube", having 7 bands.
+
+	cl> normalize cube 1.0,1.1,1.2,1.2,1.1,1.0,0.9
+
+.ih
+TIME REQUIREMENTS
+Fast
+.ih
+SEE ALSO
+.endhelp

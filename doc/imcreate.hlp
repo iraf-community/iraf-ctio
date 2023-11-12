@@ -1,0 +1,118 @@
+.help imcreate Oct90 ctio
+.ih
+NAME
+imcreate -- Create an image.
+.ih
+USAGE
+imcreate image naxis naxis1 naxis2 ... naxis7
+.ih
+PARAMETERS
+.ls image
+Output image name.
+.le
+.ls naxis = 1
+Number of axes. The user needs to supply up to this number
+of axis lengths, and not all of them.
+.le
+.ls naxis1 = INDEF
+First axis length.
+.le
+.ls naxis2 = INDEF
+Second axis length.
+.le
+.ls naxis3 = INDEF
+Third axis length.
+.le
+.ls naxis4 = INDEF
+Fourth axis length.
+.le
+.ls naxis5 = INDEF
+Fifth axis length.
+.le
+.ls naxis6 = INDEF
+Sixth axis length.
+.le
+.ls naxis7 = INDEF
+Seventh axis length.
+.le
+.ls header = "new"
+Output image header. It can take two values \fBnew\fR, or \fBcopy\fR.
+The first option is used to create images with a header containing the
+minimum information, and the second one is used to create an output image
+with a header being an exact copy of a reference image (see below).
+The \fBcopy\fR option does not preserve the number of axes, the axis
+lengths, and the pixel type.
+.le
+.ls pixtype = "short"
+Output pixel type. It can take the values \fBreference\fR, \fBushort\fR,
+\fbshort\fR, \fBint\fR, \fBlong\fR, \fBreal\fR, \fBdouble\fR, and
+\fBcomplex\fR. When set to \fBreference\fR, the pixel type will be the
+same as the pixel type of the reference image (see below).
+.le
+.ls reference = ""
+Reference image name. This image is used to get header information when
+the \fBheader\fR parameter is set to \fBcopy\fR, and/or the pixel type
+when the \fBpixtype\fR parameter is set to \fBreference\fR.
+.le
+.ih
+DESCRIPTION
+This task creates an empty image with a specified number of axes,
+and axis lengths.
+The output image header can be the minimum set required for an image,
+or it can be a copy of the header of a another image, called the reference
+image.
+In this way it is possible to create a new image of an arbitrary size,
+but with the same header keywords from an old image.
+The output pixel type is also specified as a standard data type (short,
+int, real, etc), or as the same pixel type of the reference image. It is
+possible to specify a reference image for the pixel type even if the
+output header is not being copied from the reference image.
+The pixels of the output image are all initialized to zero.
+.ih
+EXAMPLES
+1.- Create a two dimensional image, with axis lengths 20 and 30, pixel
+type real, and the minimum header (no reference image):
+.nf
+
+ct> imcreate image1 2 20 30 header=new pixtype=real
+ct> imhead image1 long+
+image1[20,30][real]: 
+    No bad pixels, no histogram, min=unknown, max=unknown
+    Line storage mode, physdim [20,30], length of user area 1 s.u.
+    Created Fri 15:48:28 26-Oct-90, Last modified Fri 15:48:28 26-Oct-90
+    Pixel file 'ctiol2!/ul21/iraf/iraf/image1ab.pix' [ok]
+ct>
+
+.fi
+2.-  Create a two dimensional image, with axis lengths 30 and 60, and with
+header and pixel type taken from the reference image dev$pix:
+.nf
+
+ct> imcreate image2 2 30 60 header=copy pixtype=reference reference=dev$pix
+ct> imhead image2 long+ | head n=20 
+image2[30,60][short]: m51  B  600s
+    No bad pixels, no histogram, min=unknown, max=unknown
+    Line storage mode, physdim [30,60], length of user area 1459 s.u.
+    Created Fri 15:25:53 26-Oct-90, Last modified Fri 15:25:53 26-Oct-90
+    Pixel file 'ctiol2!/ul21/iraf/iraf/image2ab.pix' [ok]
+    'KPNO-IRAF'  /
+    '24-04-87'  /
+    New copy of one035.imh
+    New copy of one035
+    New copy of m51
+    New copy of m513
+    New copy of m51
+    New copy of dev$pix
+    IRAF-MAX=           1.229817E4  /  DATA MAX
+    IRAF-MIN=          -6.053954E0  /  DATA MIN
+    IRAF-B/P=                   32  /  DATA BITS/PIXEL
+    IRAFTYPE= 'FLOATING'  /
+    CCDPICNO=                   53  /  ORIGINAL CCD PICTURE NUMBER
+    ITIME   =                  600  /  REQUESTED INTEGRATION TIME (SECS)
+    TTIME   =                  600  /  TOTAL ELAPSED TIME (SECS)
+ct>
+.fi
+.ih
+SEE ALSO
+images.imcopy
+.endhelp

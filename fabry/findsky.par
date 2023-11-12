@@ -1,0 +1,9 @@
+# FINDSKY parameter file
+
+cube_image,s,a,,,,Input name for image cube
+coord_file,s,a,,,,File name for sky coordinate file
+navgx,i,h,3,,,Number of columns to average
+navgy,i,h,3,,,Number of rows to average
+sky,r,a,,,,Enter new sky value
+okay,b,a,,,,Okay?
+verbose,b,h,yes,,,Review sky values for modification

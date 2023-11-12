@@ -1,0 +1,55 @@
+.help midut May89 ctio
+.ih
+NAME
+midut -- Compute UT for midpoint of observation
+.ih
+USAGE
+midut images
+.ih
+PARAMETERS
+.ls images
+List of images to process. Any image template can be used.
+.le
+.ls keywrd = "midut"
+Keyword to use for the mid exposure UT. It should be a new keyword.
+.le
+.ls ut = "ut"
+Keyword containing the starting UT.
+.le
+.ls exptime = "exptime"
+Keyword containing the exposure time.
+.le
+.ih
+DESCRIPTION
+For each image in the input list the task computes the UT at the midpoint
+of the observation from the starting UT and exposure time, and adds this
+value to the image header, under a new keyword.
+.ih
+EXAMPLES
+1.- Compute the midpoint UT for a list of images:
+.nf
+
+lo> midut image1,image2,image3
+.fi
+
+2.- The same example, but assuming the the exposure time is specified in the
+ITIME keyword:
+.nf
+
+lo> midut image* exptime="itime"
+.fi
+.ih
+TIME REQUIREMENTS
+Since this task is implemented as a CL script, it may be slow for long
+image lists.
+.ih
+BUGS
+This task requires the \fBimages\fR package loaded. It does not load it
+automaticaly.
+.br
+Temporary files of the form "tmp*" may be left around if the task
+terminates abnormaly.
+.ih
+SEE ALSO
+hedit
+.endhelp

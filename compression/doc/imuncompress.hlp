@@ -1,0 +1,64 @@
+.help imuncompress Jan92 compression
+.ih
+NAME
+imuncompress -- Uncompress IRAF image pixel files
+.ih
+USAGE
+imuncompress images
+.ih
+PARAMETERS
+.ls images
+List of compressed IRAF images to uncompress.
+.le
+.ls verbose = no
+Verbose operation ?. If this switch is set to \fByes\fR then the task
+will output information about the compress operation and the image
+header update.
+.le
+.ih
+DESCRIPTION
+This is a CL script that uncompresses the pixel file for each image in the
+input list, and also updates the image header with the new pixel file name.
+The pixel file uncompression is performed in place. It is assumed that the
+pixel file name has a ".Z" appended to it.
+The actual uncompression is performed by the UNIX utility \fBuncompress\fR.
+This program is called by the task as a foreign task.
+.ih
+EXAMPLES
+Uncompress an IRAF image with the verbose switch set. The pixel file is
+stored in the same place as the image header (HDR$).
+.nf
+
+co> imuncompress test.imh verbose=yes
+HDR$test.pix.Z:  -- replaced with HDR$test.pix
+test,i_pixfile: HDR$test.pix.Z -> HDR$test.pix
+test updated
+.fi
+.ih
+TIME REQUIREMENTS
+It takes about ten seconds to uncompress a 512x512 short image, on a
+SparcStation-1 with a SCSI disk.
+.ih
+BUGS
+The task cannot be run in the background because it calls \fBimgets\fR to 
+get the name of the pixel file from the image header. 
+.sp
+The task does not use the IRAF networking to access the pixel file
+because it calls the UNIX program \fBuncompress\fR as a foreign task.
+Therefore, the pixel file must be accessible at the host level, either
+in the local disk or via the Network File System (NFS).
+.sp
+The uncompress operation is performed in place, so the user must have read
+and write access to the IRAF image.
+.sp
+If, for some reason, the uncompress operation cannot be performed by
+\fBuncompress\fR, the pixel file name in the image header might not be equal
+to the actual pixel file name. The only workaround to this problem is
+to use \fBhedit\fR to fix the problem by hand.
+.sp
+The task might leave some temporary files in the current directory if it
+is aborted by the user before it completes.
+.ih
+SEE ALSO
+compression.imcompress, images.hedit, (UNIX) uncompress. 
+.endhelp

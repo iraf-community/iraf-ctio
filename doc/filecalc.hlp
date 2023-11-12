@@ -1,0 +1,206 @@
+.help filecalc Oct89 ctio
+.ih
+NAME
+filecalc -- File calculator
+.ih
+USAGE
+filecalc files expressions
+.ih
+PARAMETERS
+.ls files
+List of input files. These are text files with white space delimited
+columns. Files are not restricted to have the same number of columns or
+lines, although this might produce some problems during the expression
+evaluations. Blank lines are skipped as well as any characters after the
+"#" sign.
+.le
+.ls expressions
+This is a list of expressions to evaluate, delimited by semicolons. It can
+be the actual list of expressions or the name of a file where the expressions
+are stored. See the section \fBExpression Syntax\fR for more details about
+the syntax.
+.le
+.ls lines = ""
+Lines from which the columns will be extracted. This is a standard IRAF
+range specification, i.e. starting line and ending lines delimited by a
+minus sign. If this parameter is null all the lines from the input files
+are used to extract columns. The line range specified applies to all files
+in the input list. Note that the task will skip blank lines even if they
+are within the specified line range.
+.le
+.ls format = ""
+Format representation string. This is a C (or SPP) like format specification
+string that tells the task how the values for each output column are to be
+represented.
+If this string is null, or if there are not enough format specification
+for all the output columns, a default output format is used for them.
+The format string may contain any text not preceded by a percent character
+(%). The percent character is the prefix used as the starting point of a
+format specification for a single column. The characters after the percent
+characters specify the form of the output.
+These fields have the form %w.dC. The \fBw\fR represents the field width,
+\fBd\fR is the number of decimal places in the number of the digits of
+precission, and \fBC\fR is the format code.
+The \fBw\fR and \fBd\fR fields are optional.
+The following are the implemented format codes:
+.nf
+
+    d	decimal integer
+    e	exponential, \fBd\fR specifies the precission
+    f	fixed format, \fBd\fR specifies the number of decimal places
+    g	general format, \fBd\fR specifies the precission
+    h	sexagesimal format, hh:mm:ss.ss, \fBd\fR is the number of dec. places
+    m	minutes, seconds (or hours, minutes), mm:ss.ss
+    o	octal integer
+    u	unsigned decimal integer
+    x	hexadecimal integer
+
+.fi
+The following control sequences are also recognized in format strings:
+.nf
+ 
+    \f  Form feed
+    \n  Newline
+    \r  Return
+    \t  Tab
+    \\  The "\" character itself
+
+.fi
+In practice, these control sequences are seldom used since the task always
+puts a newline at the end of each output line, and the CL always expands the
+tabs (\t) before passing them to the task.
+.le
+.ls calctype = "real"
+Calculation data type. The two supported data types are \fBreal\fR (single
+precission floating point) and \fBdouble\fR (double precission floating
+point). These types are used even if the input data is only integers.
+.le
+.ls warnings = yes
+Issue warning messages when there is missing data either because one of
+the input files is shorter than the others, or because there are references
+to unexistent columns.
+.le
+.ih
+EXPRESSION SYNTAX
+The expression list is a list of Fortran like expressions delimited by
+semicolons. No semicolons are allowed at the beginning or the end of
+the expression list:
+
+	expression; expression; ... ; expression
+
+When the expression list is given in a text file instead of the
+\fBexpressions\fR parameter, it is possible to put comments after
+the "#" sign, expressions in separate lines, and even blank lines for
+readability.
+
+Each expression is a formula with references to input file columns.
+A column reference is a pair of numbers with the "$" prefix and delimited
+by the word \fBat\fR. The first number is the column number and the second
+one is the file number. Files are numbered starting from one up to the
+number of input files, in the same order as they appear in the input file
+list. If the word \fBat\fR and the file number are omitted then the file
+number defaults to one. The word \fBat\fR can be abbreviated as "@".
+
+For example, if the file list is "magnitudes,fluxes,bands" then:
+.nf
+
+	$1		is column #1 of file "magnitudes"
+	$1 at 1		is also column #1 of file "magnitudes"
+	$1 at 2		is column #1 of file "fluxes"
+	$2 at 3		is column #2 of file "bands"
+	$2 @  3		is also column #2 of file "bands"
+	$2@3		is also column #2 of file "bands"
+
+.fi
+
+The following operations, functions, and predefined constants can be
+used in expressions:
+.nf
+
+	  Name  		Meaning
+	-------------------------------------------------
+	    +	    		unary plus, addition
+	    -       		unary minus, substraction
+	    *       		multiplication
+	    /       		division
+	    **      		exponentiation
+
+	    sin    (x)		sine of x
+	    cos    (x)		cosine of x
+	    tan    (x)		tangent of x
+	    asin   (x)		arc-sine of x
+	    acos   (x)		arc-cosine of x
+	    atan   (x)		arc-tangent of x
+	    atan2  (x,y)	arc-tangent of (x/y)
+
+	    exp    (x)		exponential of x
+	    log    (x)		natural logarithm of x
+	    log10  (x)		decimal logarithm of x
+	    sqrt   (x)		square root of x
+
+	    abs    (x)		absolute value of x
+	    int    (x)		integer part of x
+
+	    min    (x1,..,xn)	minimum of x1 to xn
+	    max    (x1,..,xn)	minimum of x1 to xn
+
+	    avg    (x1,..,xn)	average of x1 to xn
+	    sigma  (x1,..,xn)	standard deviation of x1 to xn
+	    median (x1,..,xn)	median of x1 to xn
+	    
+	    pi	    		3.1415926535897932385
+	    twopi       	6.2831853071795864769
+	    fourpi		12.566370614359172953
+	    halfpi		1.5707963267948966192
+
+.fi
+.ih
+DESCRIPTION
+The task first parses the expression list given in the \fBexpressions\fR
+parameter, and if no error is found it starts reading the input files
+one line at a time. Each expression of the list is evaluated with the
+data coming from each input line, and the result of each expression is
+printed to the standard output.
+.sp
+If an expression contains references to unexistent columns or files,
+or if the argument to a function is not legal (e.g. square root of a
+negative number) the expression is evaluated to INDEF.
+.sp
+The output can be formatted if a format string is specified in the
+\fBformat\fR parameter. Otherwise, if the string is null, a default
+format is used.
+.sp
+If the \fBwarnings\fR flag is set to \fByes\fR the the task will issue
+warning messages when files have a different number of lines, and when
+references to unexistent columns  or files are made.
+.ih
+EXAMPLES
+1. Compute the magnitudes from a file containing wavelength bandpasses and
+its corresponding fluxes, one per line, in the first and second columns,
+respectively. Print the bandpass wavelengths and their fluxes along with the
+computed magnitudes. Skip the first five lines that contain column titles:
+.nf
+
+ct> filecalc fluxes.dat "$1;$2;-2.5*log($2)" lines="5-"
+
+.fi
+2. Compute the B-V color from two files containing the B and V magnitudes.
+The B magnitude is in the third column of the first file, and the V magnitude
+is in the first column of the second file. Print the magnitudes with one
+decimal of precission, the color with a default precission, and separate
+the output columns with a tab:
+.nf
+
+ct> filecalc b.dat,v.dat "$3@1; $1@2; $3@1 - $1@2" format="%5.1g\t%5.1g\t%g"
+
+.fi
+.ih
+BUGS
+The formatted output does not support the boolean (b), single character (c),
+character string (s), arbitrary radix (r), and complex (z) format codes
+supported by the SPP language, because only real and double precission
+computations are allowed for the time being.
+.ih
+SEE ALSO
+printf, stsdas.tools.imcalc
+.endhelp

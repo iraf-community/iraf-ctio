@@ -1,0 +1,676 @@
+.help stphot Aug92 manuals
+
+.ce
+\fIVII. USING PHOTCAL TO GET STANDARD MAGNITUDES\fR
+
+.nf
+                   1. Introduction
+                   2. The Preprocessor
+                   3. Configuration File
+                   4. Fitting the Coefficients
+                   5. Magnitudes for Program Objects
+
+
+
+
+
+
+
+
+                                               Lisa Wells
+                                             August 31, 1992
+.fi
+.le
+.bp
+.ls \fI1. Introduction\fR
+
+There are many steps from the photometry tasks to the final standard
+magnitude for an object. Photcal is a general package for fitting
+any transformation equation or set of equations but was specifically
+designed with photometry in mind. The data can be characterized in
+two ways, standard stars and program stars. Standards are those stars
+whose standard magnitude has been published (these references are
+listed in section 3 of this manual), and these are used to
+fit the photometry equations. The program objects are those stars
+whose standard magnitudes have yet to be calculated. The tasks in
+photcal have specific requirements as to the format of the tables.
+
+Photcal uses the inlfit package in IRAF which is a generalization of
+the nlfit package used in apphot. This incorporates the Levenberg-
+Marquardt method for non-linear least squares fitting (Numerical Recipes).
+If more information is needed, a help page exists in IRAF for the
+inlfit package, just type:
+
+.nf
+      ph> help inlfit
+.fi
+
+Typing "help pcintro | lpr" will send a copy of the photcal online
+instruction file to the laser printer. This contains examples of the
+files needed to use this package. These will be touched upon in a
+bit more detail later in this manual. All the tasks in photcal
+likewise have help pages which may be accessed by typing "help
+taskname". The general procedure is briefly detailed below.
+
+1) Use your favorite photometry program (phot, qphot, daophot),
+being careful to choose the best aperture(s) for your program objects.
+The preprocessor in the photcal package sorts objects in Y position on
+the image, so marking your objects in this direction will allow you to
+keep track of the identity of the stars.
+
+2) After you have your photometry output files, edit them to reset the
+filter parameter to your identification scheme. The problem with this
+parameter is that the preprocessor takes the first character of the
+string, so depending upon the filter bolt configuration, you may have
+fields like "0 2" for B, and "0 3" for V. These should be changed to read,
+"2 2" and "3 3" respectively.
+
+3) Create the instrumental magnitude table for your program objects. This
+requires an association table to assign the filters for each "set" of
+objects. Then you must edit the final table to assign the proper names
+to the magnitudes.
+
+4) The necessary tables of standard stars must be made or taken from the 
+template directory and the configuration file created and checked for
+syntax errors.
+
+5) Solve for the equation coefficients using the standard stars with the
+task "fitparams". This has many plotting options. Some knowledge of
+the photometric solution procedure is necessary.
+
+6) Apply the photometric solution to the instrumental magnitudes of your
+program objects.
+
+There are a number of files needed to run the tasks in this package.
+Template files are available and can be found in the directory 
+"photcal$catalogs/". A sample section of a configuration file is shown
+with several formats of the standard star tables.
+.le
+.bp
+.ls \fI2. The Preprocessor\fR
+
+You must load the package photcal which is found in digiphot,
+so type: 
+
+.nf
+      cl> digiphot
+      di> photcal
+      ph>
+.fi
+
+To use the preprocessor you must first look at the output files from
+phot, or qphot. Check the filter values for each file, to be sure
+that the filter number is set properly. The first number in the field
+is the one that is read by the tasks in this package, and if the filter
+field is set to "0 3" for the V filter, then the 0 will be read, not the
+3 which specified the V filter. You can edit the filter type by doing a
+general replace of all occurrences of "0 3" with "3 3" in the photometry
+files. You could also change the header parameter in the images before
+doing the aperture photometry. This can be done using "hedit", but you
+would have to be careful to separate the images of the same filter and
+input a list to "hedit".
+
+Now you must create an association table for the objects, ie:
+
+.nf
+      ph> ed jan01.assoc          (edit the file - vi is default)
+        i                         (begin insert mode)
+        #######     U       B       V       R       I
+        sn91bg : obj1001 obj1002 obj1003 obj1004 obj1005
+        92-250 : obj1010 obj1009 obj1008 obj1007 obj1006
+        94-242 : obj1011 obj1012 obj1013 obj1014 INDEF
+        95-275 : INDEF   obj1015 obj1016 obj1017 obj1018
+        Escape                    (exit insert mode)
+	:wq                       (save file and quit editor)
+.fi
+
+This will associate the different filter images of the same field. If you
+have some objects which don't have an image in a given filter then just
+substitute "INDEF" for the image name in the association table. For these
+objects which were missed in one filter, "INDEF" will be placed in the
+magnitude values in the table. Now run the task "mkobsfile". This will
+create a parameter file which you will then use to calculate the
+coefficients for the standard stars.
+
+.nf
+      ph> epar mkobsfile          (edit parameters, see below)
+      ph> mkobsfile 
+.fi
+
+The output table will consist of one line for each star with the different
+filter types. The object names have appended numbers which must be fixed,
+so edit the output file to assign the objects their proper names.
+For example, the third star in the field "92-250" will be assigned the
+name "92-250-3", but its true name is "92-254", so change "92-250-3" to
+"92-254". The name of your standards should appear the same as in the
+first line of the file of standard star magnitudes, more information about
+this file is given in the next section. An example of the output file
+before assigning the proper object names, is given below:
+
+
+.nf
+      # FIELD    FILTER  AIRMASS XCENTER  YCENTER   MAG     MERR
+
+       sn91bg     1       1.087   39.26    69.73   17.315   0.015 
+       *          2       1.084   37.42    68.09   16.415   0.008 
+       *          3       1.084   37.42    68.09   16.415   0.008 
+       *          4       1.081   37.21    68.77   15.968   0.008 
+       *          5       1.079   37.47    68.95   15.767   0.009
+       sn91bg-1   1       1.087   338.29   150.92  14.604   0.003 
+       *          2       1.084   336.37   150.88  13.750   0.002 
+       *          3       1.084   336.37   150.88  13.750   0.002 
+       *          4       1.081   336.22   150.64  13.372   0.002 
+       *          5       1.079   337.47   150.95  13.767   0.002
+       92-250-1   1       1.067   93.36    38.92   15.392   0.004 
+       *          2       1.065   92.23    38.04   14.762   0.003 
+       *          3       1.064   92.23    38.04   14.762   0.003 
+       *          4       1.061   91.24    37.89   14.495   0.003 
+       *          5       1.060   92.54    37.46   14.767   0.002
+       92-250-2   1       1.067   333.22   88.70   12.689   0.003 
+       *          2       1.065   332.53   88.80   11.781   0.002 
+       *          3       1.064   332.53   88.80   11.781   0.002 
+       *          4       1.061   326.37   86.80   11.366   0.001 
+       *          5       1.060   333.47   85.95   11.767   0.002
+       92-250-3   1       1.067   93.36    238.92  15.392   0.004 
+       *          2       1.065   92.23    238.04  14.762   0.003 
+       *          3       1.064   92.23    238.04  14.762   0.003 
+       *          4       1.061   91.24    237.89  14.495   0.003 
+       *          5       1.060   91.37    238.15  14.767   0.002
+       94-242-1   1       1.147   63.36    235.92  14.392   0.004 
+       *          2       1.144   62.23    235.04  13.762   0.003 
+       *          3       1.144   62.23    235.04  13.762   0.003 
+       *          4       1.141   61.24    234.89  13.495   0.003 
+       *          5       INDEF   INDEF    INDEF   INDEF    INDEF 
+       94-242-2   1       1.147   93.36    338.92  15.392   0.004 
+       *          2       1.144   92.23    338.04  14.762   0.003 
+       *          3       1.144   92.23    338.04  14.762   0.003 
+       *          4       1.141   91.24    337.89  14.495   0.003 
+       *          5       INDEF   INDEF    INDEF   INDEF    INDEF 
+       95-275-1 ...
+       .
+       .
+.fi
+
+The objects will be matched in filter images allowing for the
+tolerance parameter in the task. If you have calculated aperture shifts
+for your images, then you may specify these in a file to be used in the
+"apercors" parameter. The format for this table is the image name
+followed by the correction value:
+
+.nf
+      obj1001     -0.09
+      obj1002     -0.05
+      obj1003     -0.12
+      obj1004     -0.06
+      obj1005     -0.03
+      etc...
+.fi
+
+If you have shifts for several of the images, it is easier to make a
+shifts file so the objects are properly matched from image to image.
+Another file is used to tabulate the shifts between images and is
+input as the "shifts" parameter in the task. This file lists the image
+name, x shift and y shift, as shown below:
+
+.nf
+      obj1010    0.0   0.0
+      obj1009   -5.2  -2.9
+      obj1008   10.6   8.5
+      obj1007  -10.2  -5.7
+      obj1006   -4.5  -3.0
+.fi
+
+Another output file called "fjan01.ap3.dat" is created to be used in
+the configuration file which identifies the columns of the observations
+file. The variable names may be changed to reflect the filter type but
+should be used in the equation definitions.
+
+.nf
+      # Declare the observations file variables
+    
+      observations
+
+      X1           3         # airmass in filter 1
+      x1           4         # x coordinate in filter 1
+      y1           5         # y coordinate in filter 1
+      m1           6         # instrumental magnitude in filter 1
+      error(m1)    7         # magnitude error in filter 1
+
+      X2           9         # airmass in filter 2
+      x2           10        # x coordinate in filter 2
+      y2           11        # y coordinate in filter 2
+      m2           12        # instrumental magnitude in filter 2
+      error(m2)    13        # magnitude error in filter 2
+
+      X3           15        # airmass in filter 3
+      x3           16        # x coordinate in filter 3
+      y3           17        # y coordinate in filter 3
+      m3           18        # instrumental magnitude in filter 3
+      error(m3)    19        # magnitude error in filter 3
+
+      X4           21        # airmass in filter 4
+      x4           22        # x coordinate in filter 4
+      y4           23        # y coordinate in filter 4
+      m4           24        # instrumental magnitude in filter 4
+      error(m4)    25        # magnitude error in filter 4
+
+      X5           27        # airmass in filter 5
+      x5           28        # x coordinate in filter 5
+      y5           29        # y coordinate in filter 5
+      m5           30        # instrumental magnitude in filter 5
+      error(m5)    31        # magnitude error in filter 5
+.fi
+
+There are some errors that you might face that are due to inconsistent
+numbers of objects in each filter of the same image. For example, if you
+measure 3 stars in the U frame of standard stars, and only measure 2 in
+B, then you will get an error and the final table will not be created. If
+a shifts table is not given and the shift of one image is greater than
+the "tolerance" parameter, then an extra line will be created for that
+filter and object. You must move that line into its proper place
+with the other filter magnitudes for that object. You have part of the
+necessary configuration file, now lets put the rest of it together.
+
+.nf
+		           \fImkobsfile\fR
+
+  photfiles = "obj10*.mag.1" The input list of APPHOT/DAOPHOT databases
+  idfilters = 1,2,3,4,5      The list of filter ids
+observation = "jan01.ap3"    The output observations file
+    (imsets = "jan01.assoc") The input image set file
+ (obsparams = "")            The observing parameters file
+(obscolumns = "2 3 4")       The format of obsparams
+    (shifts = "STDIN")       The x and y coordinate shifts file
+  (apercors = "STDIN")       The aperture corrections file
+  (aperture = 3)             The aperture number of the extracted magnitude
+ (tolerance = 5.)            The tolerance in pixels for position matching
+(allfilters = no)            Output only objects matched in all filters
+    (verify = no)            Verify interactive user input?
+   (verbose = yes)           Print status, warning and error messages?
+      (mode = "ql") 
+.fi
+.le
+.bp
+.ls \fI3. Configuration File\fR
+
+The configuration file is divided into three sections: the catalog
+section which describes the format of the catalog file, the 
+observations section which describes the format of the observations
+file, and the transformation section which defines the form of the
+transformation equations. The catalog section must occur before the
+observations section in the configuration file, and the observation section
+must occur before the transformation section. The task "mkobsfile" has
+created a part of this file for you already, the observations section with
+the proper format to match your object magnitude table. At CTIO, we have a
+table of standard stars which is created from the latest papers. A copy of
+the format for the standards section can be found in the directory
+"photcal$", named "stand.conf". This file corresponds with the standards
+catalog named "ubvri.cat". This table is a formatted version of the Graham
+E Region standards paper, (PASP, \fI94\fR, 1982), and the 3 Landolt papers,
+(AJ, \fI78\fR, 1973; AJ, \fI88\fR, 1983; and AJ, \fI104\fR, 1992). The
+standard IRAF package gives two different files, "landolt.dat" (catalog
+file) and "flandolt.dat" (configuration file). A copy of the
+transformation equations is also available in the same directory named
+"tlandolt.dat". Copy the appropriate configuration and transformation
+equations file to your directory and combine them by typing:
+
+.nf
+      ph> copy photcal$catalogs/stand.conf .
+      ph> copy photcal$catalogs/tlandolt.dat .
+      ph> rename stand.conf config
+      ph> type fjan01.ap3.dat >> config
+      ph> type tlandolt.dat >> config
+.fi
+
+An example of the format of the configuration file is shown below.
+The files begin with the catalog section, which contains the format
+of the standards table and observations table. The catalog section is
+the lookup table for the standard stars and is a set format so do not
+change this section. It identifies the column number in the list for
+the given parameter needed. The observations section describes the
+format of the input data to be used to calculate the coefficients and do
+the photometry. Next are the transformation equations which specify
+the values to be fit, the equations and their derivatives. The option
+exists to make any of the coefficients a constant if a value is known.
+This is done by inserting a line like the three commented out that begin
+with the word constant. The values specified in the fit command line are
+starting values for the iteration to best fit the data.
+
+
+.nf
+    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Standard star input columns
+
+    catalog
+
+    V               2
+    error(V)        3
+    BV              4
+    error(BV)       5
+    UB              6
+    error(UB)       7
+    VR              8
+    error(VR)       9
+    RI              10
+    error(RI)       11
+    VI              12
+    error(VI)       13
+
+    # Declare the observations file variables
+
+    observations
+
+    XU            3          # airmass in filter 1
+    xu            4          # x coordinate in filter 1
+    yu            5          # y coordinate in filter 1
+    mU            6          # instrumental magnitude in filter 1
+    error(mU)     7          # magnitude error in filter 1
+
+    XB            9          # airmass in filter 2
+    xb            10         # x coordinate in filter 2
+    yb            11         # y coordinate in filter 2
+    mB            12         # instrumental magnitude in filter 2
+    error(mB)     13         # magnitude error in filter 2
+
+    XV            15         # airmass in filter 3
+    xv            16         # x coordinate in filter 3
+    yv            17         # y coordinate in filter 3
+    mV            18         # instrumental magnitude in filter 3
+    error(mV)     19         # magnitude error in filter 3
+
+    XR            21         # airmass in filter 4
+    xr            22         # x coordinate in filter 4
+    yr            23         # y coordinate in filter 4
+    mR            24         # instrumental magnitude in filter 4
+    error(mR)     25         # magnitude error in filter 4
+
+    XI            27         # airmass in filter 5
+    xi            28         # x coordinate in filter 5
+    yi            29         # y coordinate in filter 5
+    mI            30         # instrumental magnitude in filter 5
+    error(mI)     31         # magnitude error in filter 5
+
+    # Sample transformation section for the Landolt UBVRI system
+
+    transformation
+
+    fit   u1=27.0, u2=0.65, u3=1.065
+    U=UB+BV+V
+    const u4=0.0
+    UFIT : U = mU + u1 + u2 * XU + u3 * UB + u4 * UB * XU
+    plot (UFIT) = U, U - (mU + u1 + u2 * XU + u3 * UB)
+    
+    fit   b1=26.0, b2=0.35, b3=1.210
+    B=BV+V
+    const b4=0.0
+    BFIT : B = mB + b1 + b2 * XB + b3 * BV + b4 * BV * XB
+    plot (BFIT) = B, B - (mB + b1 + b2 * XB + b3 * BV)
+    
+    fit   v1=25.0, v2=0.17, v3=1.010
+    const v4=0.0
+    VFIT : V = mV + v1 + v2 * XV + v3 * BV + v4 * BV * XV
+    plot (VFIT) = V, V - (mV + v1 + v2 * XV + v3 * BV)
+
+    fit   r1=24.0, r2=0.08, r3=1.010
+    R=V-VR
+    const r4=0.0
+    RFIT : R = mR  + r1 + r2 * XR + r3 * VR + r4 * VR * XR
+    plot (RFIT) = R, R - (mR  + r1 + r2 * XR + r3 * VR)
+
+    fit   i1=23.0, i2=0.03, i3=1.010
+    I=V-VI
+    const i4=0.0
+    IFIT : I = mI + i1 + i2 * XI + i3 * VI + i4 * VI * XI
+    plot (IFIT) = I, I - (mI + i1 + i2 * XI + i3 * VI)
+
+    derivative (UFIT, u1) = 1
+    derivative (UFIT, u2) = XU
+    derivative (UFIT, u3) = UB
+    #derivative (UFIT, u4) = UB * XU
+
+    derivative (BFIT, b1) = 1
+    derivative (BFIT, b2) = XB
+    derivative (BFIT, b3) = BV 
+    #derivative (BFIT, b4) = BV * XB
+
+    derivative (VFIT, v1) = 1
+    derivative (VFIT, v2) = XV
+    derivative (VFIT, v3) = BV 
+    #derivative (VFIT, v4) = BV * XV
+
+    derivative (RFIT, r1) = 1
+    derivative (RFIT, r2) = XR
+    derivative (RFIT, r3) = VR 
+    #derivative (RFIT, r4) = VR * XR
+
+    derivative (IFIT, i1) = 1
+    derivative (IFIT, i2) = XI
+    derivative (IFIT, i3) = VI 
+    #derivative (IFIT, i4) = VI * XI
+    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+.fi
+
+This file has set the second order term in the equations to "0" by using
+the "constant" command for this coefficient. The derivatives of the
+equations do not have to be included if the equations are linear in the
+coefficients. They will be calculated automatically. Once you have
+modified the equations or any part of the file, check the configuration
+file by running chkconfig;
+
+.nf
+      ph> chkconfig config
+.fi
+
+or
+
+.nf
+      ph> chkconfig config verbose+
+.fi
+
+If errors are found then the file has a problem and this must be corrected.
+The task fitcoeffs will not run unless no errors are found in the checking
+task. The output from this program gives the following (with verbose=no):
+
+.nf
+      ******************************************************
+      ** Beginning of compilation **
+ 
+  
+      ** End of compilation **
+   
+      Catalog input variables         = 12
+      First catalog column            = 2
+      Last catalog column             = 13
+    
+      Observational input variables   = 25
+      First observational column      = 3
+      Last observational column       = 31
+     
+      Fitting parameters              = 15
+      Constant parameters             = 5
+      
+      Auxiliary (set) equations       = 0
+      Transformation equations        = 5
+       
+      Warnings                        = 0
+      Errors                          = 0
+      ******************************************************
+.fi
+
+If there was an error, say one of the equations had the wrong
+variable name, an error message would appear. In the case below, instead
+of "i2" in the derivative statement, an "82" was typed. This is found
+by the parser and described.
+
+
+.nf
+      ******************************************************
+      ** Beginning of compilation **
+
+      syntax error
+      ** Error near line 87: derivative (VFIT, 82) = XV
+      Cannot continue parsing at '82'
+
+      ** End of compilation **
+
+      Catalog input variables         = 12
+      First catalog column            = INDEF
+      Last catalog column             = INDEF
+
+      Observational input variables   = 25
+      First observational column      = INDEF
+      Last observational column       = INDEF
+
+      Fitting parameters              = 15
+      Constant parameters             = 5
+
+      Auxiliary (set) equations       = 0
+      Transformation equations        = 5
+
+      Warnings                        = 0
+      Errors                          = 1
+      ******************************************************
+.fi
+
+If you plan to solve other equations using photcal, more information
+is given about the configuration file. Type;
+
+.nf
+      ph> help config
+.fi
+
+This will tell you all about the format for your configuration file.
+.le
+.bp
+.ls \fI4. Fitting the Coefficients\fR
+
+The standards are used to calculate the transformation coefficients for
+the night(s). It is possible to solve for the extinction coefficients
+separately by specifying the equations separately in the code. The input
+files should now be ready for the fitting task. The program objects that
+do not appear in the standard lookup table will be omitted from the
+calculations for the coefficients. If you use this interactively, there
+are many options for the plotting to check that the photometry looks
+reasonable. Edit the parameters and run the task by typing;
+
+.nf
+      ph> epar fitparams             (See parameters below)
+      ph> fitparams jan01.ap3 catdir$ubvri.cat config jan01.coef
+.fi
+
+There are many commands that can be used while in interactive graphics
+mode. These will be listed by typing '?'. Type 'q' to return to the
+interactive mode. The other graphs that are available to review are
+controlled using the 'h-l' keys. The 'l' key shows the first declared
+parameter (from the plot command line in the configuration file) versus
+the second declared parameter (also from the plot statement in the
+configuration file). The rest of the plots are listed below. The
+'d' key will delete the nearest point. Use 'u' to undelete the point if
+it is to be used in the calculation of the fit. The 'c' key will give the
+coordinates of the point nearest the cursor with the function value, the
+fitted value and residual. Typing 'f' will draw the fitted curve on the
+plot.  The 'o' key will overplot the next fit provided the graph format
+has not changed. The window options are also available bye typing 'w' and
+the option. Type 'w' followed by a '?' to see the options. Typing 'q' will
+quit this equation fit and prompt for the next action, quit, go on to the
+next equation, go to the last equation, and others. The possible graphs
+are:
+
+.nf
+      h       Fit                        vs   Function
+      i       Residuals (Function - Fit) vs   Function
+      j       Ratio  (Function / Fit)    vs   Function   
+      k       Variable 1                 vs   Function
+      l       User 1                     vs   User 2
+.fi
+
+User 1 is the first term specified in the plot statement in the 
+configuration file. Variable 1 is the independent variable number 1. To
+redraw the current graph, type 'r'. Any of the task parameters may be
+changed interactively, for example, making the number of rejection
+iterations 10 by typing ':niterate 10', and a new fit will be performed.
+Another example is setting one of the coefficients as a constant using
+':const [coefficient] [value]'. To see the current values of the fitting
+parameters, use ':show'. The errors can be reviewed using ':errors'. A
+combination of these last two commands with more information is given by
+the ':vshow' command, the verbose form of "show". Specifying a file name
+after each of these colon commands will append the requested information
+to the named file.
+
+While cycling through the equations, the output file is created with the
+final coefficient values and will be updated if any values are changed
+during the interactive fitting. If the last command is used to return to
+a previous equation, the values will be updated. Once the equations have
+been cycled through, the last quit followed by 'next' or 'quit' will
+close the output files. Now you have the coefficients to calculate the
+magnitudes for the program objects.
+
+.nf
+                           \fIfitparams\fR
+ observations = "jan01.ap3"  List of observations files
+     catalogs = "ubvri.cat"  List of standard catalog files
+       config = "config"     Configuration file
+   parameters = "jan01.coef" Output parameters file
+   (weighting = "uniform")   Weighting type (uniform,photometric,equations)
+  (addscatter = yes)         Add a scatter term to the weights ?
+   (tolerance = 3.0000000000000E-5) Fit convergence tolerance
+     (maxiter = 15)          Maximum number of fit iterations
+     (nreject = 0)           Number of rejection iterations
+  (low_reject = 3.)          Low sigma rejection factor
+ (high_reject = 3.)          High sigma rejection factor
+        (grow = 0.)          Rejection growing radius
+ (interactive = yes)         Solve fit interactively ?
+     (logfile = "STDOUT")    Output log file
+ (log_unmatch = yes)         Log any unmatched stars ?
+     (log_fit = yes)         Log the fit parameters and statistics ?
+ (log_results = yes)         Log the results ?
+      (catdir = )_.catdir)   The standard star catalog directory
+    (graphics = "stdgraph")  Output graphics device
+      (cursor = "")          Graphics cursor input
+        (mode = "ql")  
+.fi
+.le
+.bp
+.ls \fI5. Magnitudes for Program Objects\fR
+
+The task which will now calculate the photometry for your standards and
+program objects is "evalfit". This task simply requires that you specify
+all the appropriate input files and it will run non-interactively. The
+output file is specified and if you wish to append to an existing file,
+this option exists. If you wish to have the standards and program objects
+done together, then both instrumental magnitude files must be specified
+in the observations parameter. To run the task type;
+
+.nf
+      ph> epar evalfit           (See parameters below)
+      ph> evalfit jan01.ap3 config jan01.coef jan01.mags
+      ph> page jan01.mags
+.fi
+
+This may take several minutes since the scanning of the catalog file of
+standard stars takes a while. To run this process in the background it
+is suggested that an "&" be added to the end of the command line. The
+command 'page' can now be used to look at the table of values. If for
+some reason an "INDEF" value is encountered in the calculation, the
+resulting value will be 'INDEF'.
+
+.nf
+                          \fIevalfit\fR
+observations = "jan01.ap3"  List of observations files
+      config = "congif"     Configuration file
+  parameters = "jan01.coef" Fitted parameters file
+       calib = "jan01.mags" Output calibrated standard indices file
+   (catalogs = "ubvri.cat") List of standard catalog files
+     (errors = "obserrors") Error computation type (undefined,obserrors,equ
+    (objects = "all")       Objects to be fit (all,program,standards)
+      (print = "")          Optional list of variables to print
+     (format = "")          Optional output format string
+     (append = no)          Append output to an existing file ?
+     (catdir = )_.catdir)   The standard star catalog directory
+       (mode = "ql")
+.fi
+
+If you have any problems or questions, see Mario Hamuy(ext. 210), or Pedro
+Gigoux(ext. 303) in La Serena.
+.le
+.endhelp

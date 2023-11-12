@@ -1,0 +1,8 @@
+t_lambda.x
+	Changed IM_LEN macro imgeti() procedure, and removed
+	include of imhdr.h file (PG 11/apr/90).
+
+t_lambda.x
+	Added convert parameter to disable the conversion of wavelengths from
+	meters to Angstroms. This is neccessary to deal with images with
+	wavelengths in microns (PG 03/Sep/92).

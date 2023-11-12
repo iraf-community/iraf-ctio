@@ -1,0 +1,9 @@
+# error parameter file
+object_spectra,s,a,"",,,Object spectra
+sky_spectra,s,a,"",,,Sky spectra
+error_spectra,s,a,"error",,,Error spectra
+ron,r,h,0.0,,,Readout noise (electrons)
+preflash,r,h,0.0,,,Preflash (electrons)
+gain,r,h,1.0,,,Gain (electrons/ADU)
+nsky,r,h,2.0,2.0,,Sky pixels
+nstar,r,h,0.0,0.0,,Star pixels

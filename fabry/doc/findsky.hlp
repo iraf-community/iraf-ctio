@@ -1,0 +1,61 @@
+.help findsky July87 fabry
+.ih
+NAME
+findsky -- determine the sky levels at each band of an image cube
+.ih
+USAGE
+findsky cube_image coord_file
+.ih
+PARAMETERS
+.ls cube_image
+the name of the 3D image cube to be measured
+.le
+.ls coord_file
+the name of the text file containing pairs of (x y) coordinates
+at which the sky level is to be estimated
+.le
+.ls navgx = 3
+the number of columns to average when determining the sky
+.le
+.ls navgy = 3
+the number of rows to average when determining the sky
+.le
+.ls sky = 
+a user variable to override the calculated sky value for a given image band
+.le
+.ls okay =
+an interactive reply variable
+.le
+.ls verbose = yes
+if set to yes, the user is allowed to review and override the derived
+sky values
+.le
+.ih
+DESCRIPTION
+The pixels at and surrounding the coordinates contained in the file
+given by "coord_file" are averaged over "navgx" and "navgy" to
+determine the mean for the sky at that location.
+When several coordinate pairs are present, the values are averaged
+and a standard deviation is computed. The calculations are
+performed for each band in the image cube. Resulting values
+are displayed on the terminal, and optionally may be altered
+by the user.
+
+Final values for the sky estimate are stored in the image header
+as keywords SKYNN, where NN may be 01 through the number of
+image bands in the cube, typically less than 25.
+.ih
+EXAMPLES
+Read the coordinate file sky.cor, and measure the sky values.
+
+	cl> findsky cube sky.cor navgx=5 navgy=5
+
+The 25 pixels surrounding each coordinate pair are averaged at
+each band in the cube.
+.ih
+TIME REQUIREMENTS
+Less than 1 second per band.
+.ih
+SEE ALSO
+VELOCITY
+.endhelp

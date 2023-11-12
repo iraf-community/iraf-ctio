@@ -1,0 +1,23 @@
+t_imtest.x
+	Added verify switch when generating delete and imdelete calls.
+	The parameter file was updated as well. Also some procedures were
+	renamed for consistency (PG 17/jan/90).
+
+t_imtest.x
+	Changed calls to recursive directory procedures to match the
+	changes made on them (PG 17/jan/90).
+
+t_imtest.x
+	Added verbose and ignore switches. The parameter and help file were
+	updated as well (PG 03/mar/90).
+
+
+t_imtest.x
+	Renamed procedures from imt_* to imts_*, in order to be consistent
+	with naming conventions, and to avoid name conflicts with the
+	Image Templete Package (PG 27/Apr/92).
+
+t_imtest.x
+	Added a call to imunmap() in imts_headers() in order to close
+	every image before processing the next one in the list. This bug
+	was probably causing a "Memory overflow" error (PG 13/Oct/92)

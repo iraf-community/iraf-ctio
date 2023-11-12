@@ -1,0 +1,102 @@
+.help cureval Aug91 ctio
+.ih
+NAME
+cureval -- Evaluate the fit computed by \fBcurfit\fR.
+.ih
+USAGE
+cureval input curfin curfout
+.ih
+PARAMETERS
+.ls input
+Values where the fit should be evaluated. This is a one column text file
+with one value per line.
+.le
+.ls curfin
+Input file to the \fBcurfit\fR task. This file is used only to determine
+the minimum and maximum values of the independent variable (x value) used
+by \fBcurfit\fR. This file is not needed if the minimum and maximum values
+are supplied in the \fBxmin\fR and \fBxmax\fR parameters.
+.le
+.ls curfout
+Output from \fBcurfit\fR. This file is obtained by redirecting the output of
+\fBcurfit\fR to a file with the \fBlistdata\fR switch set to \fBno\fR.
+.le
+.ls xmin = 0.0, xmax = 0.0
+Minimum and maximum values of the independent variable (x value) in the
+input data to \fBcurfit\fR. There are used if the minimum value is less
+than the maximum value. Otherwise they are computed from the file specified
+by \fBcurfin\fR.
+.le
+.ls calctype = "real"
+Calculation type. It can take two possible values: \fBreal\fR for single
+precission calculation, and \fBdouble\fR for double precission calculation.
+.le
+.ih
+DESCRIPTION
+This task evaluates the fit computed by the \fBcurfit\fR task for a set
+of data points. The output of the tasks is in two columns with the
+data points, and the fit evaluated at those points.
+The output is is written to the standard output.
+.ih
+EXAMPLES
+Compute the fit for a set of data, and the evaluate the fit for a set of
+data points.
+.nf
+
+cl> utilities
+ut> curfit curfit.in listdata=no > curfit.out
+[interactive fitting]
+ut> type curfit.out
+Tue 09:58:12 20-Aug-91
+curfit.in
+function = chebyshev
+grow = 0.
+naverage = 1
+order = 3
+low_reject = 3.
+high_reject = 3.
+niterate = 0
+sample = *
+total points = 196
+sample points = 196
+nrejected = 0
+deleted = 0
+RMS = 2.7E-13
+square root of reduced chi square = 2.8E-13
+	coefficient	  error
+ 1	    1.482813E2	  2.239597E-14
+ 2	    4.875000E0	  3.393008E-14
+ 3	    1.425938E2	  3.268675E-14
+Power series coefficients would be:
+		coefficient
+	1 	    6.000000E0
+	2 	    2.000000E0
+	3 	    3.000000E0
+
+ut> ctio
+ct> type input.dat
+10
+11
+12
+13
+14
+15
+16
+ct> cureval input.dat curfit.in curfit.out xmin=0 xmax=0 calctype=real
+10. 326.0001
+11. 391.0001
+12. 462.0001
+13. 539.0002
+14. 622.0002
+15. 711.0002
+16. 806.0004
+.fi
+.ih
+BUGS
+When \fBxmin\fR and \fRxmax\fR are specified, care should be taken in order
+to make sure that they are consistent with the input to \fBcurfit\fR. If
+they don't the output of \fBcureval\fR is just garbage.
+.ih
+SEE ALSO
+utilities.curfit
+.endhelp

@@ -1,0 +1,125 @@
+.help bitstat Oct89 ctio
+.ih
+NAME
+bitstat -- Perform bit statistics of image frames
+.ih
+USAGE
+bitstat images output
+.ih
+PARAMETERS
+.ls images
+List of input images. It can be any image template, and image subraster
+specifications are allowed.
+.le
+.ls output
+Output file name. This is a text file containing the output for all
+images in the input list. If the string \fBSTDOUT\fR is specified,
+the output is written to the terminal.
+.le
+.ih
+DESCRIPTION
+The main purpose of this task is to test the acquisition electronics of
+CCD's by counting the number of times a bit has a zero (0) or one (1)
+logical value. Under normal conditions each bit should have roughly the
+same number of zero and one counts. If not that means that there is a
+problem with the electronics.
+.sp
+This task performs bit statistics of each image frame in the input list.
+It is possible to specify an image section to each or all images in the
+input list, making it possible to make statistics of subrasters.
+Input images can be of any dimension, and of type \fBushort\fR,
+\fBshort\fR, \fBint\fR, or \fBlong\fR.
+.sp
+The output of the task is a five column table for each image in the input
+list. The first column contains the bit number, the second one contains
+the total number of zeroes (0) per bit, the third one contains the total
+number of ones (1) per bit, the fourth one the percentage of zeroes (0),
+and the last one the percentage of ones (1).
+A title in pinted at the beginning of each file with the image name,
+pixel type, and the total number of pixels in the image.
+.ih
+EXAMPLES
+1.- Perform bit statistics of the dev$pix image, printing the results on
+the terminal:
+.nf
+
+ct> bitstat dev$pix STDOUT
+
+dev$pix[short], npix=262144
+
+bit         0's         1's   %0's   %1's
+---  ----------  ----------  -----  -----
+  0      131152      130992   50.0   49.0
+  1      131020      131124   49.0   50.0
+  2      132229      129915   50.0   49.0
+  3      125539      136605   47.0   52.0
+  4      137719      124425   52.0   47.0
+  5      117754      144390   44.0   55.0
+  6      125001      137143   47.0   52.0
+  7      201862       60282   77.0   22.0
+  8      255708        6436   97.0    2.0
+  9      260336        1808   99.0    0.0
+ 10      261726         418   99.0    0.0
+ 11      262076          68   99.0    0.0
+ 12      262127          17   99.0    0.0
+ 13      262139           5   99.0    0.0
+ 14      262142           2   99.0    0.0
+ 15      262144           0  100.0    0.0
+     ----------  ----------  -----  -----
+        3190674     1003630   76.1   23.9
+
+.fi
+2.- Make a bit statistics of a subsection of the dev$pix image, printing
+the result on the terminal:
+.nf
+
+ct> bitstat dev$pix[1:10,1:20] STDOUT
+
+dev$pix[1:10,1:20][short], npix=200
+
+bit         0's         1's   %0's   %1's
+---  ----------  ----------  -----  -----
+  0          55         145   27.0   72.0
+  1         124          76   62.0   38.0
+  2          74         126   37.0   63.0
+  3         131          69   65.0   34.0
+  4         200           0  100.0    0.0
+  5           0         200    0.0  100.0
+  6         200           0  100.0    0.0
+  7         200           0  100.0    0.0
+  8         200           0  100.0    0.0
+  9         200           0  100.0    0.0
+ 10         200           0  100.0    0.0
+ 11         200           0  100.0    0.0
+ 12         200           0  100.0    0.0
+ 13         200           0  100.0    0.0
+ 14         200           0  100.0    0.0
+ 15         200           0  100.0    0.0
+     ----------  ----------  -----  -----
+           2584         616   80.8   19.3
+
+.fi
+3.- Perform bit statistics of all images in the current directory,
+printing the results on the terminal:
+.nf
+
+ct> bitstat *.imh STDOUT
+
+.fi
+4.- Make a bit statistics of a set of images specified in a file, called
+list, and print the results on a file, called "output":
+.nf
+
+ct> bitstat @list output
+
+.fi
+.ih
+TIME REQUIREMENTS
+On a SUN4/280, it takes about eight seconds to run over a 512x512 short
+image, with a constant value of 30000.
+The time required increases with large pixel values and decreases with
+small pixel values.
+.ih
+SEE ALSO
+images.imstat
+.endhelp

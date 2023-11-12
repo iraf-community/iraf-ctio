@@ -1,0 +1,6 @@
+# chpixfile parameter file
+images,s,a,"",,,Images to be edited
+value,s,a,"",,,new pixel file name
+show,b,h,yes,,,print record of each edit operation ?
+verify,b,h,yes,,,verify each edit operation ?
+update,b,h,yes,,,enable updating of the image header ?

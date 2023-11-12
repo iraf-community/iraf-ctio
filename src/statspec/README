@@ -1,0 +1,9 @@
+STATSPEC		06-Dic-88	(Pedro Gigoux)
+
+This directory contains the code for the spectrum statistics program. This
+program gives statistical information (errors) about extracted spectra,
+using APEXTRACT. The files are:
+
+mkpkg			mkpkg file
+
+t_statspec.x		main task procedure

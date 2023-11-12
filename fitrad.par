@@ -1,0 +1,21 @@
+# fitrad parameter file
+images,s,a,"",,,Input images
+outroot,s,a,"",,,Output root name
+option,s,h,"fit","|fit|difference|ratio|",,Output option
+xcenter,i,h,INDEF,1,,X center coordinate
+ycenter,i,h,INDEF,1,,Y center coordinate
+radius,i,h,INDEF,1,,Maximum radius
+ringavg,s,h,"mode","|mean|median|mode|none|",,Ring averaging method
+minpts,i,h,INDEF,1,,Minimum number of poits when averaging
+minwidth,r,h,INDEF,1,,Minimum number of pixels when averaging
+function,s,h,"spline3","|legendre|chebyshev|spline1|spline3|",,Fitting function
+order,i,h,1,1,,Order of fitting function
+low_reject,r,h,0.0,0.0,,Low rejection in sigma of fit
+high_reject,r,h,0.0,0.0,,High rejection in sigma of fit
+niterate,i,h,1,0,,Number of rejection iterations
+grow,r,h,0.0,,,Rejection growing radius in pixels
+interactive,b,h,yes,,,Run iteractively ?
+verbose,b,h,yes,,,Verbose processing ?
+calctype,s,h,"real","|real|double|",,Calculation data type
+graphics,s,h,"stdgraph",,,Graphics output device
+cursor,*gcur,h,"",,,Graphics cursor input

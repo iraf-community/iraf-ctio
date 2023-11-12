@@ -1,0 +1,12 @@
+HELIO			11-Feb-88		(Bill Weller/Pedro Gigoux)
+
+This directory contains the files of the heliocentric julian date and other
+usefull times code. The files are:
+
+helio.f		modified version of the original Fotran code
+
+mkpkg		mkpkg file
+
+orig/		original Fortran code (at least at Dec/87)
+
+t_helio.x	driver program for the subroutine in helio.f

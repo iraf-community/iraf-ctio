@@ -1,0 +1,8 @@
+cureval.gx
+	Modified cev_curfout() in order to be compatible with the new
+	output format of CURFIT introduced with IRAF 2.10. Also, fixed
+	a bug related with the number of coefficients when the function
+	was an spline1 or spline3. It turned out that the program was
+	using the function order supplied by CURFIT as the number of
+	coefficients instead of adding one (+1) for the spline1 and
+	adding three (+3) for the spline3 (PG 28/Dec/92).

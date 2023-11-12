@@ -1,0 +1,12 @@
+t_apropos.x
+	Changed length of the apropos database name buffer in order to
+	handle more apropos databases at the same time (PG 09/May/90).
+
+t_mkapropos.x
+	Minor fixes in messages (PG 09/May/90).
+
+t_apropos.x
+	Increased the size of the string that handles the apropos
+	environment variable contents (SZ_APROPOSDB) from 300 to
+	512 characters (PG 02/Jul/91).
+

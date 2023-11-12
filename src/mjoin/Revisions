@@ -1,0 +1,19 @@
+mjoin.hlp
+mjoin.par
+t_mjoin.x
+	Added 'discard' and 'warnings' boolean parameters, and changed
+	'output' parameter to hidden. The source code was changed to
+	make use of the new parameters, and the help page was updated
+	acordingly (PG 28/May/90).
+
+mjoin.hlp
+mjoin.par
+t_mjoin.x
+	Added 'match' boolean parameter to macth lines either by the
+	first string in the line (as before), or just by line number.
+	The code and help page were changed acordingly (PG 11/Jun/90).
+
+t_mjoin.,x
+	Added check to print all lines in the files to join that don't
+	have a corresponding input line. Warning messages will be issued
+	only if the 'warning' switch is set (PG 12/Jun/90).

@@ -1,0 +1,6 @@
+This directory contains the apropos databases used by the apropos task.
+These files are just text files with one line per reference found in the
+help menus. Each line contains the reference name (task, package, etc),
+followed by its description, and by the package path that contains it.
+The package name is enclosed in parenthesis. There is one file per external
+package plus one for the standard IRAF system (root.db).

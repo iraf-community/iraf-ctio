@@ -1,0 +1,38 @@
+SPCOMBINE		14-Nov-88	(Pedro Gigoux)
+
+This directory contains the code for the interactive combine task, for
+one-dimensional spectra. The important files contained here are:
+
+comrebin.x
+debug.x
+edit.x
+expscale.x
+
+idsm_keywrds.x		unmodified copy from onedspec$idsm_keywrds.x
+idsmtn.h		unmodified copy from onedspec$idsmtn.h
+
+lam2pix.x		lambda_to_pixel procedure copy from onedspec$t_rebin.x
+
+load_hdr.x		unmodified copy from onedspec$load_hdr.x
+
+mkpkg			mkpkg file
+
+plot.x
+
+rebin.x			copy of procedures from onedspec$t_dispcor.x
+
+setdef.x
+sort.x
+
+spcombine.h		task include file
+
+spcombine.key		interactive key menu
+
+spcombine.par		parameter file
+
+spcombine.x
+struct.x
+
+t_spcombine.x		main task procedure
+
+x_spcombine.x		task declaration

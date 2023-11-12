@@ -1,0 +1,7 @@
+
+	       fitswrite - Write compressed FITS file
+	        fitsread - Read compressed FITS file
+
+	      imcompress - Compress IRAF image pixel file
+	    imuncompress - Uncompress IRAF image pixel file
+

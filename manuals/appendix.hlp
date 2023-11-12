@@ -1,0 +1,1529 @@
+.help appendix Apr93 Version-3.0
+
+.ce
+\fIAPPENDIX\fR
+
+.nf
+                A. CTIO Calibration Files
+		B. Merging Projector flats with Dome flats
+		C. Using the UNIX Mailer on the SUNs
+                D. Linking Between Computers
+                E. Using a PC at CTIO
+                F. Using Suntool Windows
+                G. Using the Imtool Window
+                H. Using the EHISTORY and EPARAM commands
+		I. Using IMEDIT to Fix Pixels
+		J. Using the Satellite Link to the US
+		   1. Remote Login
+		   2. Copying Files
+		   3. Sending Images Home
+		   4. Collaborations
+
+                K. Using the Computers at CTIO, Paper by Lisa Wells
+                   1. Introduction
+                      1.1. Notation
+                   2. The Workstations
+                      2.1. Resources
+                   3. How To...
+                      3.1. Logging In
+                      3.2. Logging Out
+                      3.3. Transferring Pictures from the CCD Computer
+                      3.4. Displaying Images
+                      3.5. Printing Files and Plots and Other Things
+                      3.6. Allocating the Tape Drive
+                      3.7. Managing Disk Space
+                      3.8. Using Sub-Directories
+                      3.9. Using the Exabyte Devices
+                   4. Doing More with SunView Windows
+                      4.1. Pop-up Menus
+                      4.2. Specific Tools
+                      4.3. Accelerators
+                      4.4. SunView Default Tool Files
+                   5. Other UNIX Features
+                      5.1. man
+                      5.2  enscript
+                      5.3. TEX and LATEX
+                      5.4. mongo
+                      5.5. visual (vi) screen editor and emacs
+                      5.6. mail
+                      5.7. rlogin, telnet, rcp and ftp
+                   6. IRAF Examples
+                      6.1. rfits and rcamera
+                      6.2. wfits
+                      6.3. ctio
+                      6.4. ccdred
+                   7. Documentation
+                   8. Games
+                   Appendix A: System Information
+                   Appendix B: Default Initialization Files
+
+
+                                                 Lisa Wells
+
+						 Mario Hamuy
+
+                                               April 30, 1993
+
+.fi
+.bp
+.ls \fIAPPENDIX A: CTIO Calibration Files\fR
+
+A number of CTIO-specific calibration files are kept in the directories
+'ccddb' and 'onedstds'.
+In order to access these subdirectories you must load first the 'noao'
+package.
+The examples incorporate them where necessary however,
+if you plan to do data reductions at a different institution, be aware
+that these files may not exist there.
+
+\fIThe subdirectory ccddb$ctio/\fR
+
+This is home for the translation files for those CCDs which have
+been studied and also the bad pixel files. The possible files currently
+available are:
+
+.nf
+              ccd.dat
+	      ech.dat
+              cfccd.dat
+              csccd.dat
+	      fpccd.dat
+	      epi5.dat
+	      epi5_badpix.dat
+	      instruments.men
+
+.fi
+
+\fIThe subdirectory linelists$\fR
+
+This contains the general CTIO site files for wavelength calibrations.
+
+.nf
+      README
+      cuar.dat           lowskylines.dat
+      vacidhenear.dat    argon.dat
+      henear.dat         ohlines.dat
+      vacthorium.dat     ctiohear.dat
+      idhenear.dat       skylines.dat
+      xenon.dat          ctiohenear.dat
+      krypton.dat        thorium.dat
+.fi
+
+If you require tables of emission lines for HeAr, or HeNeAr,
+these are available in the manuals located in each computer room and at
+the telescopes but they cannot be duplicated for online use. The
+Thorium-Argon lamp tables are available only in the computer rooms on
+Tololo and downtown. These are separate sources:
+
+1. A CCD Atlas of Comparison Spectra: Thorium-Argon Hallow Cathode 3180 to
+9540 Angstroms, by Daryl Willmarth of the Instrument Support Group, KPNO,
+1987.
+
+2. A Pictorial Atlas of the Emission Line Spectrum of a Thorium-Argon
+Hollow Cathode Lamp, by F. H. Chaffee and J. R. Peters, FLWO, 1983.
+
+\fIThe subdirectory onedstds$\fR
+
+This contains the general CTIO site files for extinction corrections,
+and flux calibrations. It also includes files
+for the 2dfrutti multihole spacings and neutral density filter transmission
+files for the 1-m and 4-m telescopes.
+
+Extinction Coefficients:
+
+.nf
+      ctioextinct.dat     --   magnitudes/airmass vs wavelength
+.fi
+
+\fIThe subdirectory onedstds$ctio/ contains:\fR
+
+Multi-hole Spacings in seconds of arc(theoretical):
+
+.nf
+   multi1m.dat       -- 1.0 meter spectrograph
+   multi4m.dat       -- 4.0 meter RC spectrograph
+   multi4mech.dat    -- 4.0 meter echelle spectrograph
+.fi
+
+ND Filter Transmission Curves:
+
+.nf
+   nd1m.100mag.dat   -- 1.0 meter "1-mag" filter
+   nd1m.125mag.dat   -- 1.0 meter "1.25-mag" filter
+   nd1m.250mag.dat   -- 1.0 meter "2.5-mag" filter 
+   nd1m.500mag.dat   -- 1.0 meter "5-mag" filter 
+
+   nd4m.l000mag.dat  -- 4.0 meter "0-mag" lower filter
+   nd4m.l250mag.dat  -- 4.0 meter "2.5-mag" lower filter
+   nd4m.rc500mag.dat -- 4.0 meter "5-mag" for Richey-Chretien Spectrograph
+   nd4m.u000mag.dat  -- 4.0 meter "0-mag" upper filter
+   nd4m.u025mag.dat  -- 4.0 meter "0.25-mag" upper filter
+   nd4m.u075mag.dat  -- 4.0 meter "0.75-mag" upper filter
+   nd4m.u150mag.dat  -- 4.0 meter "1.5-mag" upper filter
+   nd4m.u225mag.dat  -- 4.0 meter "2.25-mag" upper filter
+   ndfilters.men
+.fi
+
+\fIThe subdirectory onedstds$bstdscal/ contains the Hayes flux standards:\fR
+
+Directory of the brighter KPNO IRS standards at 29 bandpasses,
+data from various sources transformed to the Hayes and Latham system,
+unpublished.
+
+.nf
+    hr3454.dat      hr4534.dat      hr7001.dat      hr7950.dat
+    hr3982.dat      hr5191.dat      hr718.dat       hr8634.dat
+    hr4468.dat      hr5511.dat      hr7596.dat      hr9087.dat
+    standards.men
+.fi
+
+\fIThe subdirectory onedstds$spec16bluecal/ contains the Hayes flux
+standards in the range 3300-7550A:\fR
+
+Directory with fluxes at 16A steps (suitable for high-dispersion
+spectroscopy) for the bright secondary standards,
+published in Hamuy et al., 1992, PASP, 104, 533.
+
+.nf
+    hr1544.dat      hr4963.dat      hr7596.dat      hr9087.dat      
+    hr3454.dat      hr5501.dat      hr7950.dat      standards.men   
+    hr4468.dat      hr718.dat       hr8634.dat
+.fi
+
+\fIThe subdirectory onedstds$spec16redcal/ contains the Hayes flux
+standards in the range 6050-10300 A:\fR
+
+Directory with fluxes at 16A steps (suitable for high-dispersion
+spectroscopy) for the bright secondary standards. These values were obtained in
+the spectrophotometric system described by Hamuy et al, 1992, PASP, 104, 533,
+and are accurate to better than 2%, except in the range 8400-9850A where
+the accuracy drops to 5% due to the lack of flux points in the calibrating
+spectrophotometric  system.  Work is underway to illiminate this problem at
+which time these data will be superseded.
+
+.nf
+    hr1544.dat      hr4963.dat      hr7596.dat      hr9087.dat
+    hr3454.dat      hr5501.dat      hr7950.dat      standards.men
+    hr4468.dat      hr718.dat       hr8634.dat
+.fi
+
+\fIThe subdirectory onedstds$ctiocal/ contains the Stone/Baldwin standards:\fR
+
+Directory with fluxes in the range 3200-10400 A for the southern tertiary
+standards as published by Baldwin & Stone, 1984, MNRAS,
+206, 241 and Stone and Baldwin, 1983, MNRAS, 204, 347.
+
+.nf
+    bd25.dat        f56.dat         l1020.dat       l4816.dat
+    l9491.dat       bd8.dat         f98.dat         l1788.dat
+    l6248.dat       l97030.dat      cd32.dat        g9937.dat
+    l2415.dat       l7379.dat       lds235.dat      eg21.dat
+    h600.dat        l2511.dat       l74546.dat      lds749.dat
+    eg274.dat       hz15.dat        l3218.dat       l7987.dat
+    ros627.dat      f110.dat        hz2.dat         l377.dat
+    l8702.dat       standards.men   f15.dat         hz4.dat
+    l3864.dat       l9239.dat       w1346.dat       f25.dat
+    kopf27.dat      l4364.dat       l93080.dat      w485a.dat
+.fi
+
+\fIThe subdirectory onedstds$ctionewcal/ contains the Stone/Baldwin standards:\fR
+
+Fluxes at 50A steps in the range
+3300-7550 A for the tertiary standards of Baldwin and
+Stone derived from the revised calibration of Hamuy et al.,
+1992, PASP, 104, 533. This new calibration represents
+a significant improvement over the original and the fluxes
+in this directory are in general to be preferred over those
+in ctiocal.
+
+.nf
+    cd32.dat        f56.dat         l2415.dat       l4364.dat
+    l7987.dat       eg21.dat        h600.dat        l3218.dat
+    l4816.dat       l9239.dat       eg274.dat       l1020.dat
+    l377.dat        l6248.dat       l9491.dat       f110.dat
+    l1788.dat       l3864.dat       l7379.dat       standards.men
+.fi
+
+\fIThe subdirectory onedstds$spec50cal/ contains:\fR
+
+The KPNO spectrophotometric standards at 50 A intervals.
+The data are from (1) Table V, Spectrophotometric Standards,
+Massey et al., 1988, ApJ 328, p. 315 and (2) Table 3, The
+Kitt Peak Spectrophotometric Standards: Extension to 1
+micron, Massey and Gronwall, 1990, ApJ 358, p. 344.
+
+.nf
+    bd284211.dat    feige67.dat     hz14.dat        pg0846249.dat
+    standards.men   cygob2no9.dat   g191b2b.dat     hz44.dat
+    pg0934554.dat   wolf1346.dat    eg81.dat        gd140.dat
+    pg0205134.dat   pg0939262.dat   feige110.dat    hd192281.dat
+    pg0216032.dat   pg1121145.dat   feige34.dat     hd217086.dat
+    pg0310149.dat   pg1545035.dat   feige66.dat     hilt600.dat
+    pg0823546.dat   pg1708602.dat
+.fi
+
+\fIThe subdirectory onedstds$iidscal/ contains:\fR
+
+The KPNO IIDS standards at 29 bandpasses,
+data from various sources transformed to the Hayes and
+Latham system, unpublished.
+
+.nf
+    40erib.dat      feige56.dat     he3.dat         kopff27.dat
+    ross627.dat     bd253941.dat    feige92.dat     hiltner102.dat
+    l13633.dat      ross640.dat     bd284211.dat    feige98.dat
+    hiltner600.dat  l151234b.dat    sa29130.dat     bd332642.dat
+    g191b2b.dat     hz14.dat        l74546a.dat     standards.men
+    bd404032.dat    g4718.dat       hz15.dat        l8702.dat
+    ton573.dat      bd82015.dat     g9937.dat       hz2.dat
+    l93080.dat      wolf1346.dat    feige110.dat    gd140.dat
+    hz29.dat        l97030.dat      wolf485a.dat    feige15.dat
+    gd190.dat       hz4.dat         lb1240.dat      feige24.dat
+    grw705824.dat   hz43.dat        lb227.dat       feige25.dat
+    grw708247.dat   hz44.dat        lds235b.dat     feige34.dat
+    grw738031.dat   hz7.dat         lds749b.dat
+.fi
+
+\fIThe subdirectory onedstds$irscal/ contains:\fR
+
+The KPNO IRS standards at 78 bandpasses,
+data from various sources transformed to the Hayes and
+Latham system, unpublished (note that in this directory the
+brighter standards have no values - the `bstdscal' directory
+must be used for these standards at this time).
+
+.nf
+    bd082015.dat    feige110.dat    g191b2b.dat     hd217086.dat
+    hiltner102.dat  bd174708.dat    feige15.dat     hd109995.dat
+    hd2857.dat      hiltner600.dat  bd253941.dat    feige25.dat
+    hd117880.dat    hd60778.dat     hr7001.dat      bd262606.dat
+    feige34.dat     hd161817.dat    hd74721.dat     hz44.dat
+    bd284211.dat    feige56.dat     hd17520.dat     hd84937.dat
+    kopff27.dat     bd332642.dat    feige92.dat     hd192281.dat
+    hd86986.dat     standards.men   bd404032.dat    feige98.dat
+    hd19445.dat     he3.dat         wolf1346.dat
+.fi
+
+\fIThe subdirectory onedstds$redcal/ contains:\fR
+
+Standard stars with flux data beyond 8370A.
+These stars are from the IRS or the IIDS directory but
+have data extending as far out into the red as the
+literature permits.  Data from various sources.
+
+.nf
+    40erib.dat      gd140.dat       he3.dat         l93080.dat
+    standards.men   bd174708.dat    gd190.dat       hz29.dat
+    l97030.dat      wolf1346.dat    bd262606.dat    grw705824.dat
+    hz43.dat        lds235b.dat     wolf485a.dat    feige24.dat
+    grw708247.dat   hz44.dat        lds749b.dat     g191b2b.dat
+    grw738031.dat   l13633.dat      ross627.dat     g4718.dat
+    hd19445.dat     l151234b.dat    ross640.dat     g9937.dat
+    hd84937.dat     l74546a.dat     sa29130.dat
+.fi
+
+\fIThe subdirectory onedstds$spechayescal/ contains:\fR
+
+The KPNO spectrophotometric standards at the Hayes flux
+points, Table IV, Spectrophotometric Standards, Massey
+et al., 1988, ApJ 328, p. 315.
+
+.nf
+    bd284211.dat    feige67.dat     hz14.dat        pg0846249.dat
+    standards.men   cygob2no9.dat   g191b2b.dat     hz44.dat
+    pg0934554.dat   wolf1346.dat    eg81.dat        gd140.dat
+    pg0205134.dat   pg0939262.dat   feige110.dat    hd192281.dat
+    pg0216032.dat   pg1121145.dat   feige34.dat     hd217086.dat
+    pg0310149.dat   pg1545035.dat   feige66.dat     hiltner600.dat
+    pg0823546.dat   pg1708602.dat
+.fi
+
+
+Any other files that might be needed for data reduction can be obtained
+from Mario Hamuy (ext. 210) downtown, or Mauricio Navarette or Nelson
+Saavedra on Tololo (ext. 422).
+.le
+.bp
+.ls \fIAPPENDIX B: Merging Projector flats with Dome flats\fR
+
+It is often the case when you observe with CSCCD that the flats obtained
+from the white spot do not provide a sufficient iillumination of the CCD
+throughout the spectral range. This is generally the case when you observe
+far in the ultraviolet (3100-4000A) or in the far red (1-1.1u).
+To get around this problem, the observer is forced to take a series of flats
+with the (projector) lamp located inside the spectrograph which provides a
+bright source of light. Given the brightness of the projector lamp, it
+becomes necessary to add in front of the light source a 
+combination of filters in order to avoid the saturation of the CCD where
+the response of the detector is higher. Depending on your specific setup
+(grating, CCD, telescope) you have to choose the combination of filters
+that provides iillumination of the CCD where the white-spot doesn't. 
+Sometimes more that one combination of filters is required.
+
+The goal of this appendix is to show you how to merge your dome flat with
+your projector flat(s) in order to produce a final image intended to remove
+the sensitivity variations of the CCD from your program frames.
+We assume in this appendix that your projector-flat and dome-flat have
+been properly processed through the point of overscan-subtraction, trimming
+and bias-subtraction. We assume as well that scattered light was subtracted
+from your flats. All these procedures are explained in the CSCCD manual.
+
+The example of this section is relatively simple. We used a low dispersion
+grating on the 1.5-m telescope with a GEC CCD, with a resulting wavelength
+coverage of 3000-7700A.  In this setup the white spot flat (hereafter
+dome-flat) provides sufficient iillumination of the detector redward of
+4000A. For the shortest wavelengths instead, we took a series of
+flats with the projector lamp together with the CuSO4 and Corning 9863
+filters (hereafter projector-flat). This combination of filters provided
+enough iillumination in the UV end and a sharp cutoff around 4500A.
+
+Figure 1 shows the dome-flat with the evident lack of UV iillumination at
+the bottom. On the other hand, Figure 2 shows the projector-flat with a
+strong iillumination at the UV end. You can compare the two flats with the
+'implot' task.
+
+.nf
+       cl> implot pflat
+	    :c 180              (plot one of the central columns)
+	    :i dflat
+	    o                   (overplot command)
+	    :c 180              (overplot the same column of dflat)
+            q                   (quit the task)
+.fi
+
+Figure 3a shows one of the central columns of the dome flat overplotted with
+the same column of the projector flat. It is evident that over the first 200
+lines the projector flat predominates over the dome-flat. Beyond
+that line the dome-flat plays the most important role. Write down the
+\fIintersection line \fR of the two curves (\fIline 200\fR in this example).
+Now, plot this specific line of the projector-flat and overplot the same
+line of the dome-flat. 
+
+.nf
+       cl> implot pflat
+	    :l 200              (plot the desired line)
+	    :i dflat
+	    o                   (overplot command)
+	    :l 200              (overplot the same line of dflat)
+	    q                   (quit the task)
+
+.fi
+
+In this example (Figure 3b) a strong difference in the iillumination of the slit
+is revealed from the two images. Later, we will remove the slit profile of the
+projector-flat before merging it with the dome-flat. At the moment you 
+must determine from this plot the range of useful columns to be used in
+the merging procedure (\fIcolumns 135-270\fR in this example).
+When making this decision you must include in your working sample
+only those columns which are completely contained in the decker limits;
+exclude any columns which are partially illuminated.
+
+Basically, the merging procedure consists in removing the spectral signature
+of the white-spot and projector light (STEP 1), as well as removing the slit
+profile of the projector flat (STEP 2). Once these goals are achieved you
+will be able to get a final image with a smooth transition between the
+dome-flat and the projector-flat (STEP 3).
+
+\fISTEP 1: Normalizing the flats along the dispersion\fR
+
+We must start by removing the spectral signature of the white spot and 
+the projector light. First, you must decide upon the area to be normalized
+in each image. For the dome-flat we will carry out the normalization between
+lines 190-572 and columns 135-270. For the projector-flat the normalization
+will be done between lines 1-210 and \fIthe same columns used for the
+dome-flat\fR. Note that we have purposedly left an overlap between both
+images around the \fIintersection line\fR. That area is reserved in order
+to remove any difference in the slit iillumination of both images. Figure 4
+summarizes the five areas in which we have divided our frame.
+
+Area 1: section [135:270,190:572] corresponds to the useful area of the
+dome-flat
+
+Area 2: section [135:270,1:210] corresponds to the useful area of the
+projector-flat
+
+Area 3: section [135:270,190:210] corresponds to the overlap area between
+both flats
+
+Areas 4 and 5: sections [1:134,1:572] and [271:378,1:572] correspond to
+the columns that are excluded from the merging procedure
+
+Load the packages 'twodspec' and 'longslit' and edit the parameters for
+the task 'response'.
+
+.nf
+      cl> twodspec
+      tw> longslit
+      lo> epar response      (check the parameters given below)
+
+
+                    \fIresponse task\fR
+
+  calibration =                 Longslit calibration images
+ normalizatio =                 Normalization spectrum images
+     response =                 Response function images
+ (interactive = yes)            Fit normalization spectrum interactively?
+   (threshold = INDEF)          Response threshold
+      (sample = "*")            Sample of points to use in fit
+    (naverage = 1)              Number of points in sample averaging
+    (function = "spline3")      Fitting function
+       (order = 5)              Order of fitting function
+  (low_reject = 3.)             Low rejection in sigma of fit
+ (high_reject = 3.)             High rejection in sigma of fit
+    (niterate = 1)              Number of rejection iterations
+        (grow = 0.)             Rejection growing radius
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+        (mode = "ql")           
+.fi
+
+Now use the task 'response' to normalize the dome-flat.
+ 
+.nf
+      lo> response dflat[135:270,190:572] dflat[135:270,190:572] ndflat
+.fi
+
+'response' presents you with a plot of the averaged flat field columns
+[135-270] with a function fit through it (see Fig. 5a). If the curve does
+not fit the gross shape of the flat field, try different orders (type
+':order 10') Usually an order around 10 gives a
+satisfactory fit. Since this is a spline fit on equal intervals, a
+small change in the order (i.e. number of intervals) can have a
+relatively large effect. You may reperform the fit with the 'f' key.
+A useful command is the 'k' key which will
+present you with the ratio between the sample and the fit (see Fig. 5b).
+From this plot you can better judge the quality of the fit. You should
+end up with an order such that the ratio of the sample and the fit is
+'one' on the average, plus minus 5% due to the pixel-to-pixel
+sensitivity variations of the chip. You may type 'h' to go back to the
+previous plot of the sample and the fit on top of it. When satisfied,
+exit with 'q'. The output of the
+task is an image named 'ndflat' obtained from dividing each of the
+specified columns of 'dflat' by the fitted function. All of the pixels
+that lie outside the normalization area are set to one by 'response'.
+
+You may 'display' or 'implot' this image (see Figure 6).
+
+.nf
+      lo> display ndflat 1 zs- zr- z1=0.95 z2=1.05
+      lo> implot ndflat
+.fi
+
+Now, you have to normalize the projector flat over area 2.
+
+.nf
+      lo> response pflat[135:270,1:210] pflat[135:270,1:210] temp1
+.fi
+
+Figure 7a shows the spectral shape of the projector-lamp plotted together with
+a cubic-spline fit. Figure 7b shows the ratio between the fit and the
+sample which you can get with the 'k' key. In this example we have removed
+from the sample a few lines that reveal a lower sensitivity of the CCD.
+You may do this with the help of the vertical cursor and pairs of 's' to
+define as many samples as you wish. In this case we fit a cubic-spline of
+order 20 to remove the pronounced spectral signature introduced by the color
+filters. The output image is a temporary image called 'temp1' which you
+may display it or plot it.
+
+.nf
+      lo> display temp1 1
+      lo> implot temp1
+
+.fi
+\fISTEP 2: Removing the iillumination profile along the slit\fR
+
+So far, we have removed the spectral signature of both flats along
+the dispersion axis. On the
+other hand, the iillumination along the slit has not been modified. In
+Figure 3b it is evident that both flats have extremely different
+iilluminations, which has to be modified before attempting to merge them.
+In the next paragraphs we will remove the iillumination of the projector-flat
+along the slit, \fIwith respect to the dome-flat\fR. For this purpose
+it is crucial to have a few lines of overlap between the normalized images.
+In this example the overlap area ranges between lines 190-210.
+
+Start by dividing the normalized projector-flat by the normalized dome-flat.
+
+.nf
+      lo> imarith temp1 / ndflat ratio
+.fi
+
+This operation removes all of the pixel-to-pixel variations in the overlap
+area of the projector-flat. We use now the task 'iillumination' to
+fit the relative iillumination left along the slit in the image 'ratio'.
+Do an epar on the 'iillumination' task according to the parameters given below.
+
+.nf
+      lo> epar iillumination      (check the parameters given below)
+
+
+                     \fIiillumination task\fR
+
+       images =                 Longslit calibration images
+ iillumination =                 Iillumination function images
+ (interactive = yes)            Interactive iillumination fitting?
+        (bins = "")             Dispersion bins
+       (nbins = 1)              Number of dispersion bins when bins = ""
+      (sample = "*")            Sample of points to use in fit
+    (naverage = 1)              Number of points in sample averaging
+    (function = "spline3")      Fitting function
+       (order = 1)              Order of fitting function
+  (low_reject = 3.)             Low rejection in sigma of fit
+ (high_reject = 3.)             High rejection in sigma of fit
+    (niterate = 1)              Number of rejection iterations
+        (grow = 0.)             Rejection growing radius
+(interpolator = "poly3")        Interpolation type
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+        (mode = "ql")           
+
+.fi
+Now execute the task iillumination on the image 'ratio'.
+
+.nf
+      lo> iillumination ratio[135:270,*] illum
+.fi
+
+The parameters (135:270) must be the same employed in the 'response' task.
+They correspond to the range of columns to be used in the determination of
+the iillumination profile along the slit. These task is divided in two sections.
+In the first section, 'iillumination' presents you with the average of
+columns 135-270 (see Figure 8a). The horizontal bar represents the lines
+that will be used in the next section to determine the iillumination of the
+slit. Now, you must restrict this sample only to the \fIoverlap area\fR. To
+perform this operation, start by getting rid of the current sample (type
+'i') and then redefine the new sample (type ':bin 190:210') to match the
+overlap lines. A small bar should show up now at the bottom of the plot with
+the new sample. Once you perform this operation type 'q' to quit this section.
+
+In the second section you will be presented with a plot which corresponds
+to the average of the lines 190-210 (Figure 8b). This is the iillumination
+profile of the projector-flat relative to the dome-flat. Here, you must fit
+a cubic-spline fit to this sample. To better judge the quality of the fit
+use the 'k' key to look at the ratio between the sample and the fit (see
+Figure 8c). If you desire to increase the order of the fit type for
+instance ':order 10' and reperform the fit (type 'f'). Use an order that
+yields residuals no larger than 1%.  When satisfied type 'q' to quit this
+task. The result of 'iillumination' is called 'illum' and contains the fit of
+the slit profile properly spread into a 2-dimensional image. You can examine
+the output image (Figure 9).
+
+.nf
+      lo> display illum 1
+.fi
+
+Now, you have to divide 'temp1' by 'illum' in order to remove the
+iillumination profile along the slit from the projector-flat.
+
+.nf
+      lo> imarith temp1 / illum temp2
+.fi
+
+The result of the previous operation is a temporary image called 'temp2'. As
+a consequence of dividing the projector-flat by the slit profile, the 
+resulting image has to be renormalized along the dispersion in order
+to match the same level of counts of the dome-flat. We use 'response'
+to perform this operation \fIover the same section used before\fR for
+the projector-flat.
+
+.nf
+      lo> response temp2[135:270,1:210] temp2[135:270,1:210] npflat
+.fi
+
+You will be presented with the average of the columns 135-270 with
+a fit on top of it (Figure 10a). Since this image was already
+normalized, the number of counts should be close to one, except for
+a small scaling factor introduced during the iillumination correction.
+Choose a low-order fit in order to fit your sample. In this example
+a cubic-spline order 1 works well. Try 'k' to look at the ratio
+between the sample and the fit (Figure 10b) and quit the task with 'q'.
+Remember that everything outside the normalizing section is set to one by
+this task. You may display your output image called 'npflat' (see Figure 11).
+
+.nf
+      lo> display npflat 1 zs- zr- z1=0.95 z2=1.05
+.fi
+
+You should be ready now to merge 'ndflat' and 'npflat'. To make sure
+that the final image is not going to show discontinuities at the
+overlap region, we suggest to 'implot' 'ndflat' together with 'npflat'.
+
+.nf
+      lo> implot ndflat
+           :l 190 210         (plot the overlap lines)
+           :i npflat
+           o                  (overplot command)
+           :l 190 210         (overplot the same lines)
+           q                  (quit)
+.fi
+
+If everything goes well you should get an almost perfect match between
+both images. If that is the case we will proceed to the merging itself.
+
+\fISTEP 3: Merging the flats\fR
+
+In this section we will sum both flats. Before doing this operation
+we will perform some pixel replacement with the 'imreplace' task in
+the 'proto' package. We have to start by replacing with 0 the pixels
+that were set to 1 by 'response'. The columns must be the working
+columns originally chosen to perform the normalization, i.e., 135-270.
+For the projector-flat the lines to be replaced are the ones \fIexcluded\fR
+from the normalization, i.e., 211-572. Analogously, in the dome-flat we have
+to replace columns 1-189.
+
+.nf
+      lo> proto
+      pr> imreplace npflat[135:270,211:572] 0.
+      pr> imreplace ndflat[135:270,1:189] 0.
+.fi
+
+Now, you may sum both flats.
+
+.nf
+      pr> imarith ndflat + npflat temp3
+.fi
+
+The output of the previous operation is a temporary image called 'temp3'
+which is not your final flat yet. This image has a step at the overlap area
+which has to be removed. In order to remove this step we are going to
+make a mask image which we will then multiply by 'temp3'. Let's start
+by producing the mask by dividing any of your images by itself.
+
+.nf>
+      pr> imarith temp3 / temp3 mask
+.fi
+
+Let's check that 'mask' is really filled with 1 everywhere.
+
+.nf
+      pr> imstat mask
+.fi
+
+Let's now fill the overlap area 3 with 0.5.
+
+.nf
+      pr> imrep mask[135:270,190:210] 0.5
+.fi
+
+Also we have to replace the pixels in areas 4 and 5 with 0.5.
+
+.nf
+      pr> imrep mask[1:134,1:572] 0.5
+      pr> imrep mask[271:378,1:572] 0.5
+.fi
+
+Finally, let's multiply 'temp3' by 'mask' to get the final flat.
+
+.nf
+      pr> imarith temp3 * mask flat
+.fi
+
+You may display now your final flat (see Figure 12).
+
+.nf
+      pr> display flat 1 zs- zr- z1=0.95 z2=1.05
+.fi
+
+This image should have areas 4 and 5 set to one. The area between columns
+135-270 contain the pixel-to-pixel variations. The pixel values here are
+expected to be between 0.9 and 1.1.
+
+.nf
+      Mario Hamuy - 30 April 1993
+.fi
+.le
+.bp
+.ls \fIAPPENDIX C: Using the UNIX Mailer on the SUNs\fR
+
+\fIMAIL AND ITS OPTIONS\fR
+
+There are many commands that could be useful when using the UNIX mailer.
+This is to give a list of the commands available but does not include all
+the possibilities. If you would like more information, type '!man mail'.
+When sending a file and you would like to specify a subject, use the 
+following:
+
+.nf
+       mail -s "type subject here" address < filename
+.fi
+
+This will send the file "filename" to "address" with the specified subject.
+\fIIf you send a message larger than 20,000 bytes, it will be rebounded. To
+send a large file see Jim Hughes. Also, if the message is a binary file, it
+may be necessary to encode it before sending it, otherwise, bits will be lost
+along the way. \fRIf you receive mail, just typing 'mail' will enter the mailer
+and give a listing of the message headers addressed to you currently in the
+system mailbox. If there are no messages waiting for you, you will get the
+message back, "No mail for v4". If you wish to suppress the message headers
+from being printed, use the option "-N". If you are in the middle of
+something else and just wish to see who has sent you mail, use the "-H"
+option. This will simply give the header summary only for the messages which
+are waiting for you. If you have logged on and missed the message telling
+you about mail, use the "-e" option to check for the presence of mail.
+Finally, if you wish to reread a message from your mbox file or another
+file, use the "-f filename" option. If the filename is not given, the
+default for this is the standard mbox file created when quitting mail (see
+below). The command mode is entered when a "&" prompt appears. Then you may
+use any of the interactive commands, or type 'help' for a list (see the
+third section).
+
+.nf
+       -N		Suppress the header summary upon entering mail
+       -H		List the header only of the unread mail
+       -e		Check to see if there is mail
+       -f filename	Read the messages in the file specified
+.fi
+
+\fITILDE COMMANDS WHILE WRITING A LETTER\fR
+
+When sending a message to someone, an example is shown below, you will
+then be prompted for the subject, just type it in and hit 'return'. Now
+just type your message into the buffer that has been created for your message.
+When you are finished, just type a '.' on a blank line and type 'return'
+to quit and send the letter. The mailer will echo "EOF" to specify the end
+of the file.
+There is a tilde command that works the same (see below).
+
+.nf
+       v2> mail marsden@cfa.bitnet
+       Subject: A NEW SUPERNOVA!!!
+
+       We have found a new supernova in an anonymous galaxy located
+       at RA 05 23 45, Dec -69 46.3 (1950), at a visual magnitude of
+       9.31. You can't miss it!
+
+                                                 Dr Magellan
+       .
+       EOF
+
+.fi
+
+In composition mode, you may use any of the many tilde commands. They must be
+used by typing the command on a blank line, and hitting return. They will not
+be echoed in your message. Any of the following commands may be used.
+
+.nf
+       ~?		Prints a summary of the tilde commands
+       ~b users		Adds the users specified to the 'Bcc:'
+			(Blind carbon copy) list separated by
+			commas
+       ~c users		Adds the users specified to the 'Cc:'
+			(Carbon copy) list separated by commas
+       ~d		Read the dead.letter file into the buffer
+       ~e		Edit the message buffer using 'ed' editor
+       ~f [messagelist]	Forward the message specified, will be
+			prompted for the 'To:' list
+       ~h		Show the 'To:', 'Subject:', Cc:', 'Bcc:'
+       			lists and add to or change them using
+			backspace and typing the new value 
+       ~m [messagelist]	Read the message specified into the buffer
+       ~p		Print the message being composed in the
+			buffer as it is now
+       ~q,~Q,^c		Quit, and save the message in the home
+			directory under the name dead.letter
+       ~r filename	Read the file into the message buffer
+       ~s subject	Set the 'Subject:' to subject, or use
+			this to change the original
+       ~t users		Add users to the 'To:' list
+       ~v		Edit the message using the 'vi' editor,
+			using ":wq" to exit the editor will bring
+			you back to the current mode
+       ~w filename	Write the message into the file specified
+       ~x		Quit, do not save the file
+       ~.		End of input, send message
+       ~! command	Run a shell (UNIX) command
+       ~| command	Pipe the message through the command
+       ~: command	Execute a regular mail command, type
+			'~:help' for a list of the commands
+.fi
+
+The "users" is a list of one or many addresses. The "messagelist" is explained
+in the last section of this help page, but in brief, specifies the message
+number to be used. The "filename" is the file to be used or created. "Subject"
+is the new subject to be associated with this mail message. The UNIX or mailer
+commands are used in place of "command". In all cases, the mailer will return
+to the message input mode unless you use an exit command.
+
+\fIUSING THE MAIL COMMANDS\fR
+
+When entering the mailer, the prompt becomes an "&" signifying the command
+mode. At this prompt you may type any number of commands. To read a mail
+message, just type the number of the message you wish to read. If you read
+a message and want to reply, just type 'r'. You may specify the message
+number if you are not reading the file to which you want to reply. You can
+print the specified message by using the 'p' command.
+
+.nf
+      help or ?			Prints a summary of the commands
+      <return>			Print the next message
+      cd directory		Change directory to one specified
+      copy messagelist filename	Copy messages to file but don't
+				mark as saved
+      delete messagelist	Delete the messages specified
+      edit messagelist		Edit the message buffer using "ed"
+				editor
+      exit			Leave the mailer, don't move
+				messages to 'mbox'
+      file filename		Quit the current mail file and
+				read in the named file, will give
+				number of files within filename
+      from messagelist		Print the header 'from:' the
+				message specified
+      headers			Print out headers of the messages
+				being accessed
+      list			Lists all commands available
+				without description
+      mail user-list		Mail a message to the specified
+      				user, will go to 'composition'
+				mode
+      next			Go to and print the next message
+				in the list
+      print messagelist		Print the message specified
+      preserve messagelist	Put the messages specified back
+				in the system mailbox
+      quit			Quit, and save the messages in
+				the home directory
+				under the name mbox
+      reply messagelist		Reply to sender of message only
+      Reply messagelist		Reply to sender and all
+				recipients of message
+      save messagelist filename	Append the message to the file
+				specified
+      size messagelist		Print the size in characters of
+				files specified
+      type messagelist		Type messages specified, same as
+				print
+      top messagelist		Show the top lines of the
+				message specified
+      undelete messagelist	Undelete the message(s) specified
+      visual messagelist	Edit the message using the "vi"
+				editor, using ':wq' to exit the
+				editor will bring you back to the 
+				current mode
+      write messagelist filename
+				Append the message to the file
+				specified
+      xit			Quit, do not change the system
+				mailbox
+      z [-]			Display next [previous] page of
+				headers
+      ! 			Shell (UNIX) escape
+      =				Print the current message number
+.fi
+
+The 'user-list' is the valid address(es) for the sending of the mail message
+using commas to separate multiple addresses. The 'file' specified a file to
+be created in your directory. The 'messagelist' given in these commands can
+be specified with any of the following;
+
+.nf
+       .	The current message
+       n        Message number n
+       ^	The first undeleted message
+       $	The last message
+       +	The next undeleted message
+       -	The previous undeleted message
+       *	All messages
+       n-m	An inclusive range of message numbers
+       user	All messages from user
+       /string	All messages with 'string' in the subject line
+		(case ignored)
+       :c	All messages of type 'c', where 'c' is one of:
+			d	deleted messages
+			n	new messages
+			o	old messages
+			r	read messages
+			u	unread messages
+.fi
+
+One known bug, reply does not always generate the correct return address, so
+you may need to specifically input the correct address. An E-mail Directory
+is available to check for the correct address. See Mario Hamuy,
+or Jim Hughes for more information.
+.le
+.bp
+.ls \fIAPPENDIX D: Linking Between Computers\fR
+
+All the computers used at CTIO are linked together. These commands are all
+aliased as tasks in IRAF also so you need not be in the UNIX environment. If
+you are logged onto one machine you can easily login to any other. Telnet
+connects all the computers used at CTIO. If you want to login to the "VAX1"
+machine located downtown, use telnet to connect to it from another machine,
+ie:
+
+.nf
+      mach% telnet ctiov1
+.fi
+
+You must then login in the usual manner by typing in your username and password
+when prompted. There are two VAXs which may be accessed this way, ctiov1 and 
+ctiov2. This will also work if you are logged in and using IRAF. So if you are
+logged onto a VAX and would like to connect to a SUN, just use telnet. You must
+then be sure to turn off the caps lock when returning to a SUN, or the UNIX
+systems will be thrown into a strange mode. This can be gotten out of by logging
+out and then logging back in using lower case. The stateside computers are
+accessible using telnet also. The machine internet
+number can be used in place of "ctiov1".
+
+.nf
+      mach% telnet 139.229.2.5
+.fi
+
+\fIWe ask that you not send images or big files over the link to the US unless
+you know what you are doing. Big files will tie up the network so be
+courteous.\fR All the SUNs are linked via 'rlogin'. \fINOTE THAT 'rlogin' IS
+BETTER THAN 'telnet' IF YOU ARE ONLY USING A REMOTE LOGIN TO ANOTHER SUN\fR.
+If you are on one SUN and would like to login to get onto "SUN1" ie, ctios1
+in La Serena then all you need do is type:
+
+.nf
+      mach% rlogin ctios1
+.fi
+
+This will log you onto the "SUN1" machine in La Serena from the machine you are 
+currently logged onto. The possible choices are:
+
+.nf 
+        \fBMountain\fR                \fBLa Serena\fR
+       	 ctio4m                  ctios1
+       	 ctio1m                  ctios2
+       	 ctio60                  ctios3
+         ctio36                  ctios4
+.fi
+
+Rlogin is usable in IRAF, however if you are logged onto the VAX you can only
+get to the other machines by using telnet only. If you have any problems,
+contact Mario Hamuy, or Jim Hughes.
+.le
+.bp
+.ls \fIAPPENDIX E: Using a PC at CTIO\fR
+
+There are many PCs being used at CTIO to log onto the mainframe computers.
+This is done by running an emulator program on the pc which makes it more or
+less, simulate a vt100+retrographics terminal. If the pc is off, turning it
+on will boot the disk. If the pc is on but nothing is setup, ie; the prompt
+looks like "A>", then you can run the emulator by typing 'vt' or 'em'. Most of
+the PCs are equipped with hard disks. For those that are not, check to see that
+the correct floppy is installed. If this doesn't work, boot the disk again by
+typing 'Alt/Shift/Delete'. Press all three keys at the same time. Then type 'vt'
+again. Once the PC runs the emulator, type 'return' several times. On the
+mountain each PC is connected directly to a specific SUN computer; you should
+get the normal login prompt for that computer. In La Serena the PCs are
+connected to a "micom" terminal switcher, which allows them to be used to
+log on to any of the La Serena computers. You will then be prompted for the
+number of the computer you wish to log onto, so type the number and hit
+'return'. You may now log onto the computer at the prompt. 
+
+If you are logged in and using IRAF from a PC, it is a good idea to set the
+terminal to the proper type. This helps when you are using the
+help facility for example by setting the screen size to the proper format.
+Do this by typing;
+
+.nf
+      cl> stty pc640
+.fi
+
+This will properly set the terminal type.
+
+There is a difference between text and graphics screens and there are two
+commands which link the two. In the vt100 screen you press 'Alt g' to get into
+graphics mode. To get back to the text screen, 'Alt v'. In graphics
+mode, for terminals which have only one arrow keypad, the cursor movement is
+in small steps, but using shift and the arrow gives larger steps. For terminals
+which have two arrow keypads, use the cursor pad key. The numlock key will
+light up as well. This uses the far right keypad for small increments and the
+left one for large increments in the cursor movement.
+
+When you are finished first log off the mainframe computer in the normal way.
+In La Serena you must then type 'Alt/Shift b' (type all three at once) to break
+the connection between the micom and the host computer. Finally, you can type
+'Alt x' to exit from the emulator program. The 'Ctrl/Shift' key toggles back and
+forth between using the terminal emulator to talk to the mainframe and talking
+directly to the PC. You can safely switch back and forth without logging out,
+and can even leave a program running on the sun while you play chess on the
+pc.
+.le
+.bp
+.ls \fIAPPENDIX F: Using the Suntool Windows\fR
+
+To use the suntools windows, you must be logged in at a console. The windows
+are activated by a call of the suntools. This will usually be done
+automatically when you log in to the console to use iraf. If they do not come
+up, type "suntools". The screen will change to a grey background with windows.
+If the windows are not created properly, it means that there is not enough
+block memory for the window to use. This will result in an error message
+appearing somewhere on the console. This means that there are too many people
+using the computer, so try again later, or see Mario Hamuy.
+
+Now that the windows are up, the mouse can be used to manipulate the windows.
+If you are using one of the windows, you must move the mouse cursor into that
+window. If the window you wish to use is covered by another window then move
+the cursor to the border of the window you want, and press the left button on
+the mouse. Your window will come to the front. If you wish to move the windows,
+move the cursor to the border of the window you wish to move. Now hold the     
+middle button and move the window. A frame will appear showing the outline of
+the window. Releasing the button will set the position and will move the window
+to its new place.
+
+If the console gets too cluttered and you wish to get rid of a few windows there
+are two ways of doing it. For windows you plan to use again it is easiest to
+just close the window. Take the cursor to the border and hold the right button.
+Move the cursor to 'frame' and follow the arrow off the right edge. A new menu
+will appear so move to 'close' and release the button. The window will change
+to a small rectangle. To bring back the window just move the cursor into the
+rectangle and press the left button. If you no longer need the window you can
+just quit out of it by moving the cursor to 'quit' and releasing.
+
+If you get error messages and the window borders are messed up, move the cursor
+to the grey region behind the windows and hold the right button. Move the cursor
+to 'redisplay all' and release. To bring up more windows, again move to the grey
+background and hold the right button. Move the cursor to 'imtool' or 'gterm' for
+the type of window you wish and release.
+
+When you are done for the day and wish to log out, move the cursor to the grey
+background area anywhere and hold the right button. \fBDO NOT TRY TO LOGOUT FROM
+THE CONSOLE WINDOW OR ANY OF THE WINDOWS\fR. Move the cursor to 'exit suntools'
+and release. You will return to the blank screen and be logged off the
+computer. If you are not logged out immediately then type 'logout'. This will
+log you off the computer. Note if you have IRAF background jobs running when
+you "exit suntools" they will continue to run until completed.
+.le
+.bp
+.ls \fIAPPENDIX G: The Imtool Window\fR
+
+The imtool window is used to display images. This task can do many things. The
+"tv" package contains all the tasks which manipulate the imtool window. First
+load the tv package by typing:
+
+.nf
+      cl> noao
+      no> tv
+      tv>
+.fi
+
+The tv> prompt means that the tv package has been loaded. Now display one
+of your images using display:
+
+.nf
+      tv> display obj003 1
+.fi
+
+The "1" at the end of the command is the frame number in which you would like
+your image to be displayed. The image specified is now visible in the imtool
+window. Next press the 'F6' key. You will see coordinates appear at the
+lower right of the screen. Now when you move the cursor, the coordinates
+keep track of where you are. It is a good idea to check the coordinates by
+moving the cursor to the lower left corner of the image to look for the
+origin (1,1). If one of the corners doesn't give the origin coordinates then
+the imtool is not set up properly and you should ask Mario Hamuy
+for assistance.
+
+If you wish to create a file with object positions from this
+image, the frame number at the top of the screen is important since you will
+begin writing the coordinates of your objects to a file in the 'uparm'
+subdirectory by that title, i.e.,
+frame.1.1. Now move the cursor to your object and press the left button on
+the mouse. A number will appear up and to the right of your object to
+indicate your choice and the coordinates are written to the file called
+frame.1.1 in your uparm directory. The cursor position is important since
+this does not use a centering algorithm.
+
+If you would like a color display, move the cursor to the border of the
+window, press and hold the right button down. A menu will appear with many
+choices. Move the cursor to "Setup" and release the button. A smaller window
+opens with the setup parameters. Move the cursor into the window and point it
+at "Mono". Pressing the left button on the mouse will cycle through the
+display modes. If you would like more information about using the mouse and
+Imtool window, see appendix K.
+.le
+.bp
+.ls \fIAPPENDIX H: The EPARAM and EHISTORY Editors\fR
+
+There are several ways to recall or change a previously typed command in IRAF.
+The "eparam" and "ehistory" commands have two such modes; an immediate
+execution and editing. A summary of these shortcuts and their function
+follows. The "^" is for immediate execution and "ehistory" edits the command
+line recalled.
+
+.nf
+      cl> ^			Rerun the previous command
+
+      cl> ^nite1^nite2^		Rerun the previous command but
+				substituting 'nite2' for the first
+				appearance of 'nite1' 
+
+      cl> ^nite1^nite2^g	Same as above but substituting
+				all occurrences of 'nite1' with
+				'nite2'
+
+      cl> ^rfits		Rerun the last 'rfits' command
+
+      cl> ^?FLAT		Rerun the last command containing
+				'FLAT' anywhere
+
+      cl> history		List the last few commands in the
+				history buffer
+
+      cl> history 50		List the last 50 commands in the
+				history buffer
+
+      cl> ^37			Rerun command number 37 from the
+				history list
+
+      cl> ^-2			Rerun the command before the
+				previous one
+
+      cl> task ^2 ^1		Run the 'task' with the first
+				and second arguments of the
+				previous command reversed
+
+      cl> task ^$		Run 'task' with the last argument
+				of the previous command
+
+      cl> task ^*		Run 'task' with all the arguments
+				of the previous command
+.fi
+
+Now the "^" command may behave like the editing command if the cl parameter
+"ehinit" is set to "verify". If you wish to change this, edit the parameters
+of "cl". The UNIX "ehistory" is much like the command recall in VMS. Typing
+an 'e' will present the last command in the history list. To scroll up through
+this list just type the up arrow. Now to change something on the line, move the
+cursor using the left arrow and delete and type in the change (this deletes to
+the left). If a task name is specified after the "ehistory" command it recalls
+the last command using that task. For example, typing 'e display' will recall
+the last display command used with its previous parameters. You may now edit
+this command. Typing return, (no matter where the cursor is) will run the 
+task.
+.le
+.bp
+.ls \fIAPPENDIX I: Using IMEDIT to Fix Pixels\fR
+
+The task "imedit" is found in the `tv` (images)
+package. This task gives statistics
+on a region of the image, or edits pixels by background surface fit,
+interpolation from background, replacing one region by another, or replacement
+by a constant value. The image is automatically displayed if the parameter
+"display" is set to "yes", and will be redisplayed after each alteration if
+"autodisplay" is set to "yes". This may be slow and so the option to redisplay
+exists in the interactive mode so that several changes may be performed and
+the image redisplayed. The task uses the current values of the display task
+in the tv package.
+
+If you would like the surface plot after each editing command, set
+"autosurface" to "yes", the default is "no". The "aperture" of the region can
+be designated by a circle or rectangle with a size governed by the "radius"
+parameter. If you want to fit the background, the parameters "xorder" and
+"yorder" define the number of terms in the polynomial fit. The maximum or
+minimum values of the region being fixed may not be centered in the cursor,
+so the parameter "search" is the radius over which a search is performed to
+find the pixel with the most extreme value. Caution must be used here
+however, the most extreme value may not occur in the center of the region
+you are fixing. The parameter "value" is the number for constant
+substitution. The horizontal and vertical viewing angles for the surface
+plots are set by "angh" and "angv". It is possible to run this task in
+fixpix style, see the examples at the end of the help page.
+
+All of the parameters above are in the setup file for this task, and may
+be changed while running the task interactively by typing ":" and the
+parameter name followed by the new value, for example ':search 6'. Typing
+just the ":" and the parameter name will give the current value for that
+parameter. To edit the task parameters from the interactive mode, just type
+":epar". Exit this menu as any other using "^z". Running this task in
+interactive mode, a circular cursor appears in the imtool window. This is
+controlled by the mouse and is used to mark the regions to be edited. There
+are many other commands that can be used interactively.
+
+While running this task interactively, the radius is changed using the '+'
+and '-' keys. The 't' key toggles between a search for the maximum or
+minimum valued pixel within the "search" radius. The "space bar" gives
+statistics on the region defined by the task parameters around the position
+of the cursor. The "p" key gives a box of pixel values and statistics. "u"
+undoes the most recent change performed. If you have made changes that
+you want to redo, "i" initializes the image without saving the changes
+so you may begin again. To display the image after performing a few
+operations (if autodisplay is off), use "r". For the surface
+graph, type "g". To quit and save the image, type "q". If you screw up,
+"Q" exits without saving the changes.
+
+The editing options are broken into pairs for the rectangle or aperture
+(square or circle defined in the task parameters) region. The rectangular
+region is defined interactively using two cursor positions, a "again:" will
+appear in the gterm window waiting for the second position to be marked. The
+"a" and "b" commands perform a background fit to edit the rectangle or
+aperture region, respectively. "d" and "e" are the constant value
+substitution option. Typing "j" or "k" replaces the defined region by input
+data. Line or column interpolation are done using a rectangular region with
+the "c" and "l" keys. The "f" key will interpolate across the narrowest
+dimension of the region marked. The "u" key will undo the last operation
+performed on the image and will redisplay if "autodisplay" is "yes". To get
+the interactive help, type "?" while running the task. You must type a "space
+bar" to get the next page and "q" to get out of the help mode. The mouse
+buttons work in interactive mode to center and zoom (middle) and change the
+transfer function (right).
+.le
+.bp
+.ls \fIAPPENDIX J: Using the Satellite Link to the US\fR
+
+CTIO in conjunction with NASA, now has a satellite link to the US which is
+open to all users, for remote logins, copying files to or from home, and
+real time communications with collaborators in the US. In 3-5 years, remote
+observing may be possible. We encourage you to use the link and if you do,
+please report it in your visitor suggestions form before you leave CTIO.
+This document explains how to log onto your computer
+at home, how to copy files in either direction, and instructions for copying
+images to your home institution. It is also possible to have collaborators
+in the US checking images as they are taken.
+
+.ce
+\fI1. Remote Login\fR
+
+You may log onto machines at your home institution using the machine name or
+the internet number assigned to the machine. If you first try the name and
+cannot connect, use "nslookup machinename.path", to get the internet number
+for your machine. The UNIX command to remotely log onto other machines is
+"telnet". The following example shows the possible forms:
+
+.nf
+      cl> !nslookup bootes.unm.edu
+      Server:  ctio.edu
+      Address:  139.229.1.2
+
+      Non-authoritative answer:
+      Name:    bootes.unm.edu
+      Address:  129.24.8.2
+
+      cl> telnet bootes.unm.edu
+      Trying 129.24.8.2 ...
+      Connected to bootes.unm.edu.
+      Escape character is '^]'.
+
+             +---------------------------------------------------+
+             |              University of New Mexico             |
+             | Computer and Information Resources and Technology |
+             +---------------------------------------------------+
+
+         The BOOTES Local Area Vax Cluster
+         Local Node UNMB -- VAX 6000-320 Running VAX/VMS V5.4-2  
+
+      Username:
+.fi
+
+You may now log onto your home machine, provided you have an account. Using
+the address instead of the name, "telnet 129.24.8.2", would give the same
+result. Typing in your username will result in a prompt for the password.
+You may now read mail, run programs, and edit files on your home machine.
+Logging off your home machine will kill the connection.
+
+.ce
+\fI2. Copying Files\fR
+
+The UNIX command "ftp" is used to copy files between machines. If you have
+a file on your home computer that you wish to copy down to your visitor
+account, for example, your loginuser.cl file, do the following:
+
+.nf
+      cl> !ftp 129.24.8.2
+      Connected to 129.24.8.2.
+      220 BOOTES.UNM.EDU MultiNet FTP Server Process 3.0(12) at Thu
+      10-Oct-91 3:01PM-MDT
+      Name (129.24.8.2:username): iraf
+      331 User name (iraf) ok. Password, please.
+      Password:
+      230 User IRAF logged into CPD:[USER.IRAF] at Thu 10-Oct-91 17:02,
+      job 5c6b.
+      ftp> 
+.fi
+
+Since "ftp" is not normally defined as a foreign task in IRAF, you must use an
+exclamation point in front of the command. Now you must go the the directory where
+your file resides and use "get" to pull it from your home directory to the CTIO
+computer. At the same time we will send a file home called 'backup'.
+
+.nf
+      ftp> cd cpd:[user.iraf.workspace]
+      250 Connected to CDP:[USER.IRAF.WORKSPACE].
+      ftp> dir
+      200 Port 6.65 at Host 129.24.8.2 accepted.
+      150 List started.
+
+      CDP:[USER.IRAF.WORKSPACE]
+       
+       LOGINUSER.CL;1   2034   2-AUG-1991 08:07 [AP$,IRAF] (RWED,RWED,RE,)
+       FIRST_TRY.FITS;1 2020   2-AUG-1991 08:08 [AP$,IRAF] (RWED,RWED,RE,)
+       VARS.DST;1       33   2-AUG-1991 08:06 [AP$,IRAF] (RWED,RWED,RE,)
+
+
+      Total of 4087 blocks in 3 files.
+      226 Transfer completed.
+      295 bytes received in 0.86 seconds (0.34 Kbytes/s)
+      ftp> get loginuser.cl
+      200 Port 6.67 at Host 139.229.2.60 accepted.
+      150 ASCII retrieve of CDP:[USER.IRAF.WORKSPACE]LOGINUSER.CL;$ started.
+      226 Transfer completed.  16896 (8) bytes transferred.
+      local: LOGINUSER.CL remote: LOGINUSER.CL
+      16896 bytes received in 6.6 seconds (2.5 Kbytes/s)
+      ftp> send backup
+      200 Port 6.76 at Host 139.229.2.60 accepted.
+      150 ASCII Store of CPD:[USER.IRAF.WORKSPACE]BACKUP.;1 started.
+      226 Transfer completed.  620 (8) bytes transferred.
+      local: backup remote: backup
+      620 bytes sent in 0.0057 seconds (1.1e+02 Kbytes/s)
+      ftp> quit
+      221 QUIT command received. Goodbye.
+      cl>
+.fi
+
+The file will be copied to the directory from which you ran "ftp". There is
+a help page available in UNIX by typing "man ftp" within or outside of IRAF.
+
+.ce
+\fI3. Sending Images Home\fR
+
+If you have an image that you would like to get to a collaborator quickly,
+then you must first write the image onto disk using wfits. You should use
+the proper format. For a fits format disk image you must first type "binary".
+This will set the mode for transfer, so then type the "send" command. This
+works that same for getting an image from home to compare with one you have
+just taken, use "get imagename".
+
+.nf
+      cl> !ftp 129.24.8.2
+      Connected to 129.24.8.2.
+      220 BOOTES.UNM.EDU MultiNet FTP Server Process 3.0(12) at Thu
+      10-Oct-91 3:01PM-MDT
+      Name (129.24.8.2:username): iraf
+      331 User name (iraf) ok. Password, please.
+      Password:
+      230 User IRAF logged into CPD:[USER.IRAF] at Thu 10-Oct-91 17:02,
+      job 5c6b.
+      ftp> binary
+      200 Type I ok.
+      ftp> send image.fits
+      200 Port 6.76 at Host 139.229.2.60 accepted.
+      150 BINARY Store of CPD:[USER.IRAF.WORKSPACE]IMAGE.FITS;1 started.
+      226 Transfer completed.  620 (8) bytes transferred.
+      local: image.fits remote: image.fits
+      620 bytes sent in 0.0057 seconds (1.1e+02 Kbytes/s)
+.fi
+
+If you wish to copy all of your images at the end of the night to your home
+computer, there are several more steps required. You should find some space
+on a disk to write all your nights images to fits format. Use the UNIX "tar"
+utility to write them all to one tar file, and use "compress" on this file.
+The following example shows the steps to first get the images copied to the
+home machine and then, what to do when you get home to retrieve the images.
+
+.nf
+      cl> cd home$tardir
+
+      cl> wfits *.imh image
+
+      File 1: may12.08.imh -> image001 sn1991t  B        Size = 509 x 506
+              xtype=short bitpix=16 blkfac=fixed scaling=none
+              2 Header  358  Data logical (2880 byte) records written
+      File 2: may12.09.imh -> image002 sn1991t  V        Size = 509 x 506
+              xtype=short bitpix=16 blkfac=fixed scaling=none
+              2 Header  358  Data logical (2880 byte) records written
+      File 3: may12.10.imh -> image003 sn1991t  R        Size = 509 x 506
+              xtype=short bitpix=16 blkfac=fixed scaling=none
+              2 Header  358  Data logical (2880 byte) records written
+      File 4: may12.11.imh -> image004 sn1991t  I        Size = 509 x 506
+              xtype=short bitpix=16 blkfac=fixed scaling=none
+              2 Header  358  Data logical (2880 byte) records written
+      File 5: may12.07.imh -> image005 sn1991t  U        Size = 509 x 506
+              xtype=short bitpix=16 blkfac=fixed scaling=none
+              2 Header  358  Data logical (2880 byte) records written
+
+      cl> !tar -cvf images.tar image*
+
+      cl> !compress images.tar
+
+      cl> !ftp 129.24.8.2
+
+      Connected to 129.24.8.2.
+      220 BOOTES.UNM.EDU MultiNet FTP Server Process 3.0(12) at Thu
+      10-Oct-91 3:01PM-MDT
+      Name (129.24.8.2:username): iraf
+      331 User name (iraf) ok. Password, please.
+      Password:
+      230 User IRAF logged into CPD:[USER.IRAF] at Thu 10-Oct-91 17:02,
+      job 5c6b.
+      ftp> binary
+      200 Type I ok.
+      ftp> send images.tar.Z
+      200 Port 6.76 at Host 139.229.2.60 accepted.
+      150 BINARY Store of CPD:[USER.IRAF.WORKSPACE]IMAGE.TAR.Z;1 started.
+      226 Transfer completed.  14432(8) bytes transferred.
+      local: image.tar.Z remote: image.tar.Z
+      620 bytes sent in 0.0057 seconds (1.1e+02 Kbytes/s)
+      ftp> quit
+      221 QUIT command received. Goodbye.
+      cl>
+.fi
+
+The file is in the same form as the file on the machine here. When you return
+home, first you must use the UNIX "uncompress images.tar.Z". This assumes that
+your home machine runs UNIX. Then use "tar xvf images.tar". And finally
+you must get the images out of fits storage format by using "rfits image* raw
+raw oldiraf+".
+
+.ce
+\fI4. Collaborations\fR
+
+We have had astronomers log in remotely from the states to look over the
+shoulder of their collaborator at the telescope and do data reduction while
+the other observed. This requires that IRAF host files be set to the proper
+path, especially for displaying images remotely at the US terminal. If you
+would like to have your collaborator looking over your shoulder while
+observing, you must talk with Steve Heathcote, sheathcote@noao.edu, so that
+the link may be set up \fIBEFORE\fR your observing run. There is a UNIX
+command "talk" which enables two people to talk to one another in one of
+the windows while reductions are being done in another. To use "talk" you
+must specify the username of the person being contacted, if you are on the
+same machine, or specify the username@machinename for other machines. The
+online help for "talk" is available by typing "man talk".
+.le
+.bp
+.ls \fIAPPENDIX K: Using the Computers at CTIO, by Lisa Wells\fR
+
+.nf
+	  1. Introduction
+	     1.1. Notation
+          2. The Workstations
+	     2.1. Resources
+          3. How To...
+	     3.1. Logging In
+	     3.2. Logging Out
+	     3.3. Transferring Pictures from the CCD Computer
+	     3.4. Displaying Images
+	     3.5. Printing Files and Plots and Other Things
+	     3.6. Allocating the Tape Drive
+	     3.7. Managing Disk Space
+	     3.8. Using Sub-Directories
+	     3.9. Using the Exabyte Devices
+          4. Doing More with SunView Windows
+	     4.1. Pop-up Menus
+	     4.2. Specific Tools
+	     4.3. Accelerators
+	     4.4. SunView Default Tool Files
+          5. Other UNIX Features
+	     5.1. man
+	     5.2  enscript
+	     5.3. TEX and LATEX
+	     5.4. mongo
+	     5.5. visual (vi) screen editor and emacs
+	     5.6. mail
+	     5.7. rlogin, telnet, rcp and ftp
+          6. IRAF Examples
+	     6.1. rfits and rcamera
+	     6.2. wfits
+	     6.3. ctio
+	     6.4. ccdred
+          7. Documentation
+	  8. Games
+	  Appendix A: System Information
+	  Appendix B: Default Initialization Files
+.fi
+.le
+.endhelp

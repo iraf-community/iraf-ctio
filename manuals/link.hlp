@@ -1,0 +1,44 @@
+.help link Mar88 manuals
+.ls LOGGING ONTO MACHINES USING THE LINK
+
+All the computers used at CTIO are linked together. If you are logged onto one
+machine you can easily login to any other. Telnet connects all the computers
+used at CTIO. If you want to send mail via SPAN abroad then you must login to
+the "VAX1" machine located downtown. Using this to connect to another machine
+is easy, ie:
+
+.nf
+      mach% telnet ctiov1
+.fi
+
+You must then login in the usual manner by typing in your username and password
+when prompted. There are two VAXs which may be accessed this way, ctiov1 and 
+ctiov2. This will also work if you are logged in and using IRAF. So if you are
+logged onto a VAX and would like to connect to a SUN, just use telnet. You must
+then be sure to turn off the caps lock when returning to a SUN, or the UNIX
+systems will be thrown into a strange mode. This can be gotten out of by logging
+out and then logging back in using lower case. All the SUNs are linked via 
+'rlogin'. NOTE THAT 'rlogin' IS BETTER THAN 'telnet' IF YOU ARE ONLY USING A 
+REMOTE LOGIN TO ANOTHER SUN. If you are on one SUN and would like to login to 
+get onto "SUN1" ie, ctios1 in La Serena then all you need do is type:
+
+.nf
+      mach% rlogin ctios1
+.fi
+
+This will log you onto the "SUN1" machine in La Serena from the machine you are 
+currently logged onto. The possible choises are:
+
+.nf 
+        \fBMountain\fR                \fBLa Serena\fR
+       	 ctio4m                  ctios1
+       	 ctio1m                  ctios2
+       	 ctio60                  ctios3
+         ctio36
+.fi
+
+Rlogin is usable in IRAF, however if you are logged onto the VAX you can get
+to the other machines using telnet only. If you have any problems, contact
+Mario Hamuy, Lisa Wells, or Jim Hughes.
+.le
+.endhelp

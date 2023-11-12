@@ -1,0 +1,5 @@
+# apropos parameter file
+subject,s,a,"",,,Subject
+aproposdb,s,h,"aproposdb",,,Apropos databases
+ignore_case,b,h,yes,,,Ignore case in subject string ?
+verbose,b,h,no,,,Print database file names when searching ?

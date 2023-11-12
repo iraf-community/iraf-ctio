@@ -1,0 +1,10 @@
+# imcreate mkpkg file (Fri Oct 26 10:42:52 CDT 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_imcreate.x	<imhdr.h>
+	;

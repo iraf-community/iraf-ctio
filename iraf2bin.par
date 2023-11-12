@@ -1,0 +1,6 @@
+# iraf2bin parameter file
+images,s,a,"",,,Input images
+files,s,a,"",,,Output files
+data_type,s,h,"ubyte","|ubyte|ushort|short|int|long|real|",,Output data type
+swap,s,h,"none","|none|swap2|swap4|",,Byte swap mode
+header,b,h,no,,,Write output header for Roddier images ?

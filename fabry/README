@@ -1,0 +1,41 @@
+FABRY			29-Dic-87	(Pedro Gigoux)
+
+This directory contains the files of the Fabry-Perot package, written
+originally by George Jacoby on the VAX1. This package was ported into
+the SUN with the following modifications:
+
+1.- The "icur" program (Fortran) is no longer supported since is machine
+dependent. The "jdisplay" program may be used instead.
+
+2.- The "icntr" program was functionally changed from the user point of
+view. It is no longer possible to mark stars with this program and the
+"jdisplay" program may be used for this step. The algorithms were traslated
+from Fortran to SPP and liked with the new main program, so the output
+is totally compatible with the old one.
+
+3.- The reference to the iraf$noao/onedspec/identify/libpkg.a libray was
+eliminated, because it may cause problems with new versions. The file
+"peaks.x" containig the referenced subroutines was copied to the package
+directory. This change was made in the VAX as well.
+
+
+The files that are modified from the VAX version are:
+
+fabry.cl	package declaration
+fabry.hd	package help declaration
+fabry.men	package menu
+fabry.par	package parameter file
+mkpkg		mkpkg file
+
+
+The files that are new from the VAX version are:
+
+t_icntr.x	find star centroids
+icntr.x		SPP version of some icntr.f subroutines
+icntr.par	icntr parameter file
+
+
+The files that are no longer present from the VAX version are:
+
+icur.f		mark star positions
+icntr.f		find star centroids

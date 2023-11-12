@@ -1,0 +1,11 @@
+# magband/magavg mkpkg file (Fri Mar 30 12:07:32 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_magavg.x	"magavg.com" <error.h>
+	t_magband.x	<error.h> <math/iminterp.h>
+	;

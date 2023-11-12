@@ -1,0 +1,45 @@
+# filecalc mkpkg file (Thu Mar 19 16:32:34 CST 1992)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+generic:
+	$ifnewer (fccode.gx, fccode.x)
+	    $generic -k -o fccode.x fccode.gx
+	$endif
+	$ifnewer (fcvops.gx, fcvopsr.x) $generic -k -t rd fcvops.gx $endif
+	$ifnewer (fceval.gx, fcevalr.x) $generic -k -t rd fceval.gx $endif
+	;
+	
+libpkg.a:
+	$ifeq (USE_GENERIC, yes) $call generic $endif
+
+	$ifnewer (fcparser.y, fcparser.x)
+	    $ifeq (HOSTID, unix)
+		$echo "fcparser.x is out of date; rebuilding with XYACC:"
+		!xyacc -d fcparser.y
+		$move ytab.x fcparser.x
+		$move ytab.h token.h
+	    $else
+		$echo "fcparser.x is out of date; rebuild with XYACC"
+	    $endif
+	$endif
+
+	fccode.x	"code.com" "eval.h" "lexer.h" "parser.h" "token.h"
+	fcerror.x	"lexer.com" "parser.com" "parser.h"
+	fcevald.x	"eval.h" <mach.h>
+	fcevalr.x	"eval.h" <mach.h>
+	fcfiles.x	"filecalc.h" <error.h> <lexnum.h>
+	fcgetline.x	"filecalc.h" <ctype.h>
+	fclexer.x	"lexer.com" "lexer.h" "parser.h" "token.h" \
+			<ctype.h> <lexnum.h> <math.h>
+	fcparse.x	"lexer.com" "parser.com" "parser.h"
+	fcparser.x	"lexer.h" "parser.h" <ctype.h> <lexnum.h>
+	fcproc.x	"filecalc.h" <error.h> <lexnum.h>
+	fcreadexp.x	
+	fcvopsd.x	
+	fcvopsr.x	
+	t_filecalc.x	"filecalc.h" 	
+	;

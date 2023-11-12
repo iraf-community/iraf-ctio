@@ -1,0 +1,77 @@
+.help intvel April88 fabry
+.ih
+NAME
+intvel -- determine velocity by averaging pixels interactively
+.ih
+USAGE
+intvel cube_image output lambda_rest
+.ih
+PARAMETERS
+.ls cube_image
+The name of the image cube to be analyzed
+.le
+.ls output
+The output name of the text file where to append results. If the file
+does not exist, a title line will be written as well.
+.le
+.ls lambda_rest
+The rest wavelength, in Angstroms, of the observed spectral line
+.le
+.ls band = 1
+The band number to display in the image display.
+.le
+.ls nrings = 0
+The number of square rings around the pixel to average. If set to
+zero, no averaging takes place.
+.le
+.ls x_offset = 1
+An offset in columns may have been introduced if the current
+cube is a subsection of a larger one for which the header
+parameters are otherwise correct. This parameter is the
+column position of the start of the subsection.
+.le
+.ls y_offset = 1
+An offset in rows may have been introduced if the current
+cube is a subsection of a larger one for which the header
+parameters are otherwise correct. This parameter is the
+rows position of the start of the subsection.
+.le
+.ls verbose = yes
+If set to yes, the results written into the output file are written to
+the standard output as well.
+.le
+.ls plot = no
+If set to yes, a plot of the spectrum and the associated fit, if any,
+is written to the device selected.
+.le
+.ls device = "stdgraph"
+The device where to send the plot.
+.le
+.ls cursor = ""
+Image cursor. When null the standard image cursor is used. Otherwise
+the specified file is used.
+.le
+.ls x = INDEF
+Used internally by the task
+.le
+.ls y = INDEF
+Used internally by the task
+.le
+.ls wcs = INDEF
+Used internally by the task
+.le
+.ls key = ""
+Used internally by the task
+.le
+.ih
+DESCRIPTION
+This task is an interactive version of \fBavgvel\fR. It first displays
+the image on the \fBimtool\fR display and then allows the user to mark stars
+with the cursor. Cursor readout mode can be toggled on an off by pressing
+the F6 while the cursor is over the \fBimtool\fR window. 
+Stars can be marked using the mouse left button or any key. The \fB'q'\fR
+key quits the program.
+.ih
+SEE ALSO
+velocity, avgvel
+.endhelp

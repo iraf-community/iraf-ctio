@@ -1,0 +1,125 @@
+.help magband Jan89 ctio
+.ih
+NAME
+magband -- Compute the average magnitude for a list of bandpasses
+.ih
+USAGE
+magband spectra table output
+.ih
+PARAMETERS
+.ls spectra
+The list of one-dimensional spectra to process. Any image template
+may be used.
+.le
+.ls table
+The name of the file containing the table with the list of wavelength
+bandpasses.
+This is a text file with two columns. The first one is the bandpass
+wavelength, and the second the bandpass width. 
+Both should be in Angstroms.
+.le
+.ls output
+The output file name. If more than one input image is specified the output
+from the task is appended to this file.
+.le
+.ls format = "wide"
+There are two possible output formats for the output file.
+If \fBformat=wide\fR a multicolumn output is generated, where each column
+is one wavelength bandpass, and each line one image.
+if \fBformat=long\fR a three column output is generated, where each column
+is the wavelength, magnitude and width of the bandpass, respectively.
+Each line is a different bandpass.
+The image name is specified in a separate line with a "#" sign in the first
+column, at the beginning of the bandpass list.
+.le
+.ls fnu = no
+Is flux in units of f-nu ?. If this parameter is \fByes\fR the spectrum
+are converted to f-lambda before computing the magnitudes.
+.le
+.ls convert = yes
+Convert wavelengths in the image headers to Angstroms when they are
+in meters ? (i.e. when they are less than one).
+.le
+.ls flux = no
+Output flux instead of magnitudes ?.
+.le
+.ls fnuzero = 3.68E-20
+The absolute flux per unit frequency at a magnitude of zero.
+This is used to convert the calibration magnitudes to absolute
+flux by the formula
+        
+Flux = fnuzero * 10. ** (-0.4 * magnitude)
+        
+The flux units are also determined by this parameter. However,
+the frequency to wavelength interval conversion assumes 
+frequency in hertz. The default value is based on a 
+calibration of Vega at 5556 Angstroms of 3.52e-20 ergs/cm2/s/hz
+for a magnitude of 0.048.
+This is the same default value used in \fBonedspec.standard\fR.
+.le
+.ls interpolation = "standard"
+Interpolation type. The interpolation types are \fBlinear\fR for
+linear, \fBpoly3\fR for cubic polynomial, \fBpoly5\fR for quintic
+polynomial, \fBspline3\fR for cubic spline, and \fBstandard\fR for
+the same algorithm used by the task \fBonedspec.standard\fR (this is a
+linear interpolation).
+.le
+.ls start = "W0"
+The name of the starting wavelengt keyword in the image header.
+Wavelengths are converted to Angstroms if they are in meters.
+.le
+.ls delte = "WPC"
+The name of the wavelength increment keyword in the image header.
+Wavelengths are converted to Angstroms if they are in meters.
+.le
+.ih
+DESCRIPTION
+First the task reads in the bandpasses table and stores it into memory.
+Then, for each image in the input list it computes the average magnitude,
+or flux, for each bandpass centered in the bandpass wavelength.
+Pixel values are interpolated if the boundaries of the bandpass are at
+fractional pixel values, according to the interpolation type selected.
+It is required that the input spectra are one-dimensional, and dispersion
+corrected. Otherwise they are skipped with a warning message.
+If a bandpass is totally or partially outside of a spectrum wavelength
+range, an INDEF value is printed as the magnitude for that bandpass.
+The output of the task is a text file with a multicolumn or multiline
+format. The second one is compatible with the input expected by the
+task \fBonedspec.standard\fR.
+.ih
+EXAMPLES
+Compute the average magnitude for a list of five bandpasses, and
+output the results in two different formats. There is only one input
+spectrum in f-nu.
+.sp
+.nf
+lo> type table
+3509. 45.
+4566. 45.
+5840. 45.
+6440. 45.
+7782. 45.
+8092. 45.
+
+lo> magband fnu5501.imh table outw form="wide" fnu=yes
+lo> type outw
+Wavelen.   3509   4566   5840   6440   7782   8092 
+Width        45     45     45     45     45     45 
+
+fnu5501.  6.665  5.503  5.759  5.859  6.090  6.110 
+
+lo> magband fnu5501.imh table outl form="long" fnu=yes
+lo> type outl
+
+# fnu5501. 
+  3509  6.665     45 
+  4566  5.503     45 
+  5840  5.759     45 
+  6440  5.859     45 
+  7782  6.090     45 
+  8092  6.110     45 
+.fi
+.ih
+SEE ALSO
+onedspec.standard
+.endhelp

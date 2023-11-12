@@ -1,0 +1,14 @@
+# sphot mkpkg file (Fri Mar 30 12:07:59 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	photom.f	
+	radius2.f	
+	t_sphot.x	"sphot.com" <error.h>
+	value.f	
+	xysetup.f	
+	;

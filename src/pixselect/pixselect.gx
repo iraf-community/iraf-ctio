@@ -1,0 +1,149 @@
+include <imhdr.h>
+
+$for (silrdx)
+
+# PIXSELECT -- List pixels in an image between a lower and upper value.
+
+procedure pixselect$t (im, lower, upper)
+
+pointer	im				# Image descriptor
+real	lower, upper			# Range to be replaced
+
+int	i, j
+int	npix, ndim
+PIXEL	floor, ceil
+pointer	line
+$if (datatype == x)
+real	abs_floor, abs_ceil
+$endif
+long	v[IM_MAXDIM], lv[IM_MAXDIM]
+
+int	imgeti(), imgnl$t()
+
+begin
+	# Setup start vector for sequential reads and writes.
+	call amovkl (long(1), v,  IM_MAXDIM)
+	call amovl  (v,       lv, IM_MAXDIM)
+
+	# Get image dimension
+	ndim = imgeti (im, "i_naxis")
+	npix = imgeti (im, "i_naxis1")
+
+	# If both lower and upper are INDEF then list all pixels, if
+	# lower is INDEF then list all pixels below upper, and if upper
+	# is INDEF then list all pixels above lower. Otherwise list pixels
+	# in the given window.
+	if (IS_INDEFR (lower) && IS_INDEFR (upper)) {
+	    while (imgnl$t (im, line, v) != EOF) {
+		do i = 1, npix {
+		    call printf (" %4d")		# x
+			call pargi (i)
+		    do j = 2, ndim {			# y, z, ...
+		        call printf (" %4d")
+			    call pargl (lv[j])
+		    }
+		    $if (datatype == x)
+		    call printf ("  %z\n")		# pixel value
+			call pargx (Memx[line + i - 1])
+		    $else
+		    call printf ("  %g\n")
+			call parg$t (Mem$t[line + i - 1])
+		    $endif
+		}
+		call amovl (v, lv, IM_MAXDIM)
+	    }
+
+	} else if (IS_INDEFR (lower)) {
+	    ceil = PIXEL (upper)
+	    $if (datatype == x)
+	    abs_ceil = abs (ceil)
+	    $endif
+	    while (imgnl$t (im, line, v) != EOF) {
+		do i = 1, npix {
+		    $if (datatype == x)
+		    if (abs (Memx[line + i - 1]) <= abs_ceil) {
+		    $else
+		    if (Mem$t[line + i - 1] <= ceil) {
+		    $endif
+			call printf (" %4d")		# x
+			    call pargi (i)
+			do j = 2, ndim {		# y, z, ...
+			    call printf (" %4d")
+				call pargl (lv[j])
+			}
+			$if (datatype == x)
+			call printf ("  %z\n")		# pixel value
+			$else
+			call printf ("  %g\n")
+			$endif
+			    call parg$t (Mem$t[line + i - 1])
+		    }
+		}
+		call amovl (v, lv, IM_MAXDIM)
+	    }
+
+	} else if (IS_INDEFR (upper)) {
+	    floor = double (lower)
+	    $if (datatype == x)
+	    abs_floor = abs (floor)
+	    $endif
+	    while (imgnl$t (im, line, v) != EOF) {
+		do i = 1, npix {
+		    $if (datatype == x)
+		    if (abs (Memx[line + i - 1]) >= abs_floor) {
+		    $else
+		    if (Mem$t[line + i - 1] >= floor) {
+		    $endif
+			call printf (" %4d")		# x
+			    call pargi (i)
+			do j = 2, ndim {		# y, z, ...
+			    call printf (" %4d")
+				call pargl (lv[j])
+			}
+			$if (datatype == x)
+			call printf ("  %z\n")		# pixel value
+			$else
+			call printf ("  %g\n")
+			$endif
+			    call parg$t (Mem$t[line + i - 1])
+		    }
+		}
+		call amovl (v, lv, IM_MAXDIM)
+	    }
+
+	} else {
+	    floor = double (lower)
+	    ceil  = double (upper)
+	    $if (datatype == x)
+	    abs_ceil  = abs (ceil)
+	    abs_floor = abs (floor)
+	    $endif
+	    while (imgnl$t (im, line, v) != EOF) {
+		do i = 1, npix {
+		    $if (datatype == x)
+		    if (abs (Memx[line + i - 1]) >= abs_floor &&
+			abs (Memx[line + i - 1]) <= abs_ceil) {
+		    $else
+		    if (Mem$t[line + i - 1] >= floor &&
+			Mem$t[line + i - 1] <= ceil) {
+		    $endif
+			call printf (" %4d")		# x
+			    call pargi (i)
+			do j = 2, ndim {		# y, z, ...
+			    call printf (" %4d")
+				call pargl (lv[j])
+			}
+			$if (datatype == x)
+			call printf ("  %z\n")		# pixel value
+			$else
+			call printf ("  %g\n")
+			$endif
+			    call parg$t (Mem$t[line + i - 1])
+		    }
+		}
+		call amovl (v, lv, IM_MAXDIM)
+	    }
+	}
+end
+
+$endfor

@@ -1,0 +1,6 @@
+# FITS parameters for dfits 
+fits_file,f,a,"mta",,,FITS data source
+file_list,s,a,"",,,File list
+long_header,b,h,no,,,Print FITS header cards?
+form_file,s,h,"ctio$src/dfits/format.dat",,,Format file name
+mode,s,h,ql,,,

@@ -1,0 +1,98 @@
+.help bin2iraf Nov90 ctio
+.ih
+NAME
+bin2iraf -- Convert binary files into IRAF images
+.ih
+USAGE
+bin2iraf files images nlines ncols
+.ih
+PARAMETERS
+.ls files
+Input file list.
+.le
+.ls images
+Output image list. This list should be equal in length to the
+list of input files.
+.le
+.ls nlines
+Number of lines in the output image. If the number of lines is one
+the output images will be one dimensional. Otherwise they will be
+two dimensional.
+.le
+.ls ncols
+Number of columns in the output image.
+.le
+.ls nskip = 0
+Number of bytes to skip before reading the pixel data. This parameter
+allows skipping of header data that might be at the begging of the file.
+.le
+.ls data_type = "ubyte"
+File data type. It can take the following values: \fBubyte\fR for unsigned
+bytes, \fBushort\fR for unsigned short integers, \fBshort\fR for short
+integers, \fBint\fR for integers, \fBlong\fR for long integers, and
+\fBreal\fR for reals.
+The actual number of bits used to represent of these numbers is machine
+dependent, although normally a byte is eight bits long, a short is
+sixteen bits long, and an int and a long are thirty two bits long, 
+and a real is also thirty two bits long.
+.le
+.ls swap = "none"
+Byte swap mode. It can take the following values: \fBnone\fR to leave data
+untouched, \fBswap2\fR to swap every two bytes, and \fBswap4\fR to swap
+every four bytes.
+A byte in this case is always eight bits long.
+With \fBswap2\fR the hexadecimal input sequence "0123456789ABCDEF" is
+converted into "23016745AB89EFCD", and with \fBswap4\fR the same sequence
+is converted into "67452301EFCDAB89".
+The line length should be a multiple of two when swapping every two bytes,
+and a multiple of four when swapping every four bytes.
+.le
+.ih
+DESCRIPTION
+This task takes a list of binary files and converts them into IRAF images.
+The image title will be set to the name of the corresponding input file.
+The output image data type is chosen automaticaly by the task depending on
+the file data type. It will be \fBshort\fR for file types \fBubyte\fR,
+\fBushort\fR, and \fBshort\fR; \fBint\fR for file type \fBint\fR; and
+\fBlong\fR for file type \fBlong\fR.
+The task can optionally swap bytes when reading each input line from a
+file.
+.ih
+EXAMPLES
+1.- Convert a binary file containing unsigned bytes, into a 32 by 8 IRAF
+image, without byte swapping. List the image header afterwards:
+.nf
+
+ct> bin2iraf file.bin image.imh 32 8 data_type=ubyte swap=none
+ct> imheader image long+
+image[32,8][short]: file.bin
+    No bad pixels, no histogram, min=unknown, max=unknown
+    Line storage mode, physdim [32,8], length of user area 1 s.u.
+    Created Mon 17:03:23 05-Nov-90, Last modified Mon 17:03:24 05-Nov-90
+    Pixel file 'ctiol2!/ul21/iraf/iraf/imageaa.pix' [ok]
+
+.fi
+2.- Convert two binary files containing integers, into two 32 by 32 IRAF
+images, swapping data every two bytes:
+.nf
+
+ct> bin2iraf file1.bin,file2.bin image1,image2 \
+>>> 32 32 data_type=int swap=swap2
+
+.fi
+3.- Convert a binary file containing bytes, into a 512 by 320 IRAF image,
+skipping the first 128 bytes, and without byte swapping:
+.nf
+
+ct> bin2iraf file.bin image.imh 512 320 nskip=128 data_type=ubyte swap=none
+.fi
+.ih
+BUGS
+The number of bytes to skip at the beginning of the files MUST be an
+integral multiple of SZB_CHAR (the size of an SPP character in bytes).
+SZB_CHAR is a machine dependent number defined in hlib$mach.h, normally
+equal to two bytes.
+.ih
+SEE ALSO
+iraf2bin
+.endhelp

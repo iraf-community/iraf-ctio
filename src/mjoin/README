@@ -1,0 +1,7 @@
+DFITS			24-May-90	(Pedro Gigoux)
+
+This directory contains the code for the matching join task. This task
+joins lines in text files by matching the first identifier in each
+line. The files contained here are:
+
+t_mjoin.x		Task procedures

@@ -1,0 +1,12 @@
+IMSORT			24-Aug-89	Pedro Gigoux
+
+This directory contains the code for the image sort task. This task sorts
+images based on the value of a header parameter. The files are:
+
+mkpkg			mkpkg file
+
+imsort.com		imsort common
+
+sort.x			sort procedures
+
+t_imsort.x		task procedures

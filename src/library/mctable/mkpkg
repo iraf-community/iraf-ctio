@@ -1,0 +1,96 @@
+# mctable mkpkg file (Mon Jan 21 14:53:01 CST 1991)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+generic:
+	$set	GEN = "$$generic -k -t csilrdxp"
+
+	$ifnewer (mctcopy.gx, mctcopy.x)
+	    $generic -k -o mctcopy.x mctcopy.gx
+	$endif
+	$ifnewer (mctrestore.gx, mctrestore.x)
+	    $generic -k -o mctrestore.x mctrestore.gx
+	$endif
+
+	$ifnewer (mctclear.gx, mctclearc.x)	$(GEN) mctclear.gx	$endif
+	$ifnewer (mctget.gx,   mctgetc.x)	$(GEN) mctget.gx	$endif
+	$ifnewer (mctput.gx,   mctputc.x)	$(GEN) mctput.gx	$endif
+	$ifnewer (mctsget.gx,  mctsgetc.x)	$(GEN) mctsget.gx	$endif
+	$ifnewer (mctsput.gx,  mctsputc.x)	$(GEN) mctsput.gx	$endif
+	;
+
+libpkg.a:
+	$ifeq (USE_GENERIC, yes) $call generic $endif
+
+	mctalloc.x	"mctable.h"
+	mctclearc.x	"mctable.h"
+	mctcleard.x	"mctable.h"
+	mctcleari.x	"mctable.h"
+	mctclearl.x	"mctable.h"
+	mctclearp.x	"mctable.h"
+	mctclearr.x	"mctable.h"
+	mctclears.x	"mctable.h"
+	mctclearx.x	"mctable.h"
+	mctcopy.x	"mctable.h"
+	mctfree.x	"mctable.h"
+	mctgetbuf.x	"mctable.h"
+	mctgetrow.x	"mctable.h"
+	mctgetc.x	"mctable.h"
+	mctgetd.x	"mctable.h"
+	mctgeti.x	"mctable.h"
+	mctgetl.x	"mctable.h"
+	mctgetp.x	"mctable.h"
+	mctgetr.x	"mctable.h"
+	mctgets.x	"mctable.h"
+	mctgetx.x	"mctable.h"
+	mctindef.x	"mctable.h"
+	mctmaxcol.x	"mctable.h"
+	mctmaxrow.x	"mctable.h"
+	mctncols.x	"mctable.h"
+	mctnrows.x	"mctable.h"
+	mctputc.x	"mctable.h"
+	mctputd.x	"mctable.h"
+	mctputi.x	"mctable.h"
+	mctputl.x	"mctable.h"
+	mctputp.x	"mctable.h"
+	mctputr.x	"mctable.h"
+	mctputs.x	"mctable.h"
+	mctputx.x	"mctable.h"
+	mctreset.x	"mctable.h"
+	mctrestore.x	"mctable.h"
+	mctrew.x	"mctable.h"
+	mctsave.x	"mctable.h"
+	mctsgetc.x	"mctable.h"
+	mctsgetd.x	"mctable.h"
+	mctsgeti.x	"mctable.h"
+	mctsgetl.x	"mctable.h"
+	mctsgetp.x	"mctable.h"
+	mctsgetr.x	"mctable.h"
+	mctsgets.x	"mctable.h"
+	mctsgetx.x	"mctable.h"
+	mctsputc.x	"mctable.h"
+	mctsputd.x	"mctable.h"
+	mctsputi.x	"mctable.h"
+	mctsputl.x	"mctable.h"
+	mctsputp.x	"mctable.h"
+	mctsputr.x	"mctable.h"
+	mctsputs.x	"mctable.h"
+	mctsputx.x	"mctable.h"
+	mctshrink.x	"mctable.h"
+	mcttype.x	"mctable.h"
+	;
+
+zzdebug:
+	$ifeq (USE_GENERIC, yes)
+	    $ifnewer (zzdebug.gx, zzdebug.x)
+	        $generic -k -o zzdebug.x zzdebug.gx
+	    $endif
+	$endif
+
+	$omake  zzdebug.x
+	$link   zzdebug.o ../../libpkg.a -o zzdebug.e
+	$delete	zzdebug.o
+	;

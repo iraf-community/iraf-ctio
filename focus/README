@@ -1,0 +1,6 @@
+FOCUS			21-Dec-89		(Pedro Gigoux)
+
+This directory contains the code for the telescope focus script. The files
+contained here are:
+
+focus.cl		CL script task

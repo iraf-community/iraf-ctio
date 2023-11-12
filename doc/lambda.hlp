@@ -1,0 +1,82 @@
+.help lambda Sep88 ctio
+.ih
+NAME
+lambda -- Print pixel values and wavelengths
+.ih
+USAGE
+lambda input
+.ih
+PARAMETERS
+.ls input
+Input spectum name. It can be any image template including @ lists.
+The input images should be one dimensional spectra.
+.le
+.ls start = "W0"
+The name of the starting wavelengt keyword in the image header.
+.le
+.ls delte = "WPC"
+The name of the wavelength increment keyword in the image header.
+.le
+.ls number = no
+Print pixel number in the third column of the output ?.
+.le
+.ls convert = yes
+Convert wavelengths in the image headers to Angstroms when they are
+in meters ? (i.e. when they are less than one).
+.le
+.ih
+DESCRIPTION
+This task prints the pixel value, corresponding wavelength, and pixel number
+for all the pixels of the spectra specified in the input list.
+The ouput is a two or three column table with the wavelength in the first
+column, the pixel value in the second column, and optionally the pixel
+number in the third one.
+The last column is printed only if \fBnumber=yes\fR.
+The image name is printed at the begining of each output table.
+The output is written to the standard output and may be stored into
+a file by redirecting the output of the task.
+If an image cannot be opened, or if the wavelength keywords are not found
+in the header, it's skipped with a warning message.
+The wavelength parameters in the input image headers can be either in
+meters or Angtroms.
+The appropiate conversion factor will be used, according with the order of
+magnitude of the parameters, in order to always get Angstroms in the output
+table.
+.ih
+EXAMPLES
+Get the pixel values and corresponding wavelength for the image test.imh
+and store it into a file called "wave". Finally, look at the first and last
+parts of the output file.
+This image has a starting wavelength of 3000 Angstroms, and a wavelength
+increment of 5.320002 Angstroms.
+.sp
+.nf
+lo> lambda test.imh > wave
+lo> head wave
+image = test.imh
+
+3000. 0.
+3005.32 0.
+3010.64 0.
+3015.96 0.
+3021.28 0.
+3026.6 2387.733
+3031.92 2387.733
+3037.24 2568.792
+
+lo> tail wave
+5904.72 48252.54
+5910.04 48451.05
+5915.36 48559.14
+5920.68 48507.7
+5926. 48318.09
+5931.32 48194.57
+5936.64 48170.33
+5941.96 48061.23
+5947.28 48209.77
+5952.6 48144.27
+.fi
+.ih
+SEE ALSO
+onedspec.dispcor
+.endhelp

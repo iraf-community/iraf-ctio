@@ -1,0 +1,7 @@
+IMEXTRACT		08-May-90	(Pedro Gigoux)
+
+This directory contains a CL script for extracting image sections around
+a list of pixel coordinates. This task calls the images.imcopy task.
+The file contained here is:
+
+imextract.cl		CL script task

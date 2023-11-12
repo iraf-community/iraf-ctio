@@ -1,0 +1,6 @@
+# imsort parameter file
+images,s,a,"",,,Images to sort
+parameter,s,a,"",,,Sorting parameter
+numeric,b,h,yes,,,Sort numerically instead of alfabetically ?
+invert,b,h,no,,,Reverse the sense of the sort ?
+verbose,b,h,no,,,Print parameter values along with image names ?

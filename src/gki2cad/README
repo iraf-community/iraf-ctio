@@ -1,0 +1,13 @@
+GKI2CAD			10-May-90		(Pedro Gigoux)
+
+This directory contains the code for the GKI to DXF conversion task.
+This task takes GKI metacode files and converts them into a DXF format
+file, suitable for autoCAD. The files contained here are:
+
+cad.h			CAD conversion definitions
+
+cad.x			CAD conversion procedures
+
+dxf.h			DXF format definitions
+
+t_gki2cad.x		Task procedures

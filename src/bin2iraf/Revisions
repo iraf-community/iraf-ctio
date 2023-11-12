@@ -1,0 +1,18 @@
+bin2iraf.par
+t_bin2iraf.x
+	Added "nskip" parameter to specify the number of bytes to skip
+	at the beggining of the file. This was done to allow the user
+	skip a header that might be in the file (PG 28/May/92).
+
+bin2iraf.par
+t_bin2iraf.x
+	Added support for real images and cleaned the code a little
+	bit in the part that deals with non-floating point images. The
+	parameter file was modified to add the real type (PG 28/May/92).
+
+t_bin2iraf.x
+	Fixed a problem when byte swapping was used. It turns out that
+	the number of pixels in a line was used when swapping a line
+	instead of the number of bytes, as expected by the bswap2()
+	and bswap4() routines. This gave some garbage at the end of
+	each output image line (PG 19/Mar/93).

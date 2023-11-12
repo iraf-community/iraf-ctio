@@ -1,0 +1,7 @@
+t_imspace.x
+	Revised the code and added comments (PG 26/Nov/92).
+
+t_imspace.x
+	Fixed a bug that was using the header file to determine the
+	size of the pixel file. The bug showed up only if the pixel
+	file name didn't have a "$" in it (PG 08/Jan/93).

@@ -1,0 +1,56 @@
+.help icntr July87 fabry
+.ih
+NAME
+icntr -- determine centers for a star in a set of images
+.ih
+USAGE
+icntr
+.ih
+PARAMETERS
+.ls entered via FORTRAN write/read
+.le
+.ih
+DESCRIPTION
+This uses device dependent code to obtain cursor positions
+from the image display. Since the hardware cursor position
+is related to, but not equal to, the pixel location, the
+image size must be derived. This is performed using the IMFORT
+routines  to obtain the image dimensions.
+
+The user is requested to enter the name of a file whose
+contents are the names of images containing stars whose
+positions are to be measured. This file is best created
+with the FILES command, and redirecting the output.
+
+A second input parameter is the output coordinate file name.
+As for ICUR, if the file exists, output is appended to the
+current file. If entered as a NULL name, output is to the
+terminal only.  The output file will contain  (x y image)
+where x and y are the centroided locations in the star
+for each image in the input list.
+
+Each time the RETURN key is pressed, the star near the cursor
+(usually must be within 3-5 pixels) is centroided using
+marginal distributions.  CTRL Z is used to exit from the
+cursor read loop.
+.ih
+EXAMPLES
+Create a file of image names, and measure star positions.
+
+	cl> files data00* >fname
+.br
+	cl> icntr
+.br
+	Filename for image names: fname
+.br
+	Coordinate output file: coords
+
+.ih
+BUGS
+The input parameters cannot be given on the CL command line.
+The input is via FORTRAN I/O and not CL I/O because the IMFORT
+routines clash with some low level image display routines.
+.ih
+SEE ALSO
+ICUR
+.endhelp

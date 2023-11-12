@@ -1,0 +1,51 @@
+.help mkapropos Oct88 ctio
+.ih
+NAME
+mkapropos -- make the apropos database
+.ih
+USAGE
+mkapropos helpdir aproposdb
+.ih
+PARAMETERS
+.ls helpdir = "lib$root.hd"
+The filename of the root help directory file (".hd" file)
+defining the help tree to be updated.
+.le
+.ls aproposdb = "ctio$src/apropos/db/root.db"
+The filename of the apropos database to be written. 
+.le
+.ls verbose = no
+If this switch is enabled, \fBmkapropos\fR will print a detailed
+description of the help database as it is being compiled. A
+more concise summary listing only the packages and the number
+of help modules in each package is printed by default.
+.le
+.ih
+DESCRIPTION
+The \fBmkapropos\fR task descends a tree of help directory (".hd") files
+and compiles a text database from the information therein, specifically
+from the package menu files (".men").
+The apropos database is used to speed global searches when information
+is requested for a subject.
+Each line of the apropos database contains the name of the task or package,
+a brief description of it (taken from the .men files) and the package
+where it belongs.
+By default, \fBmkapropos\fR parameters are set to recompiles the standard
+IRAF apropos database (lib$root.db), although any other similar database
+may be recompiled, such as for the \fBctio\fR, and \fBnoao\fR add-on packages.
+Also, every user can build apropos databases for his own packages.
+.ih
+EXAMPLES
+.nf
+1. Update the ctio package apropos database.
+
+	lo> mkapropos ctio$lib/root.hd ctio$src/apropos/db/ctio.db
+
+2. Update a user apropos database.
+
+	lo> mkap helpdir=myroot.hd aproposdb=my.db
+.fi
+.ih
+SEE ALSO
+apropos, mkhelpdb
+.endhelp

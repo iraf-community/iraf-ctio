@@ -1,0 +1,19 @@
+COMPRESSION		17-Jan-92		(Pedro Gigoux)
+
+This directory contains the code for the data compression package. The tasks
+contained here are:
+
+compression.cl			Package files
+compression.hd
+compression.men
+compression.par
+
+doc/				Help pages
+
+fitsread.cl			CL script to read compressed  FITS file
+fitswrite.cl			CL script to write compressed FITS file
+
+imcompress.cl			CL script calling "improc" for compression
+imuncompress.cl			CL script calling "improc" for uncompression
+
+improc.cl			CL script to compress/uncompress IRAF images

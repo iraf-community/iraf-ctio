@@ -1,0 +1,137 @@
+.help immatch Dic89 ctio
+.ih
+NAME
+immatch -- Match one or two dimensional images
+.ih
+USAGE
+immatch images reference output
+.ih
+PARAMETERS
+.ls images
+Input image list. They can be one or two dimensional images.
+.le
+.ls reference
+Reference image to match against the list of input images.
+The dimension of the input images should be the same as the dimension of
+the reference image.
+.le
+.ls output
+Output file.
+.le
+.ls section = ""
+Section to use in the matching algorithm. If no section is specified
+the full range is used, i.e is equivalent to "[*,*]".
+.le
+.ls width = 5.
+Window width for the centroid findind algorithm, in pixels.
+.le
+.ls interactive = yes
+If this switch is set to \fByes\fR, the task will display plots of the
+filtered line and column projections and the correlation patterns.
+.le
+.ls imshift = no
+If this switch is set to \fByes\fR, the task will produce a CL script that
+will run the \fBimshift\fR task to make the input images match the reference
+image.
+Otherwise, it will just list the shifts of the input images with respect
+to the reference image.
+.le
+.ls graphics = "stdgraph"
+Graphics output device.
+.le
+.ls cursor = ""
+Cursor input file. If null the interactive cursor input is used.
+.le
+.ih
+DESCRIPTION
+This task takes a list of input images (one or two dimensional), and
+determines their shifts with respect to a reference image.
+The task can be run either interactively, or non-interactively. When run
+interactively the user can display up to four different plots of the
+filtered line and column projections and the correlation patterns.
+.sp
+The \fBwidth\fR parameter controls the width used by the centroid finding
+algorithm in the correlation patterns. If this value is not set to the
+appropiate value, it is possible to get INDEF values for the shifts.
+.sp
+The output of the task is either a list of image names and their shifts
+with respect to the reference image, or a CL script to run the \fBimshift\fR
+task to make the input images match the reference image. When the CL script
+is generated the output images for \fBimshift\fR are generated as "s_file",
+where "file" is the name of the corresponding input image.
+.ih
+CURSOR COMMANDS
+.ls 3 "c"
+Plot input and reference columns. This option only works if the image is
+two dimensional.
+.le
+.ls 3 "l"
+Plot input and reference lines.
+.le
+.ls 3 "o"
+Overplot next plot.
+.le
+.ls 3 "r"
+Redraw the graph.
+.le
+.ls 3 "w"
+Window the graph. All the \fBgtools\fR options are available.
+.le
+.ls 3 "q"
+Quit the task.
+.le
+.ls 3 "x"
+Plot line correlation.
+.le
+.ls 3 "y"
+Plot column correlation. This option only works if the image is
+two dimensional.
+.le
+.ls 3 "?"
+Print cursor keys help.
+.le
+.ls 3 ":"
+Get acces to colon commands. So far there are no task colon commands, but
+this option gives access to the \fBgtools\fR colon commands.
+.le
+.ih
+EXAMPLES
+1.- Determine the shifts for a list of images:
+.nf
+
+ct> immatch exp*.imh exp2.imh shifts imshift=no interactive=no
+ct> type shifts
+exp4.imh   exp2.imh   -1.135864   1.508759
+exp1.imh   exp2.imh   -0.5351257   -0.8384399
+exp2.imh   exp2.imh   -3.662109E-4   -2.441406E-4
+exp3.imh   exp2.imh   1.645721   INDEF
+ct>
+
+.fi
+2.- Generate a script to shift the same images:
+.nf
+
+ct> immatch exp*.imh exp2.imh shifts.cl imshift=yes interactive=no
+ct> type shifts.cl
+imshift ("exp4.imh", "s_exp4.imh", 1.135864, -1.508759, shifts_file="")
+imshift ("exp1.imh", "s_exp1.imh", 0.5351257, 0.8384399, shifts_file="")
+imshift ("exp2.imh", "s_exp2.imh", 3.662109E-4, 2.441406E-4, shifts_file="")
+imshift ("exp3.imh", "s_exp3.imh", -1.645721, 0., shifts_file="")
+ct>
+.fi
+.ih
+TIME REQUIREMENTS
+The time of execution is variable and strongly dependent on the size of
+the image, and it can take a few seconds for large images.
+.ih
+BUGS
+It is not possible to change the value of the \fBwidth\fR parameter 
+interactively.
+.sp
+If the \fBimshift\fR parameter is set to \fByes\fR, undefined shifts are
+output as zero. This is to prevent the generated script to crash, but it
+might introduce some confusion.
+.ih
+SEE ALSO
+images.imshift
+.endhelp

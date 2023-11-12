@@ -1,0 +1,5 @@
+# Parameter file for NORMALIZE
+
+cube_image,s,a,,,,Input name for image cube
+factors,s,a,,,,List of normalization factors
+verbose,b,h,yes,,,Print progress

@@ -1,0 +1,68 @@
+.help avgvel April88 fabry
+.ih
+NAME
+avgvel -- determine velocity by averaging pixels
+.ih
+USAGE
+avgvel cube_image output lambda_rest
+.ih
+PARAMETERS
+.ls cube_image
+The name of the image cube to be analyzed
+.le
+.ls output
+The output name of the text file where to append results. If the file
+does not exist, a title line will be written as well.
+.le
+.ls lambda_rest
+The rest wavelength, in Angstroms, of the observed spectral line
+.le
+.ls x = 1
+The column of the cube for wich output is desired.
+.le
+.ls y = 1
+The starting line of the cube for which output is desired.
+.le
+.ls nrings = 0
+The number of square rings around the pixel to average. If set to
+zero, no averaging takes place.
+.le
+.ls x_offset = 1
+An offset in columns may have been introduced if the current
+cube is a subsection of a larger one for which the header
+parameters are otherwise correct. This parameter is the
+column position of the start of the subsection.
+.le
+.ls y_offset = 1
+An offset in rows may have been introduced if the current
+cube is a subsection of a larger one for which the header
+parameters are otherwise correct. This parameter is the
+rows position of the start of the subsection.
+.le
+.ls plot = no
+If set to yes, a plot of the spectrum and the associated fit, if any,
+is written to the device selected.
+.le
+.ls device = "stdgraph"
+The device where to send the plot.
+.le
+.ls verbose = yes
+If set to yes, the results written into the output file are written to
+the standard output as well.
+.le
+.ih
+DESCRIPTION
+This task behaves in the same way as the \fBvelocity\fR task, except
+for some differences. Instead of evaluating over a subraster, as in
+\fBvelocity\fR, this task evaluates over a single pixel. Averaging
+is optional and can be selected with the parameter \fBnrings\fR which
+specifies the number of square rings to average around the selected
+pixel. If \fBnrings=0\fR, no averaging is made. The output of the
+program are eight numbers specifying the continuum level, line
+intensity, velocity, velocity dispersion and the corresponding errors.
+This quantities are appended to a text file and may be optionally
+written to the standard output by using the \fBverbose\fR parameter.
+.ih
+SEE ALSO
+velocity, intvel
+.endhelp

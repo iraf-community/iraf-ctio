@@ -1,0 +1,9 @@
+CUREVAL			20-Aug-91		(Pedro Gigoux)
+
+This directory contains the code for the fit evaluation task. This task takes
+the input and output of the CURFIT task, and evaluates the fit for a set
+of given points. The files contained here are:
+
+cureval.gx			Evaluation procedures (generic)
+
+t_cureval.x			Task main procedure

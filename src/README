@@ -1,0 +1,41 @@
+CTIO package SPP sources. Each task is stored in a separate directory
+in order to keep it isolated from other tasks, and also to keep a
+separate revisions file. The tasks contained here are:
+
+apropos/		apropos, mkapropos
+
+bitstat/		bit statistics
+
+colselect/		select columns
+
+coords/			compute celestial coordinates
+
+dfits/			display FITS headers
+
+eqwidths/		equivalent widths
+
+fft1d/			one-dimensional FFT
+
+findfiles/		find files in directories hierarchies
+
+fitrad/			fit radial profile
+
+imsort/			sort images by header keyword
+
+imtest/			test image headers against pixel files and viceversa
+
+irlincor/		infrared linear correction
+
+lambda/			list pixel and wavelengths
+
+magband/		compute magnitudes for wavelength bands
+
+mkpkg			mkpkg file
+
+sphot/			star photometry
+
+statspec/		spectrum statistics
+
+wairmass/		weighted airmass
+
+x_ctio.x		package task declarations

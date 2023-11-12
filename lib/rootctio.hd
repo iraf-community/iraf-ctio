@@ -1,0 +1,8 @@
+# Root task entry for the CTIO package help tree.  Defines `ctio' as both a
+# task and a package in the ctio help database.
+
+ctio		men  = ctio$ctio.men,
+		hlp  = ctio$ctio.men,
+		sys  = ctio$ctio.hlp,
+		pkg  = ctio$ctio.hd,
+		src  = ctio$ctio.cl

@@ -1,0 +1,27 @@
+t_normalize.x
+	Deleted declaration of 'factors' array and extra args to
+	clpopni() call (9/29/03)
+
+t_avgvel.x
+	o  get_radii() call as function, changed to subroutine w/ correct
+	    args.
+	o  Added missing dmin/dmax args to get_radii() call
+	o  Added missing rmin arg to lam_range() call 		(9/29/03, MJF)
+
+t_mkcube.x
+	Fixed a bug related with the way the cube image was created. The
+	output image was opened as NEW_IMAGE, and the image header of the
+	first image in the input list was moved into the output image, by
+	copying one image structure into the other. This does not work
+	under IRAF 2.10 anymore, so it was necessary to open the output
+	image as a NEW_COPY of the first input image and to remove the
+	explicit structure copy (PG 21/Apr/93).
+
+fabry.cl
+	Increased the size of "min_lenuserarea" to be four times the
+	default value defined in IMIO, in order to have enough space
+	for the output image header (PG 21/Apr/93).
+
+fabry.hd
+	Modified to allow HELP find the help pages of the package even 
+	when the CTIO package is not loaded (PG 17/Aug/93).

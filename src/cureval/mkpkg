@@ -1,0 +1,19 @@
+# cureval mkpkg file (Tue Aug 20 11:52:17 CST 1991)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+generic:
+	$set	GEN = "$$generic -k -t rd"
+	$ifolder (curevalr.x, cureval.gx) $(GEN) cureval.gx $endif
+	;
+
+libpkg.a:
+	$ifeq (USE_GENERIC, yes) $call generic $endif
+
+	curevald.x	<error.h> <mach.h> <math/curfit.h>
+	curevalr.x	<error.h> <mach.h> <math/curfit.h>
+	t_cureval.x	
+	;

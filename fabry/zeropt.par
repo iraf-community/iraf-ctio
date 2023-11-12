@@ -1,0 +1,6 @@
+# ZEROPT parameter file
+
+cube_image,s,a,,,,Input name of image cube
+dispersion,s,a,,,,Name of dispersion solution file
+neon_pars,s,a,,,,Name of reference lamp parameter file
+bands,s,a,,,,Band numbers for this lamp image

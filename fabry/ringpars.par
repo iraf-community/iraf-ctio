@@ -1,0 +1,17 @@
+# Parameter file for RINGPARS
+
+input,s,a,,,,Input image name
+output,s,a,,,,Output file to hold ring parameters
+lambda,r,h,0.0,,,Wavelength for this ring
+z,r,h,0.0,,,Etalon z value
+lzfile,s,h,,,,Lambda-Z file name
+average,i,h,7,,,Number of rows to average at each sample
+xstart,i,h,0,,,Starting row number
+ystart,i,h,0,,,Starting column number
+cwidth,i,h,31,,,Width of centroider in pixels
+contrast,r,h,0.1,,,Contrast ratio between weak and strong peaks
+separation,i,h,40,,,Minimum separation between peaks
+threshold,r,h,0.0,,,Minimum threshold to find a peak
+verbose,b,h,no,,,Print answers on terminal
+interactive,b,h,yes,,,Graphical interaction with measurements
+cursor,*gcur,h,"",,,Graphics cursor input

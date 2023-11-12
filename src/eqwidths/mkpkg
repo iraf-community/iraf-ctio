@@ -1,0 +1,10 @@
+# eqwidths mkpkg file (Fri Mar 30 11:49:30 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_eqwidths.x	<error.h> <mach.h> <math/iminterp.h>
+	;

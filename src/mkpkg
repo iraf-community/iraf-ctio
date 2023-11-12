@@ -1,0 +1,57 @@
+# src mkpkg file (Mon Apr 11 14:46:25 AST 1990)
+
+$call	relink
+$exit
+
+update:
+	$call	relink
+	$call	install
+	;
+
+relink:
+	$set	LIBS = "-lxtools -lcurfit -liminterp"
+
+	$update	libpkg.a
+	$omake	x_ctio.x
+	$link	x_ctio.o libpkg.a $(LIBS) -o xx_ctio.e
+	;
+
+install:
+	$move	xx_ctio.e pkgbin$x_ctio.e
+	$purge	pkgbin$
+	;
+
+libpkg.a:
+	@apropos
+	@bin2iraf
+	@bitstat
+	@chpixfile
+	@colselect
+	@compairmass
+	@coords
+	@cureval
+	@dfits
+	@eqwidths
+	@fft1d
+	@filecalc
+	@findfiles
+	@fitrad
+	@gki2cad
+	@helio
+	@imcreate
+	@immatch
+	@imsort
+	@imspace
+	@imtest
+	@iraf2bin
+	@irlincor
+	@lambda
+	@library
+	@magband
+	@mapkeyword
+	@mjoin
+	@pixselect
+	@sphot
+	@statspec
+	@wairmass
+	;

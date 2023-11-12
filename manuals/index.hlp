@@ -1,0 +1,172 @@
+.help index Sept88 Version-1.0
+.sp 9
+
+
+.nf
+                   Cerro Tololo Inter-American Observatory
+
+                            Reduction Manuals
+
+                               Version  2.0
+
+                           For IRAF Version 2.8
+.fi
+.bp
+.nf
+\fII. An Introduction to IRAF\fR
+
+       1. Introduction.
+       2. Login and logout.
+       3. Tutorial # 1. IRAF structure.
+       4. Tutorial # 2. Reading and writing data to tape.
+       5. Tutorial # 3. Handling images.
+       6. Tutorial # 4. Implot task.
+       Editing
+       Common problems: Their cause and cure
+
+\fIII. 2D-Frutti Reductions with IRAF\fR
+
+       1. Introduction.
+       2. Getting the data.
+       3. Reducing the data.
+          3.1   Introduction.
+                3.1.1 Displaying 2D Frutti images.
+          3.2   Reading the data from tape.
+          3.3   Setting the dispersion axis.
+          3.4   Fixing bad pixels.
+          3.5   Creating the flat-field and dark images.
+                Determining scale factors.
+          3.6   Distortion correction: Mapping the distortions.
+          3.7   Distortion correction: Transforming images.
+          3.8   Creating, normalizing and correcting the flat-field.
+          3.9   Applying the flat field correction.
+          3.10  Extracting the spectra.
+          3.11  Wavelength calibration.
+          3.12  Neutral Density filter corrections.
+          3.13  Deriving a sensitivity function.
+          3.14  Applying the sensitivity function.
+
+\fIIII. CSCCD Reductions with IRAF\fR
+
+       1. Introduction.
+       2. Getting the data.
+       3. Reducing the data.
+          3.1   Introduction.
+          3.2   Reading the data from tape.
+          3.3   Setting the dispersion axis.
+          3.4   Preparing the data.
+                3.4.1  Preparing individual calibration frames.
+                3.4.2  Processing the calibration frames.
+                3.4.3  Preparing a final flat.
+                3.4.4  Processing the data.
+                3.4.5  Fixing bad pixels.
+          3.5   Extracting the spectra.
+          3.6   Wavelength calibration.
+          3.7   Deriving a sensitivity function.
+          3.8   Applying the sensitivity function.
+          3.9   Removing cosmic rays.
+
+\fIIV. Echelle Reductions with IRAF\fR
+
+       1. Introduction.
+       2. Getting the data.
+       3. Reducing the data.
+          3.1   Introduction.
+          3.2   Reading the data from tape.
+          3.3   Setting the dispersion axis.
+          3.4   Preparing the data.
+                3.4.1  Preparing individual calibration frames.
+                3.4.2  Processing the calibration frames.
+                3.4.3  Processing the data.
+                3.4.4  Normalizing the flat field.
+                3.4.5  Division by the flat field.
+          3.5   Fixing bad pixels.
+          3.6   Extracting the spectra.
+                3.6.1  Correcting for scattered light.
+                3.6.2  Extracting the object spectra.
+                3.6.3  Extracting the comparison spectra.
+          3.7   Wavelength calibration.
+          3.8   Flux calibration
+                3.8.1  Deriving a sensitivity function
+                3.8.2  Applying the sensitivity function
+
+\fIV. CCD Reductions\fR
+
+       1. Introduction
+       2. Getting the Data
+       3. Reducing the Data
+          3.1   Introduction
+          3.2   Reading the Data from Tape
+          3.3   Setting Up the Translation File and Image Headers
+                3.3.1  Setinstrument for CCD Used
+                3.3.2  Setting the Subsets Parameter and Preparations
+          3.4   Preparing Individual Calibration Frames
+          3.5   Preparing a Final Flat Field
+          3.6   Processing the Images
+          3.7   Creating the Bad Pixel File
+          3.8   Writing the Data to Tape
+
+\fIVI. Photometry\fR
+
+       1. Introduction
+       2. Options and data
+       3. Reading the data from tape
+       4. Photometry with SPHOT
+          4.1 Obtaining the object coordinates
+              4.1.1 Centers using DAOFIND
+              4.1.2 Centers using Imtool
+              4.1.3 Centers using rimcursor
+              4.1.4 Using SPHOT in batch mode
+          4.2 Using SPHOT interactively
+       5. Photometry with APPHOT
+          5.1 APPHOT With the Graphics Window: Making the image plots
+          5.2 Setting the parameters
+          5.3 Running the task phot
+
+\fIVII. Appendices\fR
+
+       A. CTIO Calibration Files
+       B. Using the UNIX/SUN Mailer
+       C. Sending Mail From CTIO
+       D. Linking Between Computers
+       E. Using a PC at CTIO
+       F. Using Suntool Windows
+       G. Using the Imtool Window
+       H. Using the EHISTORY and EPARAM commands
+       I. Using the Computers at CTIO, Paper by Lisa Wells
+          1. Introduction
+             1.1. Notation
+          2. The Workstations
+             2.1. Resources
+          3. How To...
+             3.1. Logging In
+             3.2. Logging Out
+             3.3. Transferring Pictures from the CCD Computer
+             3.4. Displaying Images
+             3.5. Printing Files and Plots and Other Things
+             3.6. Allocating the Tape Drive
+             3.7. Managing Disk Space
+             3.8. Using Sub-Directories
+          4. Doing More with SunView Windows
+             4.1. Pop-up Menus
+             4.2. Specific Tools
+             4.3. Accelerators
+             4.4. SunView Default Tool Files
+          5. Other UNIX Features
+             5.1. man
+             5.2. TEX and LATEX
+             5.3. mail
+             5.4. rlogin, telnet, rcp and ftp
+             5.5. visual (vi) screen editor and emacs
+             5.6. mongo
+          6. IRAF Examples
+             6.1. rfits and rcamera
+             6.2. wfits
+             6.3. ctio
+             6.4. ccdred
+          7. Documentation
+          8. Games
+          Appendix A: System Information
+          Appendix B: Default Initialization Files
+.fi
+.endhelp

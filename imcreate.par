@@ -1,0 +1,13 @@
+# imcreate parameter file
+image,s,a,"",,,Output image name
+naxis,i,a,1,1,7,Number of dimensions
+naxis1,i,a,INDEF,1,,First axis length
+naxis2,i,a,INDEF,1,,Second axis length
+naxis3,i,a,INDEF,1,,Third axis length
+naxis4,i,a,INDEF,1,,Fourth axis length
+naxis5,i,a,INDEF,1,,Fifth axis length
+naxis6,i,a,INDEF,1,,Sixth axis length
+naxis7,i,a,INDEF,1,,Seventh axis length
+header,s,h,"new","|new|copy|",,Output image header [new|copy]
+pixtype,s,h,"short","|reference|ushort|short|int|long|real|double|complex|",,Output pixel type
+reference,s,h,"",,,Reference image name

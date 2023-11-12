@@ -1,0 +1,104 @@
+.help fitswrite Jan92 compression
+.ih
+NAME
+fitswrite -- Create a compressed FITS file from an IRAF image.
+.ih
+USAGE
+fitswrite images fitsfiles [bscale] [bzero]
+.ih
+PARAMETERS
+.ls images
+List of input IRAF images.
+.le
+.ls fitsfiles
+List of output FITS files. A ".Z" is appended automatically to the
+compressed file names.
+.le
+.ls bscale
+This parameters has the same meaning as the \fBbscale\fR parameter of
+\fRwfits\fR.
+The FITS bscale parameter, defined as p = i * bscale + bzero, where
+p and i are the physical and tape data values respectively.
+The bscale parameters is only requested if the scale switch is set
+and the autoscale switch is turned off.
+.le
+.ls bzero
+This parameters has the same meaning as the \fBbzero\fR parameter of
+\fRwfits\fR.
+The FITS bzero parameter (see bscale for a definition).
+Bzero is only requested if the \fBscale\fR switch is set and the autoscale
+switch is turned off.
+.le
+.ls bitpix = 0
+This parameters has the same meaning as the \fBbitpix\fR parameter of
+\fRwfits\fR.
+A \fBbitpix\fR of 8, 16, or 32 will produce either an unsigned byte,
+twos-complement 16 bit integer, or twos-complement 32 bit integer FITS
+image. If \fBbitpix\fR is -32 or -64 IEEE real or double precision
+floating point FITS images are produced.
+If bitpix is set to 0 (the default), \fBwfits\fR will choose one of 8,
+16, 32, -32 or -64 based on the data type of the IRAF image.
+For example a short integer and real image will default to \fBbitpix\fR
+16 and -32 respectively.
+Users should be wary or overriding the default value of \fBbitpix\fR as loss
+of precision in their data may result. In this case wfits will issue a
+warning message and an estimate of the maximum loss of precision to be
+expected.
+.le
+.ls scale = yes
+This parameters has the same meaning as the \fBscale\fR parameter of
+\fRwfits\fR.
+If the scale switch is set, the IRAF image will be scaled before output.
+Two types of scaling are available. The scaling parameters \fBbscale\fR
+and \fBbzero\fR may be entered by the user (\fBautoscale\fR = \fBno\fR),
+or the program can calculate the appropriate \fBbscale\fR and \fBbzero\fR
+factors (\fBautoscale\fR = \fByes\fR). If the \fBscale\fR switch is turned
+off, the IRAF image data is converted directly to integers of the
+specified \fBbitpix\fR with possible loss of precision.
+.le
+.ls autoscale = yes
+This parameters has the same meaning as the \fBautoscale\fR parameter of
+\fRwfits\fR.
+If the \fBautoscale\fR switch is set, \fBwfits\fR calculates the appropriate
+\fBbscale\fR and \fBbzero\fR factors based on the IRAF image data type,
+and the maximum and minimum values of the data.
+.le
+.ls verbose = no
+Verbose operation ?. If this switch is set to \fByes\fR then the task will
+output information about the IRAF to FITS conversion and the compress
+operation.
+.le
+.ls flist1, flist2
+Used internally by the task.
+.le
+.ih
+DESCRIPTION
+This is a CL script that, for each image file in the input list, it
+converts the IRAF image into a FITS file, and then compresses the FITS file.
+A ".Z" suffix is added to the compressed FITS file.
+The compress operation is performed by the UNIX utility \fBcompress\fR,
+called as a foreign task, and the IRAF to FITS conversion is performed by
+the \fBwfits\fR task.
+.ih
+EXAMPLES
+Create a compressed FITS file from an IRAF image, using verbose output.
+.nf
+
+co> fitswrite image fits 1.0 0.0 verbose=yes
+fits.Z:  -- replaced with fits
+File: image  m51  B  600s          Size = 512 x 512
+	2 Header 183 Data logical (2880 byte) records written
+fits: Compression: 53.46% -- replaced with fits.Z
+.fi
+.ih
+TIME REQUIREMENTS
+It takes about fifteen seconds to generate a compressed FITS file for a
+512x512 short image, on a Sparcstation-1 with a SCSI disk.
+.ih
+BUGS
+The task might leave some temporary files in the current directory if it's
+aborted by the user before it completes.
+.ih
+SEE ALSO
+compression.fitsread, dataio.wfits, (UNIX) compress.
+.endhelp

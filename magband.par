@@ -1,0 +1,12 @@
+# magband parameter file
+spectra,s,a,"",,,Input spectra 
+table,s,a,"",,,Table with bandpassses
+output,s,a,"",,,Output file name
+format,s,h,"wide","|wide|long|",,Output format
+interpolation,s,h,"standard","|nearest|linear|poly3|poly5|spline3|standard|",,Interpolation mode
+fnu,b,h,no,,,Flux in units of F-nu ?
+convert,b,h,yes,,,Convert small wavelengths to Angstroms ?
+flux,b,h,no,,,Output flux instead of magnitudes ?
+fnuzero,r,h,3.68E-20,,,Absolute flux zero point
+start,s,h,"W0",,,Starting wavelength keyword
+delta,s,h,"WPC",,,Wavelength increment keyword

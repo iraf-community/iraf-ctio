@@ -1,0 +1,10 @@
+# coords mkpkg file (Fri Mar 30 11:48:35 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_coords.x	<error.h> <math.h>
+	;

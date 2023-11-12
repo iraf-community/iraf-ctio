@@ -1,0 +1,2042 @@
+.help irman Aug92 Version-3.0
+.ce
+\fIVIII. IR Reductions\fR
+
+.nf
+     1. Introduction
+     2. Getting the Data
+          2.1   IR Imaging
+	  2.2   IR Spectroscopy
+     3. Reducing the IR Data
+          3.1   Introduction
+          3.2   Reading the Data from Tape
+	  3.3   Correcting for Detector Non-linearity
+	  3.4   Making a Sky for Subtraction
+          3.5   Combining Images and Sky Subtraction
+	  3.6   Flat Field Correction
+	  3.7   Creating the Bad Pixel File for Your Images
+	  3.8   Hints for Photometry
+     4. Reducing the Flattened Spectra
+	  4.1   Flat Field Correction for IR Spectroscopy
+          4.2   Extraction of Spectra
+	  4.3   Wavelength Calibration
+	  4.4   Atmospheric Correction
+          4.5   Combining Object Spectra and Flux Calibration
+     5. Writing the Data to Tape
+
+
+
+
+
+
+
+
+						     Lisa Wells
+
+						   August 30, 1992
+.fi
+.bp
+.ls \fI1. Introduction\fR
+
+Several tasks have been written in IRAF to be used for infrared data
+reduction. It is primarily used for infrared imaging and spectroscopy. 
+This document is intended as a guideline to reducing IR images and spectra
+using IRAF. If you do not have experience using IRAF we suggest you start by
+reading "An Introduction to IRAF" which will give you a general idea of IRAF
+structure as well as a few fundamental tools.
+
+The examples shown here are just that, examples. The user must decide
+upon the reduction procedure, naming, convention, etc..., appropriate for
+his/her own data and use the cookbook and examples as guidelines only. The
+examples are shown with prompts, for the package containing the tasks (do not
+type the prompts, of course). It is strongly recommended that you perform an
+'lpar' on every task immediately before using it, unless you are familiar with
+all of its parameters. This is not always shown in the examples, but is normal
+practice even among seasoned IRAF users.
+
+IRAF uses two conventions that you should always keep in mind. 
+First, images consist of lines and columns (not rows and columns). Keep in mind
+that the mountain Forth systems for the CCDs are zero-indexed and use rows and
+lines. IRAF uses one-indexed coordinates for images (see figure below). Second,
+the "order" of a function is the number of independent coefficients for a
+polynomial, or the number of intervals for a spline curve. For example, a cubic
+(third-degree) polynomial is described as "order=4" (four coefficients).
+
+If you require personal assistance in your reductions please contact
+either Brooke Gregory(302), Jay Elias(203), or Mario Hamuy(210)
+in La Serena.
+.le
+.bp
+.ls \fI2. Getting the Data\fR
+
+Many observers get confused about the number and kind of calibration
+frames that must be taken to properly reduce their data. This depends
+upon the observing technique being used. This should be explained in
+detail in the instrument manual which is available upon request from
+CTIO. Here is just a quick reference for the necessary calibration images
+needed for both IR instruments.
+
+.ce
+\fI2.1 IR Imaging\fR
+
+During a run using the IR Imager at CTIO, you should get the following:
+
+1) Dome flats or day sky flats should be taken for each filter you are
+using. Preferably this should be done every day, but you can get by with
+just one per run, as long as you take a sufficient number of them, say
+20-30. 
+
+2) Sky flats are necessary if you want to do photometry to better
+than 2%-3%, if you are doing surface photometry of extended objects,
+or if sky subtraction is critical. Again it is good to get as many
+as possible taken close in time with your objects. You should take at
+least as many sky frames as objects frames in each filter. Skys
+for extended objects should be taken completely off the image. If you
+are doing imaging of stars, then do a small grid of positions where
+the star falls on different locations on the chip, 4 for uncrowded
+fields and >8 for crowded fields. These will be combined using different
+algorithms depending upon the type of sky taken.
+
+3) Photometric standard stars should be taken when needed and as many as
+necessary to properly calibrate your objects.
+
+You should refer to the IR Imager Cookbook for more details. We suggest
+you start taking your calibration frames early in the afternoon so that 
+you have enough time left for supper. It is important to note on your
+calibration frames, the positions of bad pixels and then avoid observing
+your objects on these regions of the chip, especially if you plan to do
+photometry. At the end of the reductions, you can use a bad pixel map to
+get rid of these regions or do a general replacement of bad pixel regions.
+This will be discussed later in more detail.
+.ce
+\fI2.2 IR Spectroscopy\fR
+
+During a run using the IRS at CTIO, you should get the following:
+
+1) Dome flats should be taken for each grating you are using. Take many
+(greater than 20) with the telescope pointed at the dome interior or
+at the white spot with a long wavelength blocking filter and the grating
+set so that 3-4um light illuminates the chip. Several grating settings,
+(use intervals of 0.1um in center wavelength), are used to wash out the
+slight fringing at long wavelengths. It is not necessary to produce a
+flat for each grating setting used since the division by the standard star
+removes any residual wavelength dependence. Preferably this should be done
+every day, but you can get by with just one per run, as long as you take a
+sufficient number of them, say >50. 
+
+2) Sky flats are necessary for all the gratings used. Again it is good
+to get as many as possible taken close in time with your objects. These
+will be combined using different algorithms depending upon the type of
+sky taken.
+
+3) Standard stars should be taken at a similar airmass to your objects
+to remove most of the instrumental and atmospheric features. A list of
+objects is available from Jay Elias. Take as many as you see necessary
+to properly calibrate your objects.
+
+4) Darks should be taken with the same exposure time as your flat field
+images. THese will be combined and subtracted only from the flats.
+
+5) For the wavelength calibration, you will need standard stars, skys
+with many lines to be identified in each order.
+
+6) You should take Argon or Xenon lamp exposures as often as is deemed
+necessary.
+
+You should refer to the instrument manual for more details or ask your
+staff contact for more information. We suggest you start taking your
+calibration frames early in the afternoon so that you have enough time
+left for supper. It is important to note on your calibration frames, the
+positions of bad pixels and then avoid observing your objects on these
+regions of the chip. At the end of the reductions, you can use a bad pixel
+map to get rid of these regions or do a general replacement of bad pixel
+regions. This will be discussed later in more detail.
+.le
+.bp
+.ce
+\fI3. Reducing the Data\fR
+.ls \fI3.1 Introduction\fR
+
+A full reduction of CCD data requires the following operations:
+
+.nf
+      1)  Correct for the non-linearity of the detector.
+      2)  Make a sky flat for images grouped in time.
+      3)  Combine like images and perform the sky subtraction.
+      4)  Create a normalized flat field.
+      5)  Create a final flat.
+      6)  Fix the bad pixels in all the images.
+   FOR SPECTRA ONLY CONTINUE TO 7:
+      7)  Extract using the apextract package.
+      8)  Apply wavelength calibration.
+      9)  Apply terrestial atmospheric correction.
+      10) Combine objects and flux calibrate.
+.fi
+
+The most general processing, described in this manual, consists of applying
+the calibration fields to your objects. It is also possible to set up
+certain reduction tasks in batch mode as long as the necessary header
+parameters are specified, (see the flow diagram on the next page).
+
+Individual bias, darks, dome and sky flats must be properly combined to
+give good signal to noise calibration frames. Many algorithms may used
+to combine the images, and this is subject to the number and type of
+calibration frame taken. IRAF offers several algorithms for combining
+the individual frames. You should always carefully inspect all the individual
+frames (either at the telescope or on the SUN), and the final image to check
+for potential problems. Once this step is complete the calibration frames must
+be processed, i.e. sky subtracted and flattened.
+
+Having obtained the combined calibration images you may have to normalize
+the calibration frames in different ways. Corrections may be needed for the
+flat field images. Now you may apply your flat field your images by first
+subtracting the dark+sky and then dividing by the flat. 
+
+The images are finished now except for fixing any bad pixels that may not
+have been taken care of in the flat fielding. Once this is done you may
+now do photometry. If you images are spectra, then continue on to section 4.
+This describes how to extract and combine your spectra and do the wavelength
+and flux calibrations.
+.le
+.bp
+.ls \fI3.2 Reading the data from Tape\fR
+
+Load the dataio package and allocate the appropriate tape drive:
+
+.nf
+      cl> dataio
+      da> alloc mta
+.fi
+
+Now mount your tape on the tape drive and be sure you've removed the write
+ring. It is best to create a separate directory for each night. This is
+done using the command "mkdir night1". Now change to this directory by
+typing "cd night1". Read the data using the task rfits. You must specify
+the tape drive name, the list of files you wish to read and the "root"
+file name. If you transferred your data to the SUN using 'getpix' then you
+may wish to use the naming convention given to your files, in this case
+just set the parameter "oldirafname" to yes. In choosing the root file
+name, its usually a good idea to include a digit in the name to indicate
+`the tape number (eg, "tape2" for the second tape; files would be
+called "tape2001, tape2002,.."); alternatively, an offset may be added (eg,
+offset=89 means the first files would be called "tape2090, tape2091,.." or
+1+89, 2+89,..).
+
+.nf
+      da> epar rfits          (check the parameter)
+      da> rfits mta 1-999 tape1
+.fi
+
+The file list "1-999" should more than cover the number of files on tape;
+the task will end gracefully at the end of the tape. When finished, rewind
+the tape and deallocate the drive,
+
+.nf
+      da> rew mta
+      da> dealloc mta
+.fi
+
+and remove your tape from the drive. We assume that you kept the old IRAF
+name given to your files throughout the rest of this manual.
+
+.nf
+                     \fIrfits\fR
+
+    fits_file = "mta"       FITS data source
+    file_list = "1-999"     File list
+    iraf_file = "tape1"     IRAF filename
+  (make_image = yes)        Create an IRAF image?
+ (long_header = no)         Print FITS header cards?
+(short_header = yes)        Print short header?
+    (datatype = "")         IRAF data type
+       (blank = 0.)         Blank value
+       (scale = yes)        Scale the data?
+ (oldirafname = no)         Use old IRAF name in place of iraf_file?
+      (offset = 0)          Tape file offset
+        (mode = "ql")           
+.fi
+.le
+.bp
+.ls \fI3.3 Correcting for Detector Non-linearity\fR
+
+Once you login and enter IRAF type the following:
+
+.nf
+      cl> noao
+      no> ctio
+      ct>
+.fi
+
+The ct> prompt indicates the ctio package has been loaded. The important
+task here is irlincor. This corrects the images for non-linearity in the
+detector. Althought the non-linearity is small for cases where the maximum
+counts per pixel is under 10K, there is not much effort required to
+apply the correction. This operation is best done in place, it is assumed
+that your images are saved on magnetic tape or other device.
+
+The form of the non-linearity is well known and therefore, the required
+coefficients have been calculated. Edit the parameters of 'irlincor' to
+set these values. The proper setup is shown below. Make a list of your
+images and then run the task.
+
+.nf
+      ct> epar irlincor            (check the parameters)
+      ct> files *.imh > list
+      ct> type list
+      ct> irlincor @list @list &
+.fi
+
+Running the task, you will perform the operation on the images and run this
+task in the background so you may do other things while it is running. This
+will not take a very long time.
+
+
+
+.nf
+			\fIirlincor\fR
+
+        input = "@list"      Input  images
+       output = "@list"      Output images
+      (coeff1 = 1.)          First  coefficient of correction equation
+      (coeff2 = 0.11)        Second coefficient of correction equation
+      (coeff3 = 0.)          Third  coefficient of correction equation
+        (mode = "ql")
+.fi
+.le
+.bp
+.ls \fI3.4 Making a Sky for Subtraction\fR
+
+There are several different ways to combine your skys. IRS sky frames
+will be handled at the end of this section. You also may have
+differents types of skys to create, those for extended objects and those
+for standard stars using the star images themselves. Since the sky is
+changing rapidly throughout the night, it is important to combine skys
+that were taken close in time and position to your images. We will begin
+with the standard star images, grouped by filter type. If you have
+observed more than one object together in time on the sky, and same
+exposure times, you may combine the skys from different images to
+improve the signal to noise. First load the 'images' package, and edit
+the parameters for the task 'imcombine'.
+
+.nf
+      cl> images
+      im> epar imcombine           (check the parameters)
+.fi
+
+You must use the "minmax" algorithm to get rid of all the stars in the
+combined image. The varying sky brightness is removed using the offset
+option. If you don't specify an image section in "statsec", then the
+entire image is used, otherwise choose a region free from bad pixels near
+the center of the image.
+
+This procedure may underestimate the sky, and this can be seen as
+artifacts in the sky subtracted images. You can run some tests on your
+images by trying the "minmax" option which will remove the bias
+and uses one less frame for the computation. For sky images that were
+taken off the program objects, they my be combine using the "median"
+algorithm, so set the "combine" parameter in imcombine to "median".
+Again, you may wish to run some tests using different algorithms to
+find the best solution.
+
+For IRS sky frames, combine the skys for a given object and grating
+setting using "incombine". You should always scale by the mode, and
+specify an image section from the region illuminated by the slit, ie.,
+"[2:60,35:45]". Where the sky remains stable, use "combine = average".
+If the background was unstable, use "combine = median". If you have
+faint stars in the slit, they shoud occur in different places along
+the slit or they will not be removed during the combining. If this
+problem exists, try using "reject = minmax", or experiment with
+other options.
+
+.nf
+                     \fIimcombine for standard stars\fR
+
+      input = "ir001,ir002,ir003,ir004" List of images to combine
+     output = "sky1"        List of output images
+    (plfile = "")           List of output pixel list files (optional)
+     (sigma = "")           List of sigma images (optional)
+   (logfile = "STDOUT")     Log file
+   (combine = "average")    Type of combine operation
+    (reject = "minmax")     Type of rejection
+   (project = no)           Project highest dimension of input images?
+   (outtype = "real")       Output image pixel datatype
+   (offsets = "none")       Input image offsets
+  (masktype = "none")       Mask type
+ (maskvalue = 0.)           Mask value
+     (blank = 0.)           Value if there are no pixels
+     (scale = "none")       Image scaling
+      (zero = "mode")       Image zero point offset
+    (weight = "none")       Image weights
+   (statsec = "")           Image section for computing statistics
+   (expname = "")           Image header exposure time keyword
+(lthreshold = INDEF)        Lower threshold
+(hthreshold = INDEF)        Upper threshold
+      (nlow = 0)            minmax: Number of low pixels to reject
+     (nhigh = 1)            minmax: Number of high pixels to reject
+     (mclip = yes)          Use median in sigma clipping algorithms?
+    (lsigma = 3.)           Lower sigma clipping factor
+    (hsigma = 2.)           Upper sigma clipping factor
+   (rdnoise = "0.")         ccdclip: CCD readout noise (electrons)
+      (gain = "1.")         ccdclip: CCD gain (electrons/DN)
+  (sigscale = 0.1)          Tolerance for sigma clipping scaling correction
+     (pclip = -0.5)         pclip: Percentile clipping parameter
+      (grow = 0)            Radius (pixels) for 1D neighbor rejection
+      (mode = "ql")
+
+
+		     \fIimcombine for skys\fR
+		      
+      input = "ir001,ir002,ir003,ir004" List of images to combine
+     output = "sky1"        List of output images
+    (plfile = "")           List of output pixel list files (optional)
+     (sigma = "")           List of sigma images (optional)
+   (logfile = "STDOUT")     Log file
+   (combine = "median")     Type of combine operation
+    (reject = "minmax")     Type of rejection
+   (project = no)           Project highest dimension of input images?
+   (outtype = "real")       Output image pixel datatype
+   (offsets = "none")       Input image offsets
+  (masktype = "none")       Mask type
+ (maskvalue = 0.)           Mask value
+     (blank = 0.)           Value if there are no pixels
+     (scale = "none")       Image scaling
+      (zero = "mode")       Image zero point offset
+    (weight = "none")       Image weights
+   (statsec = "")           Image section for computing statistics
+   (expname = "")           Image header exposure time keyword
+(lthreshold = INDEF)        Lower threshold
+(hthreshold = INDEF)        Upper threshold
+      (nlow = 0)            minmax: Number of low pixels to reject
+     (nhigh = 1)            minmax: Number of high pixels to reject
+     (mclip = yes)          Use median in sigma clipping algorithms?
+    (lsigma = 3.)           Lower sigma clipping factor
+    (hsigma = 2.)           Upper sigma clipping factor
+   (rdnoise = "0.")         ccdclip: CCD readout noise (electrons)
+      (gain = "1.")         ccdclip: CCD gain (electrons/DN)
+  (sigscale = 0.1)          Tolerance for sigma clipping scaling correction
+     (pclip = -0.5)         pclip: Percentile clipping parameter
+      (grow = 0)            Radius (pixels) for 1D neighbor rejection
+      (mode = "ql")
+
+		     \fIimcombine for skys\fR
+		      
+      input = "ir001,ir002,ir003,ir004" List of images to combine
+     output = "sky1"        List of output images
+    (plfile = "")           List of output pixel list files (optional)
+     (sigma = "")           List of sigma images (optional)
+   (logfile = "STDOUT")     Log file
+   (combine = "median")     Type of combine operation
+    (reject = "minmax")     Type of rejection
+   (project = no)           Project highest dimension of input images?
+   (outtype = "real")       Output image pixel datatype
+   (offsets = "none")       Input image offsets
+  (masktype = "none")       Mask type
+ (maskvalue = 0.)           Mask value
+     (blank = 0.)           Value if there are no pixels
+     (scale = "exposure")   Image scaling
+      (zero = "mode")       Image zero point offset
+    (weight = "none")       Image weights
+   (statsec = "[2:60,35:45]") Image section for computing statistics
+   (expname = "exptime")    Image header exposure time keyword
+(lthreshold = INDEF)        Lower threshold
+(hthreshold = INDEF)        Upper threshold
+      (nlow = 0)            minmax: Number of low pixels to reject
+     (nhigh = 1)            minmax: Number of high pixels to reject
+     (mclip = yes)          Use median in sigma clipping algorithms?
+    (lsigma = 3.)           Lower sigma clipping factor
+    (hsigma = 2.)           Upper sigma clipping factor
+   (rdnoise = "0.")         ccdclip: CCD readout noise (electrons)
+      (gain = "1.")         ccdclip: CCD gain (electrons/DN)
+  (sigscale = 0.1)          Tolerance for sigma clipping scaling correction
+     (pclip = -0.5)         pclip: Percentile clipping parameter
+      (grow = 0)            Radius (pixels) for 1D neighbor rejection
+      (mode = "ql")
+.fi
+.le
+.bp
+.ls \fI3.5 Combining Images and Sky Subtraction\fR
+
+This section will deal with combining "like" frames and performing the
+sky correction. The images package is automatically loaded when you log
+onto the SUN and enter IRAF. However you must load the apphot package
+in order to use the "center" task which will be used to calculate the
+shifts between images taken at different places on the chip. Let us
+begin with the imaging and go to spectra at the end. For all frames
+taken at the same position, use the task 'imcombine' with "combine" set
+to "average", see imcombine setup #1 below:
+
+.nf
+      cl> epar imcombine           (check the parameters)
+      cl> imcombine
+.fi
+
+Do not use "maxreject" since it may bias your data. Images taken at
+different places on the chip must be shifted before being combined.
+If your objects are bright enough such that statistics will yield
+accurate photometry, then use the frames individually. This is a
+good check of the internal consistency of the data taken at different
+places on the chip.
+
+.nf
+		      \fIimcombine setup #1\fR
+		      
+      input = "ir005,ir006,ir007,ir008" List of images to combine
+     output = "comb5to8"    List of output images
+    (plfile = "")           List of output pixel list files (optional)
+     (sigma = "")           List of sigma images (optional)
+   (logfile = "STDOUT")     Log file
+   (combine = "average")    Type of combine operation
+    (reject = "none")       Type of rejection
+   (project = no)           Project highest dimension of input images?
+   (outtype = "real")       Output image pixel datatype
+   (offsets = "none")       Input image offsets
+  (masktype = "none")       Mask type
+ (maskvalue = 0.)           Mask value
+     (blank = 0.)           Value if there are no pixels
+     (scale = "exposure")   Image scaling
+      (zero = "none")       Image zero point offset
+    (weight = "none")       Image weights
+   (statsec = "")           Image section for computing statistics
+   (expname = "exptime")    Image header exposure time keyword
+(lthreshold = INDEF)        Lower threshold
+(hthreshold = INDEF)        Upper threshold
+      (nlow = 0)            minmax: Number of low pixels to reject
+     (nhigh = 1)            minmax: Number of high pixels to reject
+     (mclip = yes)          Use median in sigma clipping algorithms?
+    (lsigma = 3.)           Lower sigma clipping factor
+    (hsigma = 3.)           Upper sigma clipping factor
+   (rdnoise = "0.")         ccdclip: CCD readout noise (electrons)
+      (gain = "1.")         ccdclip: CCD gain (electrons/DN)
+  (sigscale = 0.1)          Tolerance for sigma clipping scaling correction
+     (pclip = -0.5)         pclip: Percentile clipping parameter
+      (grow = 0)            Radius (pixels) for 1D neighbor rejection
+      (mode = "ql")
+.fi
+
+If your images were taken on different places on the chip, then you must
+register the images before combining them. This may be done in a number
+of ways. The tasks "center" and "imshift" may be used. The shifts must be
+calculated by hand from the center coordinates given by the task "center".
+Another method is to use the imtool window to get rough estimates of the
+object centers in the reference image and the rough shifts for all the
+other images to be combined. Then use the task "imalign". This task has
+some bugs that require the first image in the list to have good signal to
+noise with a smooth background. Both these methods will be described.
+
+Method 1.
+
+We will assume that 6 images will be combined, one of which will be chosen
+as the reference image to which all the others will be registered. For
+this you must use the display window, finding the object center of four of
+your images at a time:
+
+.nf
+      cl> imred
+      im> irred
+      ir> display ir005 1
+      ir> display ir006 2
+      ir> display ir007 3
+      ir> display ir008 4
+      ir> epar center              (check the parameters)
+.fi
+
+One note about editing the parameters of 'center', the parameters "datapars",
+and "centerpars" are psets that lead to other parameters. These are used by
+moving the cursor to that line and typing ":e". You will go to a subset of
+parameters that are used by the task. The defaults are usually used. You
+exit this subset by typing "^z", and you will be returned to the main
+parameters. Once the parameters are set, run the task by typing its name,
+"center". This will prompt for the name of the first image in frame 1 of
+the imtool window. Now be sure you are in frame one by checking the title
+of the image. Use "^f" to change frames if necessary, the name is displayed
+at the top of the imtool window. Be sure the image being marked is the same
+as the one displayed in the imtool window. Move the circular
+cursor to the object(s) and press the "space bar". This will save the
+position marked in the file named by the "output" parameter. Go to the next
+image by typing ":image ir006" and then "^f" to get the next frame. Repeat
+this procedure until all the objects in each of the 4 images is marked. For
+bookkeeping purposes, it is best to mark the images in the same order for
+each image.  Continue with the next 2 images by displaying and running the
+task "center".  The "output" file must be renamed, otherwise the file will
+be overwritten, and you will lose the centers for the first 4 images. There
+is a built in safety feature that will send you an error message if you
+should try to overwrite an existing file.
+
+.nf
+                        \fIcenter\fR
+
+        image = "ir005"      Input image
+    (datapars = "")          Data dependent parameters
+  (centerpars = "")          Centering parameters
+      (coords = "")          Coordinate list
+      (output = "out5")      Results
+    (plotfile = "")          Plot metacode file
+    (graphics = "stdgraph")  Graphics device
+     (display = "stdimage")  Display device
+    (commands = "")          Image cursor: [x y wcs] key [cmd]
+      (cursor = "")          Graphics cursor: [x y wcs] key [cmd]
+ (interactive = yes)         Mode of use
+      (verify = yes)         Verify critical parameters in non-interactive 
+      (update = no)          Update critical parameters in non-interactive 
+    (radplots = no)          Plot radial plots on standard graph
+     (verbose = no)          Print messages in non interactive mode
+        (mode = "ql")
+
+                           \fIdatapars\fR
+
+       (scale = 1.)          Image scale in units per pixel
+     (fwhmpsf = 1.)          FWHM of the PSF in scale units
+    (emission = yes)         Features are positive?
+       (sigma = 15.)         Standard deviation of background in counts
+     (datamin = INDEF)       Minimum good data value
+     (datamax = INDEF)       Maximum good data value
+   (threshold = 50.)         Detection threshold in counts above background
+  (cthreshold = 8.)          Centering threshold in counts above background
+       (noise = "poisson")   Noise model
+     (ccdread = "")          CCD readout noise image header keyword
+        (gain = "")          CCD gain image header keyword
+   (readnoise = INDEF)         CCD readout noise in electrons
+       (epadu = 4.)          Gain in electrons per count
+    (exposure = "")          Exposure time image header keyword
+     (airmass = "")          Airmass image header keyword
+      (filter = "")          Filter image header keyword
+     (obstime = "")          Time of observation image header keyword
+       (itime = INDEF)       Exposure time
+    (xairmass = INDEF)       Airmass
+     (ifilter = "INDEF")     Filter
+       (otime = "INDEF")     Exposure time
+        (mode = "ql")
+
+			    \fIcenterpars\fR
+
+  (calgorithm = "centroid")  Centering algorithm
+        (cbox = 3.)          Centering box width in scale units
+    (maxshift = 10.)         Maximum center shift in scale units
+  (minsnratio = 1.)          Minimum SNR ratio for centering
+    (cmaxiter = 20)          Maximum iterations for centering algorithm
+       (clean = no)          Symmetry clean before centering
+      (rclean = 1.)          Cleaning radius in scale units
+       (rclip = 2.)          Clipping radius in scale units
+      (kclean = 3.)          K-sigma rejection criterion in skysigma
+    (mkcenter = no)          Mark the computed center
+        (mode = "ql")
+.fi
+
+The xcenter and ycenter values in the output file can be extracted using
+the task "txdump". To make a list of the positions, type:
+
+.nf
+      ap> txdump out* xcenter,ycenter yes > centre
+      ap> type centre
+      17.32  21.30
+      33.42  36.33
+      32.50  18.54
+      16.02  35.07
+
+      15.38  17.99
+      36.21  27.47
+.fi
+
+The space in the file centre is due to the 2 seperate files of positions.
+Before combining these 6 images, calculate the shifts for 5 of them with one
+image as a reference. The value needed by the task "imshift" is the number
+such that, xshift = xreference - xobject. These shifts must be listed in
+a table of values like the following, (assuming the reference is ir005);
+
+.nf
+      -16.1   -15.03
+      -15.18  2.76
+      1.3     -13.77
+      1.94    3.31
+      -18.89  -6.17
+
+      \fIinlist\fR (input list of images)
+
+      ir006
+      ir007
+      ir008
+      ir009
+      ir010
+.fi
+
+The input list of images must be in the same order as the shifts file.
+IRAF has a built in calculator to help with the arithmetic. Simply type
+"= 17.32 - 33.42". You will get the correct response on the next line,
+"-16.1". You may be more comfortable using your hand held calculator.
+Shift the images using "imshift". To keep from overwriting the images, use
+another list with different names for the "output" parameter. The task
+"imshift" has many ways to calculate the values of the image region
+opposite the shift direction. This can be set to a constant value,
+interpolated from the current edge of the image, or wraped around from the
+other side of the image. You may wish to try different "boundary_type(s)"
+to see which works the best for your images.
+
+.nf
+               	        \fIimshift\fR
+        input = "@inlist"    Input images to be fit
+       output = "@outlist"   Output images
+       xshift =              Fractional pixel shift in x
+       yshift =              Fractional pixel shift in y
+ (shifts_file = "shifts")    Text file containing shifts for each image
+ (interp_type = "linear")    Interpolant (nearest,linear,poly3,poly5,spline
+(boundary_typ = "nearest")   Boundary (constant,nearest,reflect,wrap)
+    (constant = 0.)          Constant for boundary extension
+        (mode = "ql")
+.fi
+
+
+Method 2.
+
+This method is better for images with more than one object. The centers are
+found and the average shift is calculated for all the objects in the images.
+The preliminary steps are very different. The reference image's object
+coordinates are found using the imtool window and the "F6" key. Display the
+reference image and press the "F6" key. This will display the coordinates of
+the cursor position within the imtool window. Now move the cursor to the
+center of the objects, each in turn and record the coordinates. This gives
+approximate centers for the objects. You can enlarge the region of the object
+by pressing the middle button on the mouse, twice in a row. Then, using the
+same method, display the next 5 images to be combined and calculate the
+approximate shifts of these images, use only one of the objects to cut
+down the work. Once you have the shifts, make a file with the shifts for the
+6 images, put "0.0 0.0" for the reference image. Again we will assume that
+the reference in object ir005. The "coords" and "shifts" files should look
+like the following:
+
+.nf
+       \fIrefcoor\fR
+       17.5 21.25
+       24.7 6.5
+
+       \fIshift\fR
+       0.0    0.0
+       -16.0  -15.0
+       -15.0  2.7
+       1.3    -13.75
+       2.0    3.25
+       -18.75 -6.0
+.fi
+
+These files will be used the the task "imalign", to first, find the centers
+of the objects in all the frames and then to calculate the average shift in
+x and y for the images. It will also calculate a trim region for your images,
+if you wish to just get rid of the problem of what to do with the edges of
+the image opposite the shift direction. The shift is then performed on the
+images and will be overwritten. Again, the images in the input file
+must be in the same order as the shifts in that file. The shift positions
+given in the file must be good to within 1 pixel. Tests have shown that
+changing the shift values by more than 1 pixel, will mess up the centering
+algorithm and the true center will not be found correctly. Now run the task;
+
+.nf
+      cl> proto
+      pr> epar imalign             (check the parameters)
+      pr> imalign
+
+
+			     \fIimalign\fR
+
+        images = "@list"     List of images
+        coords = "refcoor"   Coordinate file
+     reference = "ir005"     Reference image
+       (shifts = "shift")    Initial shift file
+       (prefix = "r")        Prefix for the new images
+  (shiftimages = yes)        Shift the images?
+   (trimimages = no)         Trim the shifted images?
+      (verbose = yes)        Print the centers, shifts, and trim section?
+      (boxsize = 3)          Size of the small centering box
+       (bigbox = 5)          Size of the big centering box
+     (negative = no)         Are the features negative?
+   (background = INDEF)      Reference background level
+        (lower = INDEF)      Lower threshold for data
+        (upper = INDEF)      Upper threshold for data
+     (niterate = 3)          Maximum number of iterations
+    (tolerance = 3)          Tolerance for convergence
+  (interp_type = "spline3")  Imshift interpolant
+ (boundary_typ = "nearest")  Imshift boundary type
+     (constant = 0.)         Imshift boundary constant
+         (list = "")             
+         (mode = "ql")
+.fi
+
+If you do not want to overwrite your original images, make copies in another
+directory or make copies to be shifted and name them in the "images" file.
+
+Once the images have been shifted, use imcombine to combine the images. If
+decide to use "constant" as the parameter in "imalign", then use "option =
+threshold" in "imcombine". The constant value should be set to a very large
+positive or negative number. Use "imcombine" setup #2 for this.
+
+.nf
+			\fIimcombine setup #2\fR
+
+      input = "@clist"      List of images to combine
+     output = "comb5"       List of output images
+    (plfile = "")           List of output pixel list files (optional)
+     (sigma = "")           List of sigma images (optional)
+   (logfile = "STDOUT")     Log file
+   (combine = "average")    Type of combine operation
+    (reject = "none")       Type of rejection
+   (project = no)           Project highest dimension of input images?
+   (outtype = "real")       Output image pixel datatype
+   (offsets = "none")       Input image offsets
+  (masktype = "none")       Mask type
+ (maskvalue = 0.)           Mask value
+     (blank = 0.)           Value if there are no pixels
+     (scale = "exposure")   Image scaling
+      (zero = "none")       Image zero point offset
+    (weight = "none")       Image weights
+   (statsec = "")           Image section for computing statistics
+   (expname = "exptime")    Image header exposure time keyword
+(lthreshold = INDEF)        Lower threshold
+(hthreshold = INDEF)        Upper threshold
+      (nlow = 0)            minmax: Number of low pixels to reject
+     (nhigh = 1)            minmax: Number of high pixels to reject
+     (mclip = yes)          Use median in sigma clipping algorithms?
+    (lsigma = 3.)           Lower sigma clipping factor
+    (hsigma = 3.)           Upper sigma clipping factor
+   (rdnoise = "0.")         ccdclip: CCD readout noise (electrons)
+      (gain = "1.")         ccdclip: CCD gain (electrons/DN)
+  (sigscale = 0.1)          Tolerance for sigma clipping scaling correction
+     (pclip = -0.5)         pclip: Percentile clipping parameter
+      (grow = 0)            Radius (pixels) for 1D neighbor rejection
+      (mode = "ql")
+.fi
+
+The final combined skys are now subtracted from the combined images using
+imarith, for example:
+
+.nf
+      pr> imarith comb5 - sky1 irim005
+	       
+	       or
+
+      pr> imarith im005 - sky1 irim005
+      pr> imarith im006 - sky1 irim006
+      pr> imarith im007 - sky1 irim007
+      pr> imarith im008 - sky1 irim008
+      pr> imarith im009 - sky1 irim009
+      pr> imarith im010 - sky1 irim010
+.fi
+
+IRS object frames may be combined in the same manner as was used for the
+skys, depending upon the variance of the background. Again, you must specify
+a "modesec" which includes the illuminated region of the chip. The objects
+frames must then be processed in the same manner as the IR imager data, the
+sky is subtracted. The process of flat field processing is very different
+for IR imager and IRS data, so if you are reducing IRS data, go to section
+4 of this manual. For IR images, continue on to the next section.
+.le
+.bp
+.ls \fI3.6 Flat Field Correction\fR
+
+IRS data is treated differently, please go on to section 4 in this manual,
+for further reductions of IRS data. The frames taken on the daytime sky or
+on the white spot must be combined by filter type if you have more than
+one. The darks are treated the same.  The flat field frames must be
+normalized to preserve statistics when applied to your images. Combine the
+darks using the task "imcombine";
+
+.nf
+      cl> epar imcombine           (check the parameters)
+      cl> imcombine @dlist
+.fi
+
+Use the median option and scale by the exposure time only. The levels are
+too low to use the "zero" offset parameter. For the flats, use "combine =
+median" and set "zero" to "yes". Be sure you combine flats of the same
+filter type.
+
+.nf
+      cl> epar imcombine           (check the parameters)
+      cl> imcombine @dlist
+
+
+		\fIimcombine for darks\fR
+			 
+      input = "@dlist"      List of images to combine
+     output = "dark"        List of output images
+    (plfile = "")           List of output pixel list files (optional)
+     (sigma = "")           List of sigma images (optional)
+   (logfile = "STDOUT")     Log file
+   (combine = "median")     Type of combine operation
+    (reject = "none")       Type of rejection
+   (project = no)           Project highest dimension of input images?
+   (outtype = "real")       Output image pixel datatype
+   (offsets = "none")       Input image offsets
+  (masktype = "none")       Mask type
+ (maskvalue = 0.)           Mask value
+     (blank = 0.)           Value if there are no pixels
+     (scale = "exposure")   Image scaling
+      (zero = "none")       Image zero point offset
+    (weight = "none")       Image weights
+   (statsec = "")           Image section for computing statistics
+   (expname = "exptime")    Image header exposure time keyword
+(lthreshold = INDEF)        Lower threshold
+(hthreshold = INDEF)        Upper threshold
+      (nlow = 0)            minmax: Number of low pixels to reject
+     (nhigh = 1)            minmax: Number of high pixels to reject
+     (mclip = yes)          Use median in sigma clipping algorithms?
+    (lsigma = 3.)           Lower sigma clipping factor
+    (hsigma = 3.)           Upper sigma clipping factor
+   (rdnoise = "0.")         ccdclip: CCD readout noise (electrons)
+      (gain = "1.")         ccdclip: CCD gain (electrons/DN)
+  (sigscale = 0.1)          Tolerance for sigma clipping scaling correction
+     (pclip = -0.5)         pclip: Percentile clipping parameter
+      (grow = 0)            Radius (pixels) for 1D neighbor rejection
+      (mode = "ql")
+
+		\fIimcombine for flats\fR
+			 
+      input = "@flist"      List of images to combine
+     output = "flat"        List of output images
+    (plfile = "")           List of output pixel list files (optional)
+     (sigma = "")           List of sigma images (optional)
+   (logfile = "STDOUT")     Log file
+   (combine = "median")     Type of combine operation
+    (reject = "none")       Type of rejection
+   (project = no)           Project highest dimension of input images?
+   (outtype = "real")       Output image pixel datatype
+   (offsets = "none")       Input image offsets
+  (masktype = "none")       Mask type
+ (maskvalue = 0.)           Mask value
+     (blank = 0.)           Value if there are no pixels
+     (scale = "exposure")   Image scaling
+      (zero = "mode")       Image zero point offset
+    (weight = "none")       Image weights
+   (statsec = "")           Image section for computing statistics
+   (expname = "exptime")    Image header exposure time keyword
+(lthreshold = INDEF)        Lower threshold
+(hthreshold = INDEF)        Upper threshold
+      (nlow = 0)            minmax: Number of low pixels to reject
+     (nhigh = 1)            minmax: Number of high pixels to reject
+     (mclip = yes)          Use median in sigma clipping algorithms?
+    (lsigma = 3.)           Lower sigma clipping factor
+    (hsigma = 3.)           Upper sigma clipping factor
+   (rdnoise = "0.")         ccdclip: CCD readout noise (electrons)
+      (gain = "1.")         ccdclip: CCD gain (electrons/DN)
+  (sigscale = 0.1)          Tolerance for sigma clipping scaling correction
+     (pclip = -0.5)         pclip: Percentile clipping parameter
+      (grow = 0)            Radius (pixels) for 1D neighbor rejection
+      (mode = "ql")
+.fi
+
+The flats must be normalized  before they are divided into the images.
+First, use "imarith" to subtract off the dark from your flats. And then,
+use "imstat" to get the mean of the flat field and divide by this number to
+normalize it to 1;
+
+.nf
+      cl> imarith flatj - dark dsflatj
+      cl> imarith flath - dark dsflath
+      cl> imarith flatk - dark dsflatk
+      cl> imstat Jflat
+       #     IMAGE      NPIX      MEAN    STDDEV       MIN       MAX
+             Jflat      3596     758.4     1868.    -982.8    47353.
+      cl> imarith dsflatj / 758.4 Jflat
+      cl> imstat Jflat
+       #     IMAGE      NPIX      MEAN    STDDEV       MIN       MAX
+             Jflat      3596    0.9999     2.463    -1.296     62.44
+      cl> hedit Jflat ccdmean 0.9999
+      cl> ...
+.fi
+
+The bad pixel regions of the flat may be set to a value around 0.1, to
+avoid problems with this region of the images. Use the task "imreplace",
+replacing pixel values in the bad region by a constant value,
+
+.nf
+      cl> imreplace Jflat 0.1 lower=-20.0 upper=0.001
+.fi
+
+If you wish to do photometry close to this region in your images, then later
+you may use "imedit" to interpolate over this region in all your images.
+Hopefully, you avoided taking objects close to this region of the chip.
+Divide your images by the correct flat. You may use the task "ccdproc" if
+all the header parameters needed to automatically run this task exist,
+otherwise, use "imarith".
+
+To use "ccdproc", you must have the filter type in the header, and you must
+be sure that you properly set the parameter "ccdmean" after normalizing the
+flats. Check this by typing "hselect flat* $I,title,ccdmean yes", this will
+list those header parameters listed in the third parameter. The setup
+for ccdproc would look like the following:
+
+.nf
+		      \fIccdproc for IR images\fR
+
+      images = "irim*.imh"  List of CCD images to correct
+    (ccdtype = "")          CCD image type to correct
+  (max_cache = 0)           Maximum image caching memory (in Mbytes)
+     (noproc = no)          List processing steps only?
+     (fixpix = no)          Fix bad CCD lines and columns?
+   (overscan = no)          Apply overscan strip correction?
+       (trim = no)          Trim the image?
+    (zerocor = no)          Apply zero level correction?
+    (darkcor = no)          Apply dark count correction?
+    (flatcor = yes)         Apply flat field correction?
+   (illumcor = no)          Apply iillumination correction?
+  (fringecor = no)          Apply fringe correction?
+    (readcor = no)          Convert zero level image to readout correction
+    (scancor = no)          Convert flat field image to scan correction?
+   (readaxis = "line")      Read out axis (column|line)
+    (fixfile = )            File describing the bad lines and columns
+    (biassec = "")          Overscan strip image section
+    (trimsec = "")          Trim data section
+       (zero = "")          Zero level calibration image
+       (dark = "")          Dark count calibration image
+       (flat = "Jflat,Hflat,Kflat") Flat field images
+      (illum = "")          Iillumination correction images
+     (fringe = "")          Fringe correction images
+ (minreplace = 1.)          Minimum flat field value
+   (scantype = "shortscan") Scan type (shortscan|longscan)
+      (nscan = )            Number of short scan lines
+(interactive = no)          Fit overscan interactively?
+   (function = "legendre")  Fitting function
+      (order = 2)           Number of polynomial terms or spline pieces
+     (sample = "*")         Sample points to fit
+   (naverage = 1)           Number of sample points to combine
+   (niterate = 1)           Number of rejection iterations
+ (low_reject = 3.)          Low sigma rejection factor
+(high_reject = 3.)          High sigma rejection factor
+       (grow = 0.)          Rejection growing radius
+       (mode = "ql")
+.fi
+
+The other method may be easily done by making a script consisting of the
+IRAF commands to be carried out. This is done by first creating a file of
+your images and editing this file.
+
+.nf
+      cl> files irim*.imh > proc.cl
+      cl> ed proc.cl               (this goes into the VI editor)
+	  :%s[.*[imarith & / Jflat p&
+	  (edit the file so all images are assigned the proper flat)
+	  :wq                      (when finished)
+      cl> type proc.cl
+       imarith irim005 / Jflat pirim005
+       imarith irim012 / Hflat pirim012
+       imarith irim016 / Kflat pirim016
+       imarith irim020 / Jflat pirim020
+       imarith irim021 / Jflat pirim021
+       imarith irim022 / Jflat pirim022
+       imarith irim023 / Jflat pirim023
+       imarith irim024 / Hflat pirim024
+       imarith irim025 / Hflat pirim025
+       imarith irim026 / Hflat pirim026
+       imarith irim027 / Hflat pirim027
+       imarith irim028 / Kflat pirim028
+       imarith irim029 / Kflat pirim029
+       imarith irim030 / Kflat pirim030
+       imarith irim031 / Kflat pirim031
+       imarith irim032 / Jflat pirim032
+       imarith irim038 / Hflat pirim038
+       imarith irim042 / Kflat pirim042
+      cl> cl < proc.cl &
+.fi
+
+The last line executes the script and processes the images. The "&" runs
+the process in the background so that you may check the progress of the
+job and do other things while it is running. The images are all processed
+and further analysis may now be performed. If you wish to fix the bad pixels
+in your images, continue on to the next section. Helpful hints in doing
+photometry can be found in the last section.
+.le
+.bp
+.ls \fI3.7 Creating the Bad Pixel File for Your Images\fR
+
+Now it is time to check your images to see if structure remains in the bad
+pixel regions. If you were careful to observe your objects far away from any
+obvious bad regions then you may only need to 'fix' pixels for cosmetic reasons.
+We suggest you examine these files using the display window,
+imtool (this can only be done at one of the SUN consoles), and then plotting
+them using implot. Start by loading the noao, images and tv packages. Display
+a processed flat and plot it using implot;
+
+.nf
+      cl> noao
+      no> images
+      im> tv
+      tv> display Jflat 1          (Jflat is a flat-field)
+      tv> implot Jflat
+.fi
+
+Do not exit from implot, but move the cursor to the imtool window and press
+'F6'. The cursor coordinates are now visible at the bottom of the screen.
+Find the position of a bad pixel using this, return to the graph and
+plot it using 'implot' with the ':l #'(line) and ':c #'(column) commands.
+You can define them more precisely using implot by overplotting lines and
+columns around the center of the bad regions. Do this by typing 'o' followed
+by ':c #' and ':l #'. Once you have these regions written down, check some of
+your images to see if the bad pixels are a problem, ie >1% in signal. If it is
+a problem then create a file called badpix with the listing of
+the pixels you wish to fix;
+
+.nf
+      tv> ed fixfile               (according to the following format)
+.fi
+
+The following example is to illustrate the format of a bad pixel file.
+
+.nf
+      55 55 38 38
+      10 17 50 56
+.fi
+
+Each line stands for a rectangular region of the image to be fixed. The
+regions are specified by four numbers giving the starting and ending
+columns followed by the starting and ending lines. The starting and ending
+points may be the same to specify a single column, line or pixel. Note that
+each region is "fixed" by interpolating across its shortest dimension and
+that regions are processed in the order that they appear in the bad pixel
+list. For bad regions of complex shape, some care may be required in
+specifying the regions in order to achieve an optimal result. \fIIt is
+strongly recommended that you test your bad pixel file by using it to
+correct a copy of one of your images before going into production\fR. This
+bad pixel file will be specified in the task ccdproc in the parameter
+fixfile. So now edit and run the task:
+
+.nf
+       cl> proto
+       pr> epar fixpix
+       pr> fixpix irim*.imh
+.fi
+
+Now you have final images that are ready to be used. If you plan to do
+photometry in IRAF see the next section for helpful hints.
+
+.nf
+                          \fIfixpix\fR
+
+       images = "irim*.imh"  Images to be modified
+    badpixels = "fixfile"    Bad pixel regions file
+     (verbose = no)          Print the image name and bad regions?
+        (mode = "ql")
+.fi
+
+The other option is to use the task "imedit". This is the interactive
+task that uses the imtool window. You choose the type and size of the
+aperture to be used from the list of options, and using the "+" and "-"
+keys. Another important feature is the "t" option. For more information
+about the use of this task, see Appendix H, of this manual.
+
+.le
+.bp
+.ls \fI3.8 Hints for Photometry\fR
+
+Doing photometry on images is done using any one of a number of tasks in
+IRAF. In the apphot package there are two tasks, "phot" and "qphot". In
+the ctio package, there is the task "sphot", which was written at CTIO.
+The output file for this is more direct and understandable however, both
+output rather large files. The output files may be considerably reduced
+using the tasks "apselect" (within apphot), or "fields" in the proto
+package used with "sphot" style output files. More details of these
+operations are given in the Photman section of this manual. The process
+may be automated using a script, "/uw90/jhe/script/jphot.cl". Running
+this, your images will in turn, be displayed and qphot will be executed. 
+
+Since the images have been sky subtracted, the magnitude errors given
+by the photon statistics will be underestimated. That is why it is good
+to compare values from different places on the chip. \fINote: Response
+variations within a pixel are likely to affect your results and complicate
+PSF fitting, because of substantial undersampling at the 1.5 meter telescope.
+This should be less of a problem at the 4.0 meter.\fR PSF fitting using
+DAOPHOT or DOPHOT are untested because there are so few objects per image.
+.le
+.bp
+.ls \fI4. Reducing the Flattened Spectra\fR
+
+The process of combining the flat field images from the IRS is very different
+from the IR Imager, so we begin with this process. The number of flats
+created will depend on the number of gratings used during your run. If you
+used 3 different gratings, you must make a flat for each. Flats taken
+throughout your run may be combined, giving better signal to noise, so it
+is not necessary to reduce your data for each night individually. The grating
+setting are varied due to the fringing, this must be eliminated. This is why
+taking many tilts is required, so that the final flat will have uniform
+iillumination. Once the flats have been combined, they are applied to the
+objects taken with the same grating.
+
+After the images have had the calibration frames applied to them, it is time
+to begin the extraction, wavelength, and flux calibration from other
+standard images. The calibration frames necessary are described in section
+2 of this manual.
+
+.le
+.bp
+.ls \fI4.1 Flat Field Correction for IR Spectroscopy\fR
+
+The many flat field images that were taken must be combined and normalized
+before they may be applied to the images. Those taken with the same grating
+setting must be combined first, then the various setting are combined.
+The combination of the individual setting should get rid of this.
+We will again use the task "imcombine". In the example, we are combining 30
+flats taken at the same setting. Make a list of the "like" flats for each
+setting and combine them;
+
+.nf
+      cl> files ir100*.imh > flist1
+      cl> files ir101*.imh >> flist1
+      cl> files ir102*.imh >> flist1
+      cl> files ir103*.imh > flist2
+      cl> files ir104*.imh >> flist2
+      cl> files ir105*.imh >> flist2
+      cl> epar imcombine           (check the parameters)
+      cl> imcombine
+.fi
+
+This will result in 3 or more grating settings to be combined. This is done
+using "imcombine" with the "average" option. Scaling by the mode is not
+critical, however for this example, we will continue to use it.
+
+.nf
+               \fIimcombine for Seperate Grating Settings\fR
+
+        input = "@flist1"       List of images to combine
+       output = "flat3.3"       Output image
+       (sigma = "")             Output sigma image (optional)
+     (logfile = "STDOUT")       Log file
+      (option = "median")       Type of combine operation: sum, average,...
+     (outtype = "real")         Output image pixel datatype
+     (expname = "exptime")      Image header exposure time keyword
+    (exposure = yes)            Scale by the exposure times?
+       (scale = yes)            Scale by the mode?
+      (offset = no)             Add offset determined from the mode?
+      (weight = no)             Use a weighted average?
+     (modesec = "[2:58,32:42]") Image section for computing mode
+   (lowreject = 3.)             Lower sigma clipping factor
+  (highreject = 3.)             Upper sigma clipping factor
+       (blank = 0.)             Value if all pixel are rejected
+        (mode = "ql")
+
+
+                   \fIimcombine the Individual Settings\fR
+
+        input = "flat3.3,flat3.4,flat3.5" List of images to combine
+       output = "flatgr9"       Output image
+       (sigma = "")             Output sigma image (optional)
+     (logfile = "STDOUT")       Log file
+      (option = "median")       Type of combine operation: sum, average,...
+     (outtype = "real")         Output image pixel datatype
+     (expname = "exptime")      Image header exposure time keyword
+    (exposure = yes)            Scale by the exposure times?
+       (scale = yes)            Scale by the mode?
+      (offset = no)             Add offset determined from the mode?
+      (weight = no)             Use a weighted average?
+     (modesec = "[2:58,32:42]") Image section for computing mode
+   (lowreject = 3.)             Lower sigma clipping factor
+  (highreject = 3.)             Upper sigma clipping factor
+       (blank = 0.)             Value if all pixel are rejected
+        (mode = "ql")
+.fi
+
+The dark must be subtracted from the flat before the flat is normalized
+and applied to the images. The individual darks are first combined using
+"imcombine". The overall level of the darks is so low that scaling by the
+mode is not required. The combined dark is subtracted from the flats using
+the task "imarith".
+
+.nf
+      cl> epar imcombine           (check the parameters)
+      cl> imcombine @dlist dark
+      cl> imarith flatgr9 - dark flat9
+
+
+                    \fIimcombine for darks\fR
+
+        input = "@dlist"        List of images to combine
+       output = "dark"          Output image
+       (sigma = "")             Output sigma image (optional)
+     (logfile = "STDOUT")       Log file
+      (option = "median")       Type of combine operation: sum, average,...
+     (outtype = "real")         Output image pixel datatype
+     (expname = "exptime")      Image header exposure time keyword
+    (exposure = yes)            Scale by the exposure times?
+       (scale = no)             Scale by the mode?
+      (offset = no)             Add offset determined from the mode?
+      (weight = no)             Use a weighted average?
+     (modesec = "[2:58,32:42]") Image section for computing mode
+   (lowreject = 3.)             Lower sigma clipping factor
+  (highreject = 3.)             Upper sigma clipping factor
+       (blank = 0.)             Value if all pixel are rejected
+        (mode = "ql")
+.fi
+
+To normalize the flat and take care of the large-scale variations, use the
+task "response". If there are bad pixel regions at the edge of the slit, you
+must first edit these pixels using "imedit" and the "c" option to interpolate
+along the column. If there are bad pixels close to the object spectra, do not
+fix this region. The bad pixels can then be eliminated by resetting the pixel
+values for all the bad pixels once the image has been processed. The image
+section of the illuminated slit should be specified when running the task
+"response", see the example. Inside the task response, you should play with
+the order of the function, the spline3 is very sensitive to the order. The
+final curve should follow the pixel variations well. The output image from
+"response" is the normalized flat field image. The objects frames can now be
+processed using the normalized flat.
+
+.nf
+      cl> images
+      im> imedit flat9 flat
+.fi
+
+The fixed image will be called flat. Since the pixels to be fixed are negative
+regions, type "t", until the response in the gterm window is "search -3". It
+is best to interpolate in the column direction over the bad region. Move the
+cursor to the left side of the column to be fixed and type "c". Now move to the
+other end and type a "c" again. The column will be fixed. If it did a bad job,
+type "u" to undo the change and try increasing (+) or decreasing (-) the
+radius of the aperture, and try again until you are satisfied. Type "q" to
+quit and save the fixed image.
+
+.nf
+      im> twodspec
+      tw> longslit
+      lo> epar response         (check the parameters)
+      lo> response
+.fi
+
+To change the order of the function fit, type ":order #". Then type "f" to fit
+the function with the new order. An order around 45 works well. When satisfied,
+type "q" to quit. Divide your spectra by the output image, response using
+"imarith ir110 / response irf110". This can be done in a short script.
+
+
+.nf
+			   \fIresponse\fR
+
+  calibration = "flat[1:62,29:47]" Longslit calibration images
+ normalizatio = "flat[1:62,29:47]" Normalization spectrum images
+     response = "response"      Response function images
+ (interactive = yes)            Fit normalization spectrum interactively?
+   (threshold = INDEF)          Response threshold
+      (sample = "*")            Sample of points to use in fit
+    (naverage = 1)              Number of points in sample averaging
+    (function = "spline3")      Fitting function
+       (order = 30)             Order of fitting function
+  (low_reject = 3.)             Low rejection in sigma of fit
+ (high_reject = 3.)             High rejection in sigma of fit
+    (niterate = 1)              Number of rejection iterations
+        (grow = 0.)             Rejection growing radius
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+        (mode = "ql")
+
+.fi
+.le
+.bp
+.ls \fI4.2 Extraction of Spectra\fR
+
+The same method of extraction is used for the infrared spectra as with optical
+spectra. Go into the package 'apextract' ('noao.twodspec') and edit the
+parameter file for 'apdefault', 'apio', 'aptrace', 'apfind', 'apedit' and
+'apsum'. Suggested parameters are given at the end of this section.
+
+.nf
+      cl> noao
+      no> twod
+      tw> apextr
+      ap> epar apdefault      (check the parameters below)
+      ap> epar apio           (  "    "  parameters below)
+      ap> epar aptrace        (  "    "  parameters below)
+      ap> epar apfind         (  "    "  parameters below)
+      ap> epar apedit         (  "    "  parameters below)
+      ap> epar apsum          (  "    "  parameters below)
+.fi
+
+Extracting spectra is generally a delicate step and we suggest doing
+this by carefully inspecting each image. It is worth spending some time
+on each image to properly select the object and the background windows,
+to trace the spectrum and extract it. We suggest that you start
+with a bright star (maybe a spectrophotometric standard) to allow a
+proper tracing. For instance,
+
+.nf
+      ap> apsum irf110
+.fi
+
+The task will start by asking you the following questions to which you must
+answer 'yes',
+
+.nf
+Find aperture for irf110? (yes):
+Write apertures for irf110 to database (yes):
+Edit apertures for irf110? (yes):
+.fi
+
+The task 'apsum' calls several other tasks (i.e. 'apdefault', 'aptrace',
+'apfind' and 'apedit'), whatever is called for by the switches in the
+parameter file. It is possible to run this blindly (i.e. non-interactively)
+but you should run it interactively to understand the various steps.
+
+The first section of the task is used to define the aperture size you wish
+to use in extracting the spectrum. You will be presented with a cross-section
+of the image (average of 'nsum' lines) along with an aperture centered around
+the star profile. If there are not enough lines added together to give a
+good profile, use ':nsum #' to add up # lines. You may also wish to review or
+modify the profile width using ':width' (the width should be about twice the
+FWHM of the profile). Now you may redefine your aperture: put the cursor on
+the profile and type 'c' (if you want to center the aperture), 'l' (cursor
+marks the lower edge of the aperture) and 'u' (the upper edge). You may also
+define the center, lower and upper values using ':cen #', ':low #' and
+':upp #'. All of these parameters are shown in the active status line at the
+bottom of the screen. The lower and upper edge values are given in pixels
+with respect to the center of the window.
+
+Once you have defined the extraction aperture, define the background. Type
+'b' and you will get a new plot showing the same cross-section, but with
+sky or background regions marked according to the sample specified in
+'apdefault'. If you don't like the regions defined type 't' to initialize
+the sample and then pairs of 's' to define new regions. You may wish to
+modify the function and order, although for most applications a linear fit
+(e.g. chebychev of order 2) is satisfactory. Type 'f' to fit the background.
+When satisfied type 'q'. This returns you to the first section. Type 'q'
+again. You will be asked,
+
+.nf
+Write apertures for irf110 to database (yes):
+Trace apertures for irf110? (yes):
+Fit traced positions for irf110 interactively? (yes):
+wait...
+Fit curve to aperture 1 of irf110 interactively (yes):
+
+.fi
+Answer 'yes' to all of them (hit RETURN).
+
+The next step is to trace the spectrum. This means fitting the center of
+the star profile along the image. Ideally the center should be constant
+through the entire image, but sometimes there is a small slope. Usually, the
+'rms' of the center is about 0.05 pixels. The fitting function suggested is
+'spline3' of third order which of course you may change in the usual way
+by typing, for example, ':function legendre' and/or ':order 4' before
+reperforming the fit with 'f'. When you are happy with the fit type 'q' to
+quit this section and continue.  You must answer 'yes' to the questions,
+
+.nf
+Write apertures for irf110 to database (yes):
+Extract 1D aperture sums for irf110? (yes):
+Review extracted spectra from irf110? (yes):
+wait...
+Review extracted spectra for aperture 1 from irf110? (yes):
+.fi
+
+Right now the extracted spectrum will be presented to you (see Fig. 5d). The
+result should be examined for evidence of any extraction problems. Quit this
+section with 'q'. Finally, type RETURN to quit the task. If answered
+appriopriately, the task will output a one-dimensional image with the
+extracted spectrum under the name irf110.0001 (where the '0001' extension
+stands for aperture #1) and a file in the database under the name 'apirf110',
+which contains information about the extraction, the window sizes and the
+tracing.
+
+You may now enter a good reference in 'apsum' (maybe irf110) which can be
+used for your next extraction. The reference must be a bright standard star
+whose tracing and windows will be read from the database and used as defaults
+in the next extraction. This is very convenient when extracting a faint object
+which might be difficult or imposible to trace properly because of the low
+signal.
+
+.nf
+      ap> epar apsum          (fill the 'reference' parameter with
+			       the appropriate object)
+.fi
+
+Once you have entered the right reference in 'apsum', proceed with the
+extraction of the rest of your objects.
+
+.nf
+      ap> apsum irf116
+          ...
+	  ...
+.fi
+
+We suggest the following scheme which summarizes the main commands in 'apsum',
+
+- \fIdefine object window for your first object\fR: if the object window is
+not properly centered on your object bring the vertical cursor to the
+position of your object and type 's'. This command shifts the center of the
+window to the position of the cursor. Then type 'c' to center the window
+around your object. You may use the 'l' and 'u' commands to adjust the limits
+of your window. Once you are happy with the object window type 'b' to check
+the background windows.
+
+- \fIdefine background windows\fR: you will be presented with the default sky
+windows coming from your reference. You have the option of deleting the
+current windows ('t' key) and defining new windows (pairs of 's') using the
+vertical cursor. Once you have defined your windows type 'f' to fit the
+current sky sample. The default for the fit is a chebyshev function of order
+2. You may change them by typing, for instance, ':function spline3' and/or
+':order 3'. Once you are happy with the sky fit type 'q' to go back to the
+previous section.
+
+Optionally you may define a new aperture at the position of the cursor using
+the 'n' key which stands for 'new aperture'. Go through the previous two
+sections. \fIWarning\fR: It is necessary to redefine the sky for the new
+aperture, and cannot skip this step. You have to repeat the previous loop
+for all the apertures you want to define.
+
+If you are using a reference in 'apsum' you can skip the tracing procedure
+which will be taken from the reference. Proceed with the extractions by
+inspecting your spectra and accepting the default names (irf116.0001,
+irf116.0002, ...).
+
+You can also inspect the extracted spectra by using 'splot' in the 'onedspec'
+package.
+
+.nf
+      ap> onedspec
+      on> splot irf106.0001
+.fi
+
+You will be presented with a plot of the extracted spectrum with the y-axis
+in counts and the x-axis in pixels.
+
+The next step consists of extracting the wavelength calibration arc spectra.
+Start by editing the 'apsum' task according to the list given below. Note
+that in this case the parameters 'recent', 'find', 'trace', 'background',
+'interactive', 'edit' and 'review' must all be set to 'no'.
+
+If you are not terribly interested in the wavelength calibration you can fill
+the 'reference' parameter in 'apsum' with any well traced object and perform
+the extractions of your arcs with the same reference. If you are looking for
+an accurate wavelength calibration do an 'epar' for each arc extraction and
+fill the 'reference' parameter with the object of interest.
+
+.nf
+      on> epar apsum          (check the list given below)
+.fi
+
+Finally, perform the task 'apsum' for each arc. You are required to specify
+a reference to be used for the trace and extraction. You must change the
+background parameter to "none". The extraction of the arcs should be done
+non-interactively.
+
+
+.nf
+                  \fIapdefault parameters\fR
+
+       (lower = -2.)            Lower aperture limit relative to center
+       (upper = 2.)             Upper aperture limit relative to center
+    (function = "chebyshev")    Background function
+       (order = 2)              Background function order
+      (sample = "-10:-5,5:10") Background sample regions
+    (naverage = -5)             Background average or median
+    (niterate = 1)              Background rejection iterations
+  (low_reject = 3.)             Background lower rejection sigma
+ (high_reject = 3.)             Background upper rejection sigma
+        (grow = 0.)             Background rejection growing radius
+        (mode = "ql")           
+
+                    \fIapio parameters\fR
+
+      (format = "onedspec")     Extracted spectra format
+    (database = "database")     Database
+     (dbwrite = "yes")          Write apertures to database?
+     (verbose = no)             Verbose output?
+     (logfile = "aplog")        Text log file
+    (graphics = "stdgraph")     Graphics output device or file
+       (plots = "")             Plot output device or file
+      (cursor = "")             Graphics cursor input
+        (mode = "ql")           
+
+                   \fIaptrace parameters\fR
+
+        input =                 List of input images to trace
+  (references = "")             List of reference images
+ (interactive = yes)            Run task interactively?
+    (recenter = yes)            Recenter reference apertures?
+        (find = yes)            Find apertures automatically?
+        (edit = yes)            Define and edit apertures interactively?
+       (trace = yes)            Trace aperture features?
+    (fittrace = yes)            Fit the traced points interactively?
+        (line = INDEF)          Starting dispersion line
+        (nsum = 20)             Number of dispersion lines to sum
+        (step = 20)             Tracing step
+    (function = "spline3")      Trace fitting function
+       (order = 3)              Trace fitting function order
+      (sample = "*")            Trace sample regions
+    (naverage = 1)              Trace average or median
+    (niterate = 1)              Trace rejection iterations
+  (low_reject = 3.)             Trace lower rejection sigma
+ (high_reject = 3.)             Trace upper rejection sigma
+        (grow = 0.)             Trace rejection growing radius
+        (mode = "a")            
+
+                    \fIapfind parameters\fR
+
+        input =                 List of input images
+       (nfind = 1)              Number of apertures to be found automat
+  (references = "")             Reference images
+ (interactive = yes)            Run task interactively?
+    (recenter = yes)            Recenter reference apertures?
+        (find = yes)            Find apertures automatically?
+        (edit = yes)            Define and edit apertures interactively?
+        (line = INDEF)          Dispersion line to graph
+        (nsum = 20)             Number of dispersion lines to sum
+      (minsep = 5.)             Minimum separation between spectra
+        (mode = "a")            
+
+                   \fIapedit parameters\fR
+
+        input =                 List of input images to edit
+  (references = "")             Reference images
+ (interactive = yes)            Run task interactively?
+    (recenter = yes)            Recenter reference apertures?
+        (find = yes)            Find apertures automatically?
+        (edit = yes)            Define and edit apertures interactively?
+        (line = INDEF)          Dispersion line to graph
+        (nsum = 20)             Number of dispersion lines to sum
+       (width = 5.)             Profile centering width
+      (radius = 10.)            Profile centering radius
+   (threshold = 10.)            Detection threshold for profile centering\n
+       output =                 Output spectra rootname
+          sky =                 Output sky spectra rootname
+     profiles =                 Profile reference image
+        (mode = "a")            
+
+                   \fIapsum parameters for stars\fR
+
+        input = ""              List of input images
+      (output = "")             List of output spectra
+         (sky = "")             List of output sky spectra
+  (references = "")             List of aperture reference images
+    (profiles = "")             List of profile reference images\n
+    (recenter = yes)            Recenter reference apertures (if defined)?
+        (find = yes)            Find apertures automatically (if none)?
+       (trace = yes)            Trace aperture features?
+     (extract = yes)            Extract 1D aperture sums?
+  (skyextract = no)             Output sky spectra (if background subtr
+  (background = "fit")          Background to subtract (none|average|fit)
+       (clean = no)             Detect and replace bad pixels?\n
+ (interactive = yes)            Run task interactively?
+        (edit = yes)            Define and edit apertures (if interactive)?
+      (review = yes)            Review extractions and output names (if int
+     (weights = "profile")      Extraction weights (profile|variance)
+    (naverage = 1000)           Number of profiles to average
+(interpolator = "spline3")      Type of image interpolation
+      (nclean = 2)              Number of pixels to clean per profile per
+      (lsigma = 3.)             Lower rejection threshold
+      (usigma = 3.)             Upper rejection threshold
+          (v0 = 1.)             Variance intercept
+          (v1 = 0.)             Variance slope
+        (mode = "a")            
+
+                    \fIapsum parameters for arcs\fR
+
+        input = ""              List of input images
+      (output = "")             List of output spectra
+         (sky = "")             List of output sky spectra
+  (references = "irf110")       List of aperture reference images
+    (profiles = "")             List of profile reference images\n
+    (recenter = no)             Recenter reference apertures (if defined)?
+        (find = no)             Find apertures automatically (if none)?
+       (trace = no)             Trace aperture features?
+     (extract = yes)            Extract 1D aperture sums?
+  (skyextract = no)             Output sky spectra (if background subtrac
+  (background = "none")         Background to subtract (none|average|fit)
+       (clean = no)             Detect and replace bad pixels?\n
+ (interactive = no)             Run task interactively?
+        (edit = no)             Define and edit apertures (if interactive)?
+      (review = no)             Review extractions and output names (if
+     (weights = "profile")      Extraction weights (profile|variance)
+    (naverage = 1000)           Number of profiles to average
+(interpolator = "spline3")      Type of image interpolation
+      (nclean = 2)              Number of pixels to clean per profile per
+      (lsigma = 3.)             Lower rejection threshold
+      (usigma = 3.)             Upper rejection threshold
+          (v0 = 1.)             Variance intercept
+          (v1 = 0.)             Variance slope
+        (mode = "a")            
+.fi
+.le
+.bp
+.ls\fI4.3 Wavelength Calibration\fR
+
+The wavelength calibration is done in the same manner as the CSCCD instrument,
+however, Argon or Xenon lamp spectra are used. Unfortunately, the spectral
+range covered by the array does not always include a prominent line. This is
+not a major problem at low resolution, but when using high resolution, it is
+a big problem. There are alternate methods for wavelength calibrating when the
+arcs do not have enough lines. Using the night sky emission lines, of which
+there are many in the IR, is one alternative. Sorting out which night sky
+emission lines you are looking at is sometimes a chore, however. Another
+alternative is to simply use a grating equation, since the IRS grating drive
+is quite accurate. For this, Brooke Gregory must be consulted for a program
+which will compute the dispersion for the specified grating setting. Then the
+image header parameters "crval1" and "crdel1" are added using the task
+"hedit". This is explained at the very end of this section.
+
+Wavelength calibration consists of three steps. The first one is done
+interactively with the task 'identify' which allows you to get from an arc
+a dispersion solution (wavelength versus pixel). That solution is the output
+from 'identify' and is stored as a text file in the database. The next step
+consists in assigning arc references to your objects. This step is performed 
+with the task 'refspectra' which simply writes this assignment in the header
+of your objects under the keywords REFSPEC1 and REFSPEC2. The third step
+consists in linearizing the x-axis of the extracted spectra with the task
+'dispcor' using the reference(s) found in the header and the corresponding
+solution(s) from the database. This task is non-interactive.
+
+\fISTEP 1\fR.
+
+You have to start by identifying emission lines in your arc spectra to be
+used to get a wavelength solution which will be applied later to your objects.
+This method should be used on your night sky spectrum if you plan to use them
+to wavelength calibrate your object spectra. Do an 'epar' on the 'identify'
+task (in the 'onedspec' package) and set the parameters according to the list
+given below. The first time you run this task is the most time consuming. Once
+you have obtained a solution for one arc, the following identifications will
+be much more straightforward. Now, execute the task for your first arc.
+
+.nf
+      no> onedspec
+      on> epar identify           (check the list given below)
+      on> identify irf115.0001
+
+
+                   \fIidentify parameters\fR
+
+       images = "irf115.0001"  Images containing features to be identified
+     (section = "middle line")  Section to apply to two dimensional images
+    (database = "database")     Database in which to record feature data
+   (coordlist = "onedstds$thorium.dat") User coordinate list
+        (nsum = 10)             Number of lines or columns to sum in 2D
+       (match = 2.)             Coordinate list matching limit in user units
+ (maxfeatures = 20)             Maximum number of features for automatic
+      (zwidth = 100.)           Zoom graph width in user units
+       (ftype = "emission")     Feature type
+      (fwidth = 5.)             Feature width in pixels
+     (cradius = 2.)             Centering radius in pixels
+   (threshold = 20.)            Feature threshold for centering
+      (minsep = 4.)             Minimum pixel separation
+    (function = "chebyshev")    Coordinate function
+       (order = 3)              Order of coordinate function
+      (sample = "*")            Coordinate sample regions
+    (niterate = 1)              Rejection iterations
+  (low_reject = 3.)             Lower rejection sigma
+ (high_reject = 3.)             Upper rejection sigma
+        (grow = 0.)             Rejection growing radius
+    (graphics = "stdgraph")     Graphics output device
+      (cursor = "")             Graphics cursor input
+        (mode = "ql")           
+
+.fi
+Several arc spectra catalogs with identified lines can be found in the
+computer room. Select the appropriate figure for your needs.
+
+The task will present you with the extracted arc. So far the x-axis is in
+pixels. Once you have recognized some features (this step is not
+straightforward and make take a while ...), select a line by setting the
+cursor on it, typing 'm' (mark feature) and enter the corresponding value
+in Angstroms. A tick mark should appear on top of the feature. Now mark a few
+more features (3 or 4) and enter their values by consulting the reference
+figure.
+
+Try now to perform a fit with the current points. If you type 'f' the task
+will carry out a one-dimensional fit between the values you entered in
+Angstroms and their pixel values. You will be presented with a plot of the
+residuals of the fit as a function of wavelength. The rms of the fit in
+Angstroms is given at the top of the plot. So far you may see some
+systematic trends in the residuals since the spectra are short and have only
+a few lines. Type 'q' to quit this section and you will see the arc spectrum
+in a real \fIwavelength scale!\fR, which makes things a lot simpler to
+identify features. You must continue marking more features if you can. From
+now on, each time you mark a feature you will be offered a value in Angstroms
+however, the lookup table for the thorium arc does not go into the IR. The
+value will come from the solution. If it looks correct, hit RETURN to accept
+it. If not, enter the correct value by hand and hit 'return'. Be sure there
+are several features evenly separated throughout the dispersion range. Type
+'f' to improve the current fit. If you see any trend in the residuals try to
+increase the order of the function by typing, for instance, ':order 3'
+followed by 'f' to reperform the fit. In order to change the type of the
+function to fit type, for instance, ':function legendre'. You may delete
+points with high residuals by moving the cursor near to the point and typing
+'d' or undelete points (crosses) with 'u'. Once you are happy with the type
+of function along with the order of the fit, type 'q' to return to the arc
+spectrum. Finally type 'q' again to quit the task. You must answer 'yes' to
+the question,
+
+.nf
+Write feature data to the database (yes)?
+
+.fi
+The solution obtained will be stored in the database as a text file.
+
+Proceed now with the identification of the other arcs. Since you already have
+a wavelength solution you can use it as a reference for the next
+identifications. Start by running 'identify' on the next arc.
+
+.nf
+      on> ident irf132.0001
+
+.fi
+Once you have the arc spectrum in front of you, read the wavelength solution
+from the database for the first arc identified. Type, for instance, ':read
+irf115.0001'. You will be presented with the current spectrum with the x-axis
+in Angstroms along with the features identified in irf115.0001 plotted on
+top. Although you probably cannot see it, the tick marks are slightly shifted
+with respect to the emission lines. The next step consists of recentering
+the old features on the current ones. Type 'a' (all) followed by 'c' (center)
+to center all the features. After thinking a while the task will shift the 
+tick marks accordingly. You may then do a fit ('f') to inspect the residuals.
+At this level you may use all the commands described above to get a good fit.
+Quit the task ('q') once you have a good fit with the right rms.
+
+Once you have identified all your spectra the wavelength solutions should all
+be in the database.
+
+
+\fISTEP 2\fR.
+
+There are many ways of assigning arc references to your objects. We suggest
+two different approaches that satisfy most needs of IRAF users.
+
+- If you have only \fIone arc for the whole night\fR do an 'epar' on 'refspec'
+according to the list given below and fill the 'reference' parameter with the
+arc you wish to use (for instance, irf115.0001) and execute 'refspec'.
+
+.nf
+      on> epar refspec       (check the list given below)
+      on> refspec irf*.000?.imh
+
+
+                     \fIrefspec parameters\fR
+
+
+        input = "irf*.000?.imh" List of input spectra
+      records =                 Record number extensions
+   (recformat = no)             Use record number extension format?
+  (references = "irf115.0001") List of reference spectra
+   (apertures = "")             Input aperture selection list
+      (refaps = "")             Reference aperture selection list
+   (ignoreaps = yes)            Ignore input and reference apertures?
+      (select = "average")      Selection method for reference spectra
+        (sort = "ut")           Sort key
+        (time = yes)            Is sort key a time?
+    (timewrap = 22.)            Time wrap point for time sorting
+    (override = yes)            Override previous assignments?
+     (confirm = yes)            Confirm reference spectrum assignments?
+      (assign = yes)            Assign the reference spectra to the inp
+    (logfiles = "STDOUT,logfile") List of logfiles
+     (verbose = no)             Verbose log output?
+       answer = "yes"           Accept assignment?
+        (mode = "ql")           
+
+You should get the following question for each object,
+
+[irf116.0001] refspec1='irf115.0001' Accept assingment?(no|yes|YES)(yes):
+
+.fi
+to which you have to answer 'yes' in order to
+accept the assignment.
+
+- If you have \fIone or two different arc(s) per object\fR prepare
+a table with your specific assignments in the following format,
+
+.nf
+     on> edit ref.table
+
+	 irf116.0001 irf115.0001
+	 irf117.0001 irf115.0001
+	 irf124.0001 irf115.0001,irf132.0001
+	 irf124.0002 irf115.0002,irf132.0002
+	 ...
+
+.fi
+In the previous example irf116.0001 will be wavelength calibrated using only
+the arc 'irf115.0001'. 'irf124.0001' and 'irf124.0002' will be calibrated
+using simultaneously two arcs bracketing your object, both with the same
+weight. Note that each spectrum from 'irf124' has its own set of extracted
+arcs. 'irf117.0001' will be calibrated with the same arc used for
+'irf115.0001'.
+
+Now, do an 'epar' for 'refspec' and fill the 'reference' parameter with
+'ref.table' (the name of the assignment table you created), fill the 'select'
+parameter with 'average' and execute the task.
+
+.nf
+      on> epar refspec
+      on> refspec irf*.000?.imh
+.fi
+
+
+\fISTEP 3\fR.
+
+Before running 'dispcor' you need a list with your raw spectra and a list
+with the names of the output spectra. Use the 'files' command to create the
+input list. We suggest the following,
+
+.nf
+      on> files irf*.000?.imh > inlist
+      on> edit inlist                   (optional)
+.fi
+
+Once you have the input list with the appropriate files make a copy
+of it into a new list called 'dclist' and edit this new file to
+change the output names of your wavelength calibrated spectra.
+
+.nf
+      on> copy inlist dclist
+      on> edit dclist     (if you have followed the convention of
+			   this manual the following vi command
+			   might be useful for a global replacement
+			   :%s/irf/dc/)
+.fi
+
+Once you have created the output list which must have \fIthe same number of
+lines as the output list\fR, you are ready to run 'dispcor'. Do an 'epar'
+first on 'dispcor' according to the list given below. Execute the task.
+
+.nf
+      on> epar dispcor         (check the list given below)
+      on> dispcor @inlist @dclist
+
+
+
+		   \fIdispcor parameters\fR
+
+        input = "@inlist"       List of input spectra
+       output = "@dclist"       List of output spectra
+      records =                 Record number extensions
+   (recformat = no)             Use record number extension format?
+    (database = "database")     Dispersion solution database
+       (table = "")             Wavelength table
+   (apertures = "")             Input aperture selection list
+          (w1 = INDEF)          Starting wavelength
+          (w2 = INDEF)          Ending wavelength
+          (dw = INDEF)          Wavelength interval per pixel
+          (nw = INDEF)          Number of output pixels
+(interpolatio = "poly5")        Interpolation type
+         (log = no)             Logarithmic wavelength scale?
+        (flux = yes)            Conserve flux?
+      (global = no)             Apply global defaults?
+   (ignoreaps = no)             Ignore apertures in global defaults?
+     (confirm = no)             Confirm dispersion coordinates?
+       (rebin = no)             Rebin previous dispersion corrections?
+    (listonly = no)             List the dispersion coordinates only?
+        (mode = "ql")           
+
+.fi
+The output of 'dispcor' is a set of wavelength calibrated images called in
+this example dc116.0001, dc117.0001, dc124.0002, dc023.0001 ...  It is a good
+idea to plot them with the use of the 'splot' task.
+
+.nf
+      on> splot dc116.0001
+.fi
+
+Check that the x-scale is in Angstroms.
+
+Now if you do not have enough lines in your arcs and the night sky emission
+lines also cannot be used, then you must calculate the starting wavelength and
+dispersion yourself and edit the headers of all your spectra. To do this, find
+one line which is identifiable and note its position in pixels. The using the
+grating equation, find the scale, wavelength per pixel, and calculate the
+starting wavelength. Then use "hedit" to set the values of the header
+parameters "crval1", the starting wavelength, and "cdelt1", the wavelength
+per pixel.
+.le
+.bp
+.ls \fI4.4 Atmospheric Correction\fR
+
+The standards that were taken during the night must now be used to get rid
+of terrestrial absorption, grating and filter characteristics. This is done
+by dividing the objects by a standard star spectrum taken at the same airmass.
+For the image arithmatics, use the task "imarith". If we have two images of
+the same airmass, one a standard and the other a program object, you might
+use the following:
+
+.nf
+      cl> imarith dc117.0001 / dc116.0001 dc117.01
+.fi
+
+
+Do this for all your object images. Be sure that you are using the same
+grating setting for both spectra.
+.le
+.bp
+.ls \fI4.5 Combining Object Spectra and Flux Calibration\fR
+
+This section deals with the combination of the different grating settings and
+the flux calibration using the reference "W. J. Wilson et.al., 1972, Ap.J.,
+177, 523" to make a blackbody curve which is then multiplied into all your
+objects.
+
+The 'ctio' package should be loaded and the task "spcombine" used to combine
+your short spectra into one long one for your objects and standards. We will
+assume that we took the objects at three different settings. Use the
+following example as your quideline:
+
+.nf
+      cl> ctio
+      ct> epar spcombine         (check the parameters below)
+      ct> spcombine dc117.01,dc217.01,dc317.01 sp117
+.fi
+
+You should repeat this for all your objects.
+
+The task which will create a dummy blackbody curve of a given temperature is
+in the 'artdata' package. The task name is "mk1dspec". The "input" and
+"output" names should be the same. You must specify the number of columns,
+the wavelength range, and the blackbody temperature for the output curve.
+The setup will produce the blackbody curve for the A star used as a reference,
+which now must be scaled to produce the proper flux scale when multiplied into
+your standard A star. The flux density corresponding to a 0th-magnitude star
+is showm in a table in the reference above. Once you have set the proper scale
+for your sensitivity curve, multiply all your images by it.
+
+.nf
+                         \fImk1dspec\fR
+
+    input   =                bbody  List of input spectra
+    (output =                bbody) List of output spectra
+    (rv     =                   0.) Radial velocity (km/s) or redshift
+    (z      =                   no) Is velocity a redshift?
+
+			IF NEW SPECTRUM
+    (title  =                     ) Title of spectrum
+    (ncols  =                   62) Number of columns
+    (header = artdata$stdheader.dat) Header keyword file
+    (wstart =               12400.) Starting wavelength (Angstroms)
+    (wend   =               12600.) Ending wavelength (Angstroms)
+
+			CONTINUUM
+    (continu=                1000.) Continuum at first pixel
+    (slope  =                   0.) Continuum slope per pixel
+    (tempera=               10000.) Blackbody temperture (Kelvin)
+
+			LINES
+    (lines  =                     ) List of files containing lines
+    (nlines =                    0) Number of random lines (if new line list)
+    (peak   =                 -0.5) Peak of lines (relative to continuum)
+    (sigma  =                  10.) Sigma of lines (Angstroms)
+    (seed   =                    1) Random number seed
+    (mode   =                   ql)
+.fi
+.le
+.bp
+.ls \fI5. Writing the Data to Tape\fR
+
+Allocate the device, for the SUNs it is "mta". Then mount your tape, don't
+forget to put in a write ring. Load the package dataio and do an epar on
+wfits.
+
+.nf
+      cl> dataio
+      da> epar wfits
+      da> wfits *.imh mta.6250 new+ 
+.fi
+
+The parameters are all explained in the online help pages. If you need a tape
+or assistance using the tapedrive, see Mario Hamuy or Lisa Wells. The parameter
+newtape should be "yes" if you are starting on a new tape. Otherwise you will
+not want to overwrite data which has already been placed on a tape. 
+
+After writing all the desired files to tape, deallocate the drive and retrieve
+your tape.
+
+.nf
+      da> dealloc mta
+.fi
+.le
+.endhelp

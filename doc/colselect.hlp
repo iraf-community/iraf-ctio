@@ -1,0 +1,56 @@
+.help colselect	Jun89 ctio
+.ih
+NAME
+colselect -- Extract selected columns from a list.
+.ih
+USAGE
+colselect files columns
+.ih
+PARAMETERS
+.ls files
+File or files from which the fields are to be extracted.
+.le
+.ls columns
+The columns to be extracted.  
+.le
+.ls lines = "1-9999"
+The lines from which the columns are to be extracted.  If multiple files are 
+being extracted, the same lines apply to each file.
+.le
+.ls repstr = ""
+String used to replace blank or missing columns. It is used only if
+\fBreplace=yes\fR.
+.le
+.ls replace = no
+This flag determines the task behavior when a column is missing from the
+specified line, i.e., either is blank or not there at all.
+If \fBreplace\fR = yes, the task replaces the column by the string specified
+in \fBrepstr\fR.
+.le
+.ls print_file_names = no
+If \fBprint_file_name\fR = yes, the first string of each output line of
+extracted fields is the file name.  
+.le
+.ih
+DESCRIPTION
+The list processing tool \fIcolselect\fR is used to extract fixed column
+ranges from the specified files and lines.
+The input to this task can be either the standard input or a list of
+files; output is a new list of the extracted column ranges.
+The columns of a line are numbered from 1 up to a newline character; those
+columns to be extracted are specified as a range of numbers.
+If a specified column is missing from a selected
+line the action taken is determined by the \fBreplace\fR flag;
+\fIcolselect\fR will either replace the column by a default value specified
+in \fBrepstr\fR, or just leave it as blank.
+.ih
+BUGS
+Column ranges are sorted internally by the task, so this task cannot be
+used to transpose columns.
+.sp
+Tabs in input files are treated as one column, i.e., they are not expanded
+before selecting column ranges.
+.ih
+SEE ALSO
+proto.fields
+.endhelp

@@ -1,0 +1,18 @@
+# spcombine parameter file
+input,s,a,"",,,List of input images
+output,s,a,"",,,Output image name
+interp_mode,s,h,"poly5",linear|spline|poly3|poly5,,Interpolation type
+w0,r,h,INDEF,,,Starting wavelength for output spectra
+w1,r,h,INDEF,,,Ending wavelength for output spectra
+wpc,r,h,INDEF,,,Wavelength increment for output spectra
+nout,i,h,INDEF,,,Length of output spectra
+sort,s,h,inc,none|inc|dec,,Sort on wavelength mode
+logarithm,b,h,no,,,Rebin to log wavelenth ?
+exposure,b,h,no,,,Scale by exposure time before combining ?
+fluxcons,b,h,yes,,,Conserve flux when rebinning
+wt_type,s,h,"none",none|expo|user,,Weighting type
+weight,r,a,,,,Weight if wt_type = user
+wt_image,s,h,"",,,File name for spectrum weighting
+interactive,b,h,yes,,,Adjust spectrum interactively ?
+cursor,*gcur,h,"",,,Graphics cursor input
+debug,b,h,no,,,Internal use only

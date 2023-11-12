@@ -1,0 +1,44 @@
+directory.x
+	Changed procedure names to be more consistent with IRAF 
+	conventions (PG 17/jan/90).
+
+directory.x
+	Changed string allocation in order to guarantee that string
+	overflow won't ocurr again. A new field to keep track of the
+	current root directory string space was added to the directory
+	structure (PG 17/jan/90).
+
+julian.x
+	Changed dble() to double() (PG 27/Aug/90).
+
+fft1d.x
+	Added missing mfree() call to free the FFT structure, fixed one
+	of the calls to aclxx() to clear the input buffer, added fft1_dump()
+	procedure to dump the FFT structure, added magic number to the FFT
+	structure, added fft1_chk() procedure to check for null FFT pointer
+	and bad magic number, and added calls to the latter to all the high
+	level entry points (uf!) (PG 15/Nov/90).
+
+fft1d.x
+	Changed fft1_get() procedure to return all the points in the
+	output buffer, instead of the first half (PG 16/Nov/90).
+
+fft1d.x
+	Added "flip" parameter to fft1_init() in order to select how to
+	retrieve the FFT values with fft1_get() (PG 16/Nov/90).
+
+sort.x
+	Added check to srt_sort() in order to call the quick-sort routine
+	only if there are at least two data points (PG 14/Oct/91).
+
+format.x
+	Changed the "count" parameter being passed to the user supplied
+	function to a pointer to a user supplied pointer. In this way it
+	will be possible to pass any number of quantities, of any type,
+	to the user supplied procedure (PG 20/Apr/92).
+
+fft1d.x
+	Added fft1_clear() routine to let the caller clear the FFT
+	buffers and reset th counter without freeing them. This reduces
+	the overhead when the FFT will be used multiple times, such as
+	in image lines (PG 15/Dec/92).

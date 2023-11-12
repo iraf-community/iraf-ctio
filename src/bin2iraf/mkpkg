@@ -1,0 +1,10 @@
+# bin2iraf mkpkg file (Mon Nov  5 14:43:54 CDT 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_bin2iraf.x	<error.h> <mach.h>
+	;

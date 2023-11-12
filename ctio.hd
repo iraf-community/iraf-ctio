@@ -1,0 +1,68 @@
+# Help directory for the CTIO package.
+
+$defdir		= "ctio$src/"
+$doc		= "ctio$doc/"
+
+$compression	= "ctio$compression/"
+$fabry		= "ctio$fabry/"
+$manuals	= "ctio$manuals/"
+
+apropos		hlp = doc$apropos.hlp,	   src = apropos/t_apropos.x
+bin2iraf	hlp = doc$bin2iraf.hlp,	   src = bin2iraf/t_bin2iraf.x
+bitstat		hlp = doc$bitstat.hlp,	   src = bitstat/t_bitstat.x
+chpixfile	hlp = doc$chpixfile.hlp,   src = chpixfile/t_chpixfile.x
+colselect	hlp = doc$colselect.hlp,   src = colselect/t_colselect.x
+compairmass	hlp = doc$compairmass.hlp, src = compairmass/t_compairmass.x
+coords		hlp = doc$coords.hlp,	   src = coords/t_coords.x
+cureval		hlp = doc$cureval.hlp,	   src = cureval/t_cureval.x
+dfits		hlp = doc$dfits.hlp,	   src = dfits/t_dfits.x
+eqwidths	hlp = doc$eqwidths.hlp,	   src = eqwidths/t_eqwidths.x
+fft1d		hlp = doc$fft1d.hlp,	   src = fft1d/t_fft1d.x
+filecalc	hlp = doc$filecalc.hlp,	   src = filecalc/t_filecalc.x
+findfiles	hlp = doc$findfiles.hlp,   src = findfiles/t_findfiles.x
+fitrad		hlp = doc$fitrad.hlp,	   src = fitrad/t_fitrad.x
+fixtail		hlp = doc$fixtail.hlp,	   src = ctio$fixtail/fixtail.cl
+focus		hlp = doc$focus.hlp,	   src = ctio$focus/focus.cl
+gki2cad		hlp = doc$gki2cad.hlp,	   src = gki2cad/t_gki2cad.x
+growthcurve	hlp = doc$growthcurve.hlp, src = ctio$growthcurve/growthcurve.cl
+helio		hlp = doc$helio.hlp,	   src = helio/t_helio.x
+imcreate	hlp = doc$imcreate.hlp,	   src = imcreate/t_imcreate.x
+imextract	hlp = doc$imextract.hlp,   src = ctio$imextract/imextract.cl
+immatch		hlp = doc$immatch.hlp,	   src = immatch/t_immatch.x
+imsort		hlp = doc$imsort.hlp,	   src = imsort/t_imsort.x
+imspace		hlp = doc$imspace.hlp,	   src = imspace/t_imspace.x
+imtest		hlp = doc$imtest.hlp,	   src = imtest/t_imtest.x
+iraf2bin	hlp = doc$iraf2bin.hlp,	   src = iraf2bin/t_iraf2bin.x
+irlincor	hlp = doc$irlincor.hlp,	   src = irlincor/t_irlincor.x
+lambda		hlp = doc$lambda.hlp,	   src = lambda/t_lambda.x
+magavg		hlp = doc$magavg.hlp,	   src = magavg/t_magavg.x
+magband		hlp = doc$magband.hlp,	   src = magband/t_magband.x
+mapkeyword	hlp = doc$mapkeyword.hlp,  src = mapkeyword/t_mapkeyword.x
+midut		hlp = doc$midut.hlp,	   src = ctio$midut/midut.cl
+mjoin		hlp = doc$mjoin.hlp,	   src = lambda/t_mjoin.x
+mkapropos	hlp = doc$mkapropos.hlp,   src = lambda/t_mkapropos.x
+pixselect	hlp = doc$pixselect.hlp,   src = pixselect/t_pixselect.x
+rvxcor		hlp = doc$rvxcor.hlp,	   src = ctio$rvxcor/t_rvxcor.x
+spcombine	hlp = doc$spcombine.hlp,   src = ctio$spcombine/t_spcombine.x
+sphot		hlp = doc$sphot.hlp,	   src = sphot/t_sphot.x
+statspec	hlp = doc$statspec.hlp,	   src = statspec/t_statspec.x
+wairmass	hlp = doc$wairmass.hlp,	   src = wairmass/t_wairmass.x
+
+
+
+
+compression	men = compression$compression.men,
+		hlp = ..,
+		sys = compression$compression.hlp,
+		pkg = compression$compression.hd,
+		src = compression$compression.cl
+
+fabry		men = fabry$fabry.men,
+		hlp = ..,
+		sys = fabry$fabry.hlp,
+		pkg = fabry$fabry.hd,
+		src = fabry$fabry.cl
+
+manuals         men = manuals$manuals.men,
+		hlp = ..,
+		pkg = manuals$manuals.hd

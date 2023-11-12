@@ -1,0 +1,99 @@
+.help statspec Dic88 ctio
+.ih
+NAME
+statspec -- Compute statistical error spectra from object and sky spectra.
+.ih
+USAGE
+statspec object_spectra sky_spectra error_spectra
+.ih
+PARAMETERS
+.ls object_spectra
+List object spectra. It may be any image template including
+@ lists.
+.le
+.ls sky_spectra
+List of sky spectra. It may be any image template including
+@ lists. The length of this list should be the same as the object
+spectra list. Otherwise, the task will stop at the end of the shoter
+list.
+.le
+.ls error_spectra
+Root name for the output spectra. This name will be prepended to
+each object name to build the output spectrum name.
+.le
+.ls ron = 0.0
+Readout noise in electrons.
+.le
+.ls preflash = 0.0
+Average preflash per pixel in electrons. 
+.le
+.ls gain = 1.0
+Detector gain in electrons per ADU.
+.le
+.ls nsky = 2.0
+Number of background pixels used in \fBapsum\fR.
+.le
+.ls nstar = 0.0
+Number of pixels in object window used in \fBapsum\fR.
+.le
+.ih
+DESCRIPTION
+For each object and sky spectrum in the input lists this task computes
+a statistical error spectrum, based on the Poisson statistics of the object
+counts, sky counts, and preflash level, plus the detector readout noise.
+The formula used to evaluate the relative error for each pixel is the
+following:
+.nf
+
+	error = sqrt (A + B + C) / D
+
+where:
+
+	A = star_counts * gain
+
+	B = sky_counts * gain * nsky / (nsky - 1)
+
+	C = (preflash + ron ** 2) * nsky * nstar / (nsky -1)
+
+	D = star_counts * gain
+
+.fi
+\fBnstar\fR, and \fBnsky\fR are the number of star and sky counts used
+when the input spectra were extracted using \fBapsum\fR.
+Each object and sky spactrum must be of the same length (this is always
+true for \fBapsum\fR). Otherwise they will be skipped with a warning message.
+The output of the task is a one-dimensional error spectrum, of the same
+length of the object spectrum, for each object and sky spectrum in the
+input list.
+.ih
+EXAMPLES
+Extract one aperture from a set of two-dimensional spectra, creating the
+sky spectra. Suppose that the object and sky windows were set, by \fBapedit\fR,
+to 10 pixels and 25 pixels respectively. Then compute the statistical error
+spectrum for each of the input spectra:
+.nf
+
+cl> noao
+no> twodspec
+tw> apextract
+tw> dir *.imh
+obj015.imh   obj037.imh   obj045.imh   obj051.imh
+
+ap> apsum obj*.imh extract+ skyextract+
+ap> dir *.imh
+obj015.0001.imh     obj037.imh          obj045sky.0001.imh  
+obj015.imh          obj037sky.0001.imh  obj051.0001.imh	
+obj015sky.0001.imh  obj045.0001.imh     obj051.imh
+obj037.0001.imh     obj045.imh          obj051sky.0001.imh
+
+ap> ctio
+ct> statspec obj*.0001 obj*sky.0001 err nstar=10 nsky=25
+ct> dir err*.imh
+errobj015.0001.imh  errobj045.0001.imh
+errobj037.0001.imh  errobj051.0001.imh
+
+.fi
+.ih
+SEE ALSO
+noao.apextract
+.endhelp

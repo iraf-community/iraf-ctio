@@ -1,0 +1,9 @@
+IMTEST			01-Sep-88	Pedro Gigoux
+
+This directory contains the code for the image headers and pixels
+report program. THis code finds image headers without pixel file
+and viceversa. The files are:
+
+mkpkg			mkpkg file
+
+t_imtest.x		main tasks procedure

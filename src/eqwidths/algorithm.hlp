@@ -1,0 +1,66 @@
+.help algorithm Jan91 eqwidths
+.nf
+Let be A the area enclosed by an absorption line, under the continuum
+level, for a given wavelength range l1 to l2:
+
+	A = integral [l1, l2] (Ic - I) dl,				(1)
+
+and let Ac be the area under the continuum level, for another wavelength
+range w1 to w2:
+
+	Ac = integral [w1, w2] Ic dl					(2)
+
+By definition the equivalent width is defined to be the wavelength
+interval:
+
+		eqw = w2 - w1,						(3)
+such that:
+		A = Ac							(4)
+
+Now, if Ic is not a function of wavelength, i.e. a constant, then
+from (1), and (4):
+
+		Ic * eqw = A,						(5)
+or:
+		eqw = A / Ic						(6)
+
+If the continuum is not a constant, but instead a linear function of
+the wavelength:
+
+		Ic = a * l + b,						(7)
+then:
+		Ac = integral [w1, w2] (a * l + b) dl			(8)
+		   
+		   = integral [0, w2 - w1] (a * (w1 + x) + b) dx,	(9)
+
+		   = a * w1 * dw + a * dw ** 2 / 2 + b * dw		(10)
+where:
+		 l = w1 + x						(11a)
+		dw = w2 - w1						(11b)
+		
+If we require that both wavelenth ranges [l1, l2], and [w1, w2] have
+the same midpoint, then:
+
+		lm = (l1 + l2) / 2 = (w1 + w2) / 2,			(12)
+Now:
+		w1 + w2 = 2 * w1 + dw					(13)
+
+From (12) and (13):
+
+		w1 = lm  - dw / 2					(14)
+
+Multiplying (14) by 'a' and 'dw':
+
+		a * w1 * dw = a * lm  * dw / 2 - a * dw ** 2 /2		(15)
+
+Substituting (15) into (10):
+
+		Ac = (a * lm + b) * dw					(16)
+
+therefore:
+		dw = Ac / (a * lm + b)					(17)
+
+From (3) and (4):
+
+		eqw = A / (a * lm + b)					(18)
+.endhelp

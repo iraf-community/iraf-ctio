@@ -1,0 +1,91 @@
+.help mapkeyword Jun91 ctio
+.ih
+NAME
+mapkeyword -- Replace image header keyword values with other values.
+.ih
+USAGE
+mapkeyword input keyword table
+.ih
+PARAMETERS
+.ls input
+Images to process.
+.le
+.ls keyword
+Image header keyword name to be edited. This must be a valid keyword
+name, either in lower or uppercase.
+.le
+.ls table
+Mapping table file.
+This is a two column text file containing the keyword values and the
+mappings for those values.
+.le
+.ls verify = yes
+Prompt the user for vefification before changing the keyword value ?.
+The possible answers to the prompts are: \fByes\fR (do it and continue
+prompting), \fBno\fR (don't do it and continue prompting),
+\fBYES\fR (do it and continue without prompting), and \fBNO\fR (abort).
+.le
+.ls show = yes
+Echo the operations as they are performed ?. This parameter has no effect
+if the user is being prompted for verification.
+.le
+.ls noop = no
+Echo operations without performing them ?. This is usefull for checking
+what the task would do, without actualy doing it.
+.le
+.ls check = yes
+Check for keyword values, present in the table, that were never used ?.
+If this parameter is set to \fByes\fR, then the task will report which
+keyword values, present in the table, were not found in the image headers.
+This is usefull to detect misspelling errors in the keyword values.
+.le
+.ih
+DESCRIPTION
+The task first reads the mapping table, specified in the \fBtable\fR
+parameter, and stores the keyword values and their mapping values into
+a table in meory. This table is used later when the image headers are
+being edited.
+.sp
+Then, for each image in the input list, the task reads the value of the
+header keyword, specified in the \fBkeyword\fR parameter, from the image
+header and replaces its value with the mapping value from the table in
+memory.
+If the keyword is not found in the image header then a warning message
+is issued, and and the task continues processing the
+next image in the input list.
+If the keyword value read from the image header is not present in the
+mapping table, then a waning message is issued. The keyword value is left
+unchanged in this case.
+.ih
+EXAMPLES
+Change the filter number into a name. The following mapping table would
+be used for the UBV system:
+.nf
+
+ct> type filetable
+1 U
+2 B
+3 V
+
+ct> mapkeyword image*.imh FILTERS filetable verify- show+ noop- check-
+Image [image1.imh], Keyword [FILTERS]: [1] -> [U]
+Image [image2.imh], Keyword [FILTERS]: [2] -> [B]
+Image [image3.imh], Keyword [FILTERS]: [3] -> [V]
+Image [image4.imh], Keyword [FILTERS]: [2] -> [B]
+ct>
+.fi
+.ih
+BUGS
+When a single word keyword value is converted to a multiple word value,
+the keyword value is enclosed between single quotes, in order to
+make it a single token.
+The problem arises when one tries to convert a quoted value into a
+single word value, and then back to a multiple word value.
+Since in the first conversion quotes are not removed, one will end with
+a value enclosed by two single quotes and each side.
+Unfortunately the IMIO routines will interpret this as a NULL string value,
+because of the two leading quotes.
+.ih
+SEE ALSO
+images.hedit, images.hselect
+.endhelp

@@ -1,0 +1,134 @@
+.help mjoin May90 ctio
+.ih
+NAME
+mjoin -- Join lines in text files by matching them
+.ih
+USAGE
+mjoin input join output
+.ih
+PARAMETERS
+.ls input
+Input text files.
+.le
+.ls join
+Text files with data to join. The lines in these files will be joined
+to the the ones in the input files.
+.le
+.ls output = STDOUT
+Output file. By default the output is written to the standard output.
+.le
+.ls match = yes
+Match lines by the first string in each line ?. If this parameter is
+\fByes\fR lines will be matched using the first string in each line.
+Otherwise they will be matched by line number.
+.le
+.ls discard = yes
+Discard matching string when joining lines. If this parameter
+is set to \fByes\fR the matching string is written only once, at the
+beginning of each output line.
+.le
+.ls warnings = no
+Print warning messages when joining lines ?.
+.le
+.ih
+DESCRIPTION
+This task joins lines from the input file with matching lines coming from
+the files to join. Lines are matched based either on the first character
+string present in each line, or by line number.
+.sp
+If \fBmatch=yes\fR the task first reads lines from the files to join, and
+places them in a table in memory indexed by the first string in each line
+(matching string). 
+Matching strings are whitespace delimited.
+The matching string must be unique in all lines to join. Otherwise any
+subsequent line containing the same matching string will be skipped with
+a warning message.
+After reading the files to join, the task reads lines from the input
+files, and prints them to the output file followed by the corresponding
+line found in the table in memory.
+If the matching string is not found in the table only the input line will
+be printed, and a warning messages will be issued.
+The matching string won't be printed again if the \fBdiscard\fR parameter
+is set to \fByes\fR.
+.sp
+If \fBmatch=no\fR the task just reads lines from the input files and the
+files to join, and prints them as one line. In this case the \fBdiscard\fR
+parameter is not used. Warning messages will be issued if the file lists
+are of different lenght, or if the files don't have the same number of
+lines.
+.sp
+All warning messages can be supressed if the \fBwarnings\fR parameter is
+set to \fBno\fR.
+.ih
+EXAMPLES
+Join a file containing image names and a list of magnitudes with a
+file containing image names and airmasses, and print the output to
+the terminal:
+.nf
+
+ct> type magnitudes
+image3	12.89
+image1	15.78
+image1	10.66
+image2	19.56
+image5	20.57
+image5	11.65
+image2	15.97
+
+ct> type airmasses
+image1	1.06
+image2 	1.01
+image4 	1.32
+image3 	1.56
+
+ct> mjoin magnitudes airmasses match=yes discard=no warnings=no
+image3  12.89  image3           1.56
+image1  15.78  image1   1.06
+image1  10.66  image1   1.06
+image2  19.56  image2           1.01
+image5  20.57
+image5  11.65
+image2  15.97  image2           1.01
+
+ct> mjoin magnitudes airmasses match=yes discard=yes warnings=no 
+image3  12.89           1.56
+image1  15.78   1.06
+image1  10.66   1.06
+image2  19.56           1.01
+image5  20.57
+image5  11.65
+image2  15.97           1.01
+
+ct> mjoin magnitudes airmasses match=yes discard=yes warnings=yes 
+image3  12.89           1.56
+image1  15.78   1.06
+image1  10.66   1.06
+image2  19.56           1.01
+image5  20.57
+[image5] does not match in file magnitudes at line 5
+image5  11.65
+[image5] does not match in file magnitudes at line 6
+image2  15.97           1.01
+
+ct> mjoin magnitudes airmasses match=no warnings=no
+image3  12.89  image1   1.06
+image1  15.78  image2   1.01
+image1  10.66  image4   1.32
+image2  19.56  image3   1.56
+
+ct> mjoin magnitudes airmasses match=no warnings=yes
+image3  12.89  image1   1.06
+image1  15.78  image2   1.01
+image1  10.66  image4   1.32
+image2  19.56  image3   1.56
+File [join1] shorter than [input1]
+.fi
+.ih
+BUGS
+The task could run out of memory when matching by the first string in each
+line and the files to join are too big, since in this case task needs to
+store the contents of these files in memory.
+.ih
+SEE ALSO
+join
+.endhelp

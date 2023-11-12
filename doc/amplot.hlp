@@ -1,0 +1,20 @@
+.help amplot Apr90 ctio
+.ih
+NAME
+amplot -- Plot critical airmass versus UT
+.ih
+USAGE
+amplot args
+.ih
+PARAMETERS
+.ih
+DESCRIPTION
+.ih
+EXAMPLES
+.ih
+TIME REQUIREMENTS
+.ih
+BUGS
+.ih
+SEE ALSO
+.endhelp

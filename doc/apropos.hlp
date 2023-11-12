@@ -1,0 +1,80 @@
+.help apropos May88 ctio
+.ih
+NAME
+apropos -- List all the tasks related with a given subject
+.ih
+USAGE
+apropos subject
+.ih
+PARAMETERS
+.ls subject
+Subject string to search. This string should be enclosed in double quotes
+if the string contains any character that have special meaning for the CL.
+.le
+.ls ignore_case = yes
+Ignore the case of letters in the subject string, i.e.,
+upper and lower case are considered identical. 
+.le
+.ls aproposdb = "aproposdb"
+It can be either the names of database files build by \fBmkapropos\fR, or
+the name of the environment variable \fBaproposdb\fR, which in turn contains
+the names of the database files to use.
+.le
+.ls verbose = no
+Print the name of the database files, as they are searched, along with the
+output ?.
+.le
+.ih
+DESCRIPTION
+This task will list all IRAF tasks that have the subject
+string in their name, description, or the name of the package where
+they belong.
+Only the tasks that are mentioned in a package menu file will be listed.
+The following meta-characters are allowed inside the subject string:
+.nf
+
+	^	matches the beginning of the line
+	$	matches the end of the line
+	?	matches any character
+	#	matches whitespace (space or tab)
+	{	turn off case sensivity
+	}	turn on case sensivity
+	\	escape next character
+
+.fi
+\fBignore_case=no\fR works in the same way as if the turn off case
+sensivity meta-character were prepended to the subject string.
+.br
+The user can specify the list of databases to search either explicitely,
+or by using the environment variable \fBaproposdb\fR. In the latter
+case this environment variable should contain the list of database files
+to search.
+Databases should be created by using the \fBmkapropos\fR task.
+.br
+The output will contain the task name followed by the task description
+and the name of the package where the task belongs.
+.ih
+EXAMPLE
+List all the task that are related to directories:
+.nf
+
+cl> apropos directory
+back          - Return to the previous directory (after a chdir) (language)
+cd            - Change directory (language)
+chdir         - Change directory (language)
+directory     - List the files in a directory (system)
+gkidir        - Directory listing of metacode file (plot)
+mkdir         - Create a new directory (system)
+movefiles     - Move files to a directory (system)
+.fi
+.ih
+BUGS
+The task does not restict a search to complete words.
+.sp
+The match at beginning of line meta-character does not work if 
+\fBignore_case=yes\fR. The sequence "^{subject}" with
+\fBignore_case=no\fR must be used instead.
+.ih
+SEE ALSO
+help, match, mkapropos
+.endhelp

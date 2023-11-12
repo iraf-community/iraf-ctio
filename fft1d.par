@@ -1,0 +1,11 @@
+# fft1d parameter file
+input,s,a,"",,,Input image or file list
+output,s,a,"",,,Output image or file list
+type,s,h,"complex","|real|complex|",,Transformation type [real|complex]
+format,s,h,"plain","|plain|modulus|power|",,Output format [plain|modulus|power]
+inverse,b,h,no,,,Take inverse transformation ?
+flip,b,h,no,,,Flip negative and positive parts of transformation ?
+interval,r,h,INDEF,,,Sampling interval (files)
+valkey,s,h,"CRVAL1",,,Starting value keyword (images)
+intkey,s,h,"CDELT1",,,Pixel interval keyword (images)
+angular,b,h,no,,,Show angular frecuencies ?

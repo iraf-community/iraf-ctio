@@ -1,0 +1,11 @@
+The file ctiocookbook is a troff file and a copy is obtained using the
+following command:
+
+       troff -t -ms ctiocookbook | lp2
+
+All other files are used in the IRAF help mode.
+
+To add a file to the list of accessible help pages load the 'softools'
+package and type:
+
+       mkhelpdb ctio$lib/root.hd ctio$lib/helpdb.mip

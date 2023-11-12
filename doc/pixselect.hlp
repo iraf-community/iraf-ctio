@@ -1,0 +1,54 @@
+.help pixselect Jul91 ctio
+.ih
+NAME
+pixselect -- List pixel values within a certain range
+.ih
+USAGE
+pixselect images lower upper
+.ih
+PARAMETERS
+.ls images
+Images or list of image sections whose pixels are to be printed.
+.le
+.ls lower
+Lower limit of window for listing pixels.  If INDEF then all pixels
+that are below \fBupper\fR are listed. For complex images this is
+the magnitude of the pixel values.
+.le
+.ls upper
+Upper limit of window for listing pixels.  If INDEF then all pixels
+that are above \fIlower\fR are listed.  For complex images this is
+the magnitude of the pixel values.
+.le
+.ls verbose = no
+Print a title line for each image whose pixels are to be listed.
+.le
+.ih
+DESCRIPTION
+For each image in the input list, the pixel coordinates and values are
+printed on the standard output, if the pixel values are within the range
+specified by \fBlower\fR and \fBupper\fR.
+.ih
+EXAMPLES
+1.- List all pixels below 100:
+
+ct> pixselect dev$pix 100 INDEF
+
+
+2.- List all pixels above 1000 in an image subraster:
+
+ct> pixselect dev$pix[51:55,155:151] INDEF 1000
+
+
+3.- List all pixels between 100 and 1000:
+
+ct> pixselect dev$pix 100 1000
+
+.ih
+BUGS
+Pixel coordinates of image subsections refer to the coordinate system of
+the subsection not the coordinate system of the original image.
+.ih
+SEE ALSO
+images.listpixels
+.endhelp

@@ -1,0 +1,11 @@
+PIXSELECT		11-Jul-91		Pedro Gigoux
+
+This directory contains the code for selecting pixels within a certain range
+from a list of images. The files contained here are:
+
+mkpkg			mkpkg file
+
+pixselect.gx		generic procedure tasks
+pixselect.x
+
+t_pixselect.x		main task procedure

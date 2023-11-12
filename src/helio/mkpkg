@@ -1,0 +1,12 @@
+# helio mkpkg file (Fri Mar 30 12:04:53 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	helio.f	
+	imdata.x	<math.h>
+	t_helio.x	<error.h> <math.h>
+	;

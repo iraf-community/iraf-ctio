@@ -1,0 +1,33 @@
+.help icntr Jan88 fabry
+.ih
+NAME
+icntr -- determine centers for a star in a set of images
+.ih
+USAGE
+icntr images positons output
+.ih
+PARAMETERS
+.ls images
+.le
+.ls positions
+.le
+.ls output
+.le
+.ih
+DESCRIPTION
+The user is requested to enter the names of the images
+containing stars whose positions are to be measured. This
+name may be any template expansion including @ lists.
+A second input parameter is the name of the files containing
+the star coordinates. This file may be generated using other
+programs such as \fBjdisplay\fR. Any template expansion may
+be used for this name as well.
+The output file will contain  (x0 y0 x y image)
+where \fBx0\fR and \fBy0\fR are the given star position, \fBx\fR and
+\fBy\fR are the centroided
+locations of the star for each image in the input list, and \fBimage\fR
+is the image file name.
+.ih
+SEE ALSO
+jdisplay
+.endhelp

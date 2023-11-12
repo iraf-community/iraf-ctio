@@ -1,0 +1,10 @@
+# statspec mkpkg file (Fri Mar 30 12:08:27 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_statspec.x	<error.h>
+	;

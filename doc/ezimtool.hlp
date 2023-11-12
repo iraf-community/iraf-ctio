@@ -1,0 +1,121 @@
+.help ezimtool Dic88 ctio
+.ih
+NAME
+ezimtool -- Call IRAF tasks interactivelly from image cursor mode
+.ih
+USAGE
+ezimtool image
+.ih
+PARAMETERS
+.ls image
+Name of the image to analize.
+.le
+.ls cursor = "imcur"
+Image cursor.
+.le
+.ls display = no
+If this parameter is set to \fByes\fR the image is displayed in
+the \fBimtool\fR window.
+.le
+.le
+.ih
+DESCRIPTION
+This task interactively calls other IRAF tasks within the \fBimtool\fR
+cursor mode. 
+All the tasks will be started by a single or double keystroke, and they
+will process the image specified in the \fBimage\fR parameter.
+By moving the image cursor it is possible to define an image pixel, line,
+column, or subraster.
+An image pixel, column, or line is defined by a single keystroke with the
+image cursor over the desired pixel, column, or line.
+An image subraster is defined by two subsequent keystrokes at opposite
+corners of the desired subsraster, i.e., if the keystrokes were at coordinates
+(x1,y1) and (x2,y2), the image subraster will be [x1:x2,y1:y2].
+If \fBdisplay=yes\fR the image is displayed (only once) at the beginning
+of the execution of the task. Otherwise it is assumed that the image is
+already displayed. 
+With this feature it is possible to analize one image using a second one
+as reference in the \fBimtool\fR window. Of course, the displayed
+image and the image to be analized must be of the same dimension or
+meaningless results or even a program crash may occur.
+Only a small subset of the parameters of the called tasks can be set
+interactively by a single keystrokes. However, it is possible to set other
+parameters by temporary exiting to the CL and calling \fBeparam\fR.
+.ih
+MENU KEYS
+The menu keys are recognized by the program only if the image cursor
+is over the displayed image. The keys currently implemented are:
+.ls "c"
+Pcol: The horizontal cursor coordinate defines the column to plot.
+.le
+.ls "d"
+Display: The image will be (re)displayed in the image display.
+.le
+.ls "g"
+Graphics cursor. The CL cursor mode is entered, and any command available
+in this mode can be used.
+.le
+.ls "h", "?"
+Help information. A summary of all the defined keys will be printed in
+the text window. No actual processing is done.
+.le
+.ls "l", "r"
+Prow: The vertical cursor coordinate defines the line to plot.
+.le
+.ls "o"
+Contour: A contour plot of the subraster specified will be displayed.
+.le
+.ls "p"
+Sphot: The first keystroke will start sphot in interactive mode. Subsequent
+keystrokes will be taken as star positions to process, until "q" or CTRL-Z
+is pressed.
+.le
+.ls "q"
+Quit the task. It is also possible to quit with CTRL-Z.
+.le
+.ls "s"
+Imstat: Image statistics over the subraster specified will be performed.
+Two keystrokes with the cursor on the same pixel will give the value of a
+single pixel.
+.le
+.ls "u"
+Surface: A surface plot of the subraster specified will be displayed.
+.le
+.ls "v"
+Pvector: The cursor defines the vector to plot.
+.le
+.ls "z"
+Zoom (display): The image subraster specified will be displayed.
+.le
+.ls "!"
+Exit temporarily to the CL. Return to the program by typing "bye".
+.le
+.ih
+EXAMPLES
+Display the image dev$pix, plot a column of it and get a hard copy of
+the plot:
+.nf
+
+ct> ezimtool dev$pix display=yes
+-- The image will be displayed
+...ready
+-- press the 'c' key to get a plot of a column
+-- the plot will appear in the graphics window
+...ready
+-- press the 'g' key to enter graphics cursor mode
+-- in cursor mode press the '=' key to get a hard copy
+-- now press 'q' to exit cursor mode
+-- back to the program
+...ready
+-- press 'q' to exit ezimtool
+...ready
+ct>
+.fi
+.ih
+BUGS
+This task does NOT load packages automaticaly. This means that all packages
+should be loaded before calling the tasks interactively from cursor mode.
+.ih
+SEE ALSO
+contour, display, imstat, pcol, prow, pvector, sphot, surface.
+.endhelp

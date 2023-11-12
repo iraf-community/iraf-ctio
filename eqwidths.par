@@ -1,0 +1,10 @@
+# eqw parameter file
+spectra,s,a,"",,,Input spectra 
+bands,s,a,"",,,Table with bandpassses
+output,s,a,"",,,Output file name
+radial,s,h,"",,,Table with radial velocities
+interpolation,s,h,"linear","|nearest|linear|poly3|poly5|spline3|",,Interpolation mode
+start,s,h,"W0",,,Starting wavelength keyword
+delta,s,h,"WPC",,,Wavelength increment keyword
+dispersion,s,h,"DC-FLAG",,,Dispersion correction flag keyword
+flux,s,h,"CA-FLAG",,,Flux calibration flag keyword

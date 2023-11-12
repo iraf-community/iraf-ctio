@@ -1,0 +1,8 @@
+# mapkeyword parameter file
+input,s,a,"",,,Input images
+table,s,a,"",,,Keyword value table
+keyword,s,a,"",,,Keyword name
+verify,b,h,yes,,,Verify each operation ?
+show,b,h,yes,,,Print record of each operation ?
+noop,b,h,no,,,Echo operation without performing it ?
+check,b,h,yes,,,Check for unused keyword values ?

@@ -1,0 +1,10 @@
+# wairmass mkpkg file (Fri Mar 30 12:08:43 CST 1990)
+
+$checkout	libpkg.a ../
+$update		libpkg.a
+$checkin	libpkg.a ../
+$exit
+
+libpkg.a:
+	t_wairmass.x	<error.h> <mach.h> <pkg/xtanswer.h>
+	;
