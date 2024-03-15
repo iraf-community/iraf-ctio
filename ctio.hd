@@ -40,7 +40,7 @@ magband		hlp = doc$magband.hlp,	   src = magband/t_magband.x
 mapkeyword	hlp = doc$mapkeyword.hlp,  src = mapkeyword/t_mapkeyword.x
 midut		hlp = doc$midut.hlp,	   src = ctio$midut/midut.cl
 mjoin		hlp = doc$mjoin.hlp,	   src = lambda/t_mjoin.x
-mkapropos	hlp = doc$mkapropos.hlp,   src = lambda/t_mkapropos.x
+mkapropos	hlp = doc$mkapropos.hlp,   src = apropos/t_mkapropos.x
 pixselect	hlp = doc$pixselect.hlp,   src = pixselect/t_pixselect.x
 rvxcor		hlp = doc$rvxcor.hlp,	   src = ctio$rvxcor/t_rvxcor.x
 spcombine	hlp = doc$spcombine.hlp,   src = ctio$spcombine/t_spcombine.x
