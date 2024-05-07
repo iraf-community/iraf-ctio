@@ -169,7 +169,7 @@ begin
 	    nchars = ncols  * pix_size[TY_DOUBLE]
 	    nbytes = nchars * SZB_CHAR
 	default:
-	    call error ("i2b_proc: Unknown output type")
+	    call error (0, "i2b_proc: Unknown output type")
 	}
 
 #call eprintf ("nc=%d, nb=%d\n")
@@ -204,7 +204,7 @@ begin
 	    case OUTPUT_DOUBLE:
 		call achtid (Memi[linebuf], Memc[outbuf], ncols)
 	    default:
-		call error ("i2b_proc: Unknown output type")
+		call error (0, "i2b_proc: Unknown output type")
 	    }
 
 	    # Swap bytes, if necessary. The swap buffer pointer will
