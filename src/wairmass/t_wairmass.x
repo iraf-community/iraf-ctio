@@ -13,7 +13,7 @@ define	WRM_ERROR	2		# ha == 0 || st == 0 || ra == 0
 procedure t_wairmass ()
 
 char	name[SZ_FNAME]		# input image name
-bool	fprecess		# precess by epoch ?
+#bool	fprecess		# precess by epoch ?
 bool	fairmass		# update airmass value ?
 bool	fzd			# update zenith distance value ?
 bool	fverify			# verify before updating ?
